@@ -1,7 +1,7 @@
 #pragma once
-#include "Type.h"
+#include "base_type.h"
 
-namespace Reflection
+namespace Zafkiel::Reflection
 {
 template <typename T>
     requires std::derived_from<T, Type>
@@ -16,6 +16,7 @@ template <typename T>
 Type::Kind Type::DetectKind()
 {
     if constexpr (std::is_same_v<T, Numeric>) return Kind::Numeric;
+    else if constexpr (std::is_same_v<T, String>) return Kind::String;
     else if constexpr (std::is_same_v<T, Enum>) return Kind::Enum;
     else if constexpr (std::is_same_v<T, Class>) return Kind::Class;
     else return Kind::Unknown;
@@ -33,6 +34,35 @@ Numeric::Kind Numeric::DetectKind()
     else if constexpr (std::is_same_v<T, double>) return Kind::Double;
     else return Kind::Unknown;
 }
+
+template <typename T>
+T Numeric::GetValue(const Any &elem) const
+{
+    const Numeric *type = elem.typeinfo->As<Numeric>();
+    bool isSinged = type->IsSigned();
+    switch (type->GetKind())
+    {
+        using enum Kind;
+    case Int8:
+        if (isSigned) return *(int8_t *)elem.payload;
+        else return *(uint8_t *)elem.payload;
+    case Int16:
+        if (isSigned) return *(int16_t *)elem.payload;
+        else return *(uint16_t *)elem.payload;
+    case Int32:
+        if (isSigned) return *(int32_t *)elem.payload;
+        else return *(uint32_t *)elem.payload;
+    case Int64:
+        if (isSigned) return *(int64_t *)elem.payload;
+        else return *(uint64_t *)elem.payload;
+    case Float:
+        return *(float *)elem.payload;
+    case Double:
+        return *(double *)elem.payload;
+    }
+    return -1;
+}
+
 template <typename T>
 Enum &Enum::Add(const std::string &name, T value)
 {

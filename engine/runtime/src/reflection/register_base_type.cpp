@@ -1,6 +1,6 @@
-#include "Register.h"
+#include "register_base_type.h"
 
-namespace Reflection
+namespace Zafkiel::Reflection
 {
 
 // 通过类型名字来获取类型信息

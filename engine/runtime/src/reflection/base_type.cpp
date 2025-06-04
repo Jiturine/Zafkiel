@@ -1,9 +1,10 @@
-#include "Type.h"
+#include "base_type.h"
 #include <cstdint>
-#include "Any.h"
+#include "any.h"
 #include <cassert>
+#include "make_any.h"
 
-namespace Reflection
+namespace Zafkiel::Reflection
 {
 std::string Numeric::GetNameOfKind(Kind kind)
 {
@@ -20,7 +21,7 @@ std::string Numeric::GetNameOfKind(Kind kind)
     }
 }
 
-void Numeric::SetValue(int64_t value, Any &elem) const
+void Numeric::SetValue(int64_t value, const Any &elem) const
 {
     if (elem.typeinfo->GetKind() == Type::Kind::Numeric)
     {
@@ -48,6 +49,23 @@ void Numeric::SetValue(int64_t value, Any &elem) const
         case Double: *(double *)elem.payload = value; break;
         case Unknown: assert(false); break;
         }
+    }
+}
+
+std::string String::GetValue(const Any &elem) const
+{
+    if (elem.typeinfo->GetKind() == Type::Kind::String)
+    {
+        return *AnyCast<std::string>(elem);
+    }
+    return nullptr;
+}
+
+void String::SetValue(const std::string &value, const Any &elem) const
+{
+    if (elem.typeinfo->GetKind() == Type::Kind::String)
+    {
+        *AnyCast<std::string>(elem) = value;
     }
 }
 

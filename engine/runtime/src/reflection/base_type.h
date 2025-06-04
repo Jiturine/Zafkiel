@@ -2,9 +2,9 @@
 #include <string>
 #include <vector>
 #include <memory>
-#include "Any.h"
+#include "any.h"
 
-namespace Reflection
+namespace Zafkiel::Reflection
 {
 class Any;
 
@@ -18,6 +18,7 @@ class Type
     {
         Unknown,
         Numeric, // 数字类型
+        String,  // 字符串类型
         Enum,    // 枚举类型
         Class,   // 类类型
         Property // 属性(类成员)类型
@@ -69,7 +70,10 @@ class Numeric : public Type
     {
     }
 
-    void SetValue(int64_t value, Any &elem) const;
+    template <typename T>
+    T GetValue(const Any &elem) const;
+
+    void SetValue(int64_t value, const Any &elem) const;
   private:
     Kind kind;
     bool isSigned;
@@ -77,6 +81,17 @@ class Numeric : public Type
     template <typename T>
         requires std::is_fundamental_v<T>
     static Kind DetectKind();
+};
+
+// 字符串类型
+class String : public Type
+{
+  public:
+    String() : Type(Type::Kind::String) {}
+    String(const std::string &name) : Type(name, Type::Kind::String) {}
+
+    std::string GetValue(const Any &elem) const;
+    void SetValue(const std::string &value, const Any &elem) const;
 };
 
 // 枚举类型
@@ -144,6 +159,11 @@ class NumericProperty : public Property
     using Property::Property;
 };
 
+class StringProperty : public Property
+{
+    using Property::Property;
+};
+
 class EnumProperty : public Property
 {
     using Property::Property;
@@ -154,55 +174,6 @@ class ClassProperty : public Property
     using Property::Property;
 };
 
-// 内部通过类成员指针，从类的Any中访问属性的Any
-template <typename Ptr>
-Any CallProperty(Any &a, Ptr accessor, const Type *owner);
-
-template <typename Ptr>
-class NumericProperty_Impl : public NumericProperty
-{
-  public:
-    NumericProperty_Impl(const std::string &name, const Class *owner, Ptr pointer);
-
-    Any Call(Any &a) const override { return CallProperty(a, pointer, GetOwner()); }
-
-    virtual const Type *GetTypeInfo() const override { return info; };
-
-  private:
-    Ptr pointer = nullptr;
-    const Numeric *info;
-};
-
-template <typename Ptr>
-class EnumProperty_Impl : public EnumProperty
-{
-  public:
-    EnumProperty_Impl(const std::string &name, const Class *owner, Ptr pointer);
-
-    Any Call(Any &a) const override { return CallProperty(a, pointer, GetOwner()); }
-
-    virtual const Type *GetTypeInfo() const override { return info; };
-
-  private:
-    Ptr pointer = nullptr;
-    const Enum *info;
-};
-
-template <typename Ptr>
-class ClassProperty_Impl : public ClassProperty
-{
-  public:
-    ClassProperty_Impl(const std::string &name, const Class *owner, Ptr pointer);
-
-    Any Call(Any &a) const override { return CallProperty(a, pointer, GetOwner()); }
-
-    virtual const Type *GetTypeInfo() const override { return info; };
-
-  private:
-    Ptr pointer = nullptr;
-    const Class *info;
-};
-
 }
 
-#include "Type.tpp"
+#include "base_type.tpp"

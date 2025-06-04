@@ -1,0 +1,5 @@
+::Zafkiel::Reflection::Register<{{class_name}}>("{{class_register_name}}")
+    {{#properties}}
+    .AddProperty(&{{property_name}}, "{{property_register_name}}")
+    {{/properties}}
+    ;

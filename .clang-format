@@ -12,7 +12,7 @@ AlignConsecutiveAssignments:
   AlignFunctionPointers: false
   PadOperators:    false
 AlignConsecutiveBitFields:
-  Enabled:         false
+  # Enabled:         false
   AcrossEmptyLines: false
   AcrossComments:  false
   AlignCompound:   false
@@ -95,7 +95,7 @@ BreakInheritanceList: BeforeColon
 BreakTemplateDeclarations: Leave
 BreakStringLiterals: true
 AlwaysBreakTemplateDeclarations: Leave
-ColumnLimit:     120
+ColumnLimit:     0
 CommentPragmas:  '^ IWYU pragma:'
 CompactNamespaces: false
 ConstructorInitializerIndentWidth: 4

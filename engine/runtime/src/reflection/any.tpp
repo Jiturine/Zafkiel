@@ -1,7 +1,7 @@
 #pragma once
-#include "Any.h"
+#include "any.h"
 
-namespace Reflection
+namespace Zafkiel::Reflection
 {
 template <typename T>
 Any operations_traits<T>::Copy(const Any &elem)

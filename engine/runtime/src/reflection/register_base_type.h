@@ -1,9 +1,10 @@
 #pragma once
 #include <list>
-#include "Type.h"
-#include "../utils/Singleton.h"
+#include <iostream>
+#include "base_type.h"
+#include "../utils/singleton.h"
 
-namespace Reflection
+namespace Zafkiel::Reflection
 {
 
 // 存储所有已注册的类型的类列表，便于只通过类型名string获取类型信息
@@ -23,7 +24,6 @@ template <typename T>
 class TypeInfo<T, Numeric> : public Singleton<TypeInfo<T, Numeric>>
 {
   public:
-    friend const Type *GetType<T>();
 
     TypeInfo &Register(const std::string &name);
     void AutoRegister();
@@ -38,13 +38,30 @@ class TypeInfo<T, Numeric> : public Singleton<TypeInfo<T, Numeric>>
     Numeric info;
 };
 
+template <typename T>
+class TypeInfo<T, String> : public Singleton<TypeInfo<T, String>>
+{
+  public:
+    TypeInfo &Register(const std::string &name);
+    void AutoRegister();
+
+    const String &GetInfo() const
+    {
+        if (!TypeInfo<T, String>::Instance().saved) { TypeInfo<T, String>::Instance().AutoRegister(); }
+        return info;
+    }
+  private:
+    static bool saved;
+    String info;
+};
+
 // 存储枚举类型信息的TypeInfo
 template <typename T>
 class TypeInfo<T, Enum> : public Singleton<TypeInfo<T, Enum>>
 {
   public:
     TypeInfo &Register(const std::string &name);
-    TypeInfo &Add(const std::string &name, auto value);
+    TypeInfo &Add(auto value, const std::string &name);
 
     const Enum &GetInfo() const { return info; }
   private:
@@ -66,41 +83,16 @@ class TypeInfo<T, Class> : public Singleton<TypeInfo<T, Class>>
     Class info;
 };
 
-// 后面是存储各个属性类型信息的TypeInfo
+// 核心的GetType函数，这里没有属性的概念，因为属性自己有对应类型
+// 后面要通过GetType来获取属性对应的类型
 
 template <typename T>
-class TypeInfo<T, NumericProperty> : public Singleton<TypeInfo<T, NumericProperty>>
-{
-  public:
-    TypeInfo &Register(const std::string &name, T accessor);
+const Type *GetType();
 
-    std::shared_ptr<Property> GetInfo() const { return info; }
-  private:
-    std::shared_ptr<NumericProperty> info;
-};
-
+// 核心的Register，根据不同类型，进行不同TypeInfo的注册
 template <typename T>
-class TypeInfo<T, EnumProperty> : public Singleton<TypeInfo<T, EnumProperty>>
-{
-  public:
-    TypeInfo &Register(const std::string &name, T accessor);
-
-    std::shared_ptr<Property> GetInfo() const { return info; }
-  private:
-    std::shared_ptr<EnumProperty> info;
-};
-
-template <typename T>
-class TypeInfo<T, ClassProperty> : public Singleton<TypeInfo<T, ClassProperty>>
-{
-  public:
-    TypeInfo &Register(const std::string &name, T accessor);
-
-    std::shared_ptr<Property> GetInfo() const { return info; }
-  private:
-    std::shared_ptr<ClassProperty> info;
-};
+auto &Register(const std::string &name);
 
 };
 
-#include "Register.tpp"
+#include "register_base_type.tpp"

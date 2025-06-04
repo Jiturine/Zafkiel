@@ -1,7 +1,8 @@
 #pragma once
 #include "make_any.h"
+#include "register.h"
 
-namespace Reflection
+namespace Zafkiel::Reflection
 {
 
 template <typename T>
@@ -31,7 +32,7 @@ Any MakeMove(T &&elem)
 }
 
 template <typename T>
-Any MakeRef(T &elem)
+Any MakeRef(const T &elem)
 {
     Any ret_value;
     ret_value.payload = &elem;
@@ -47,7 +48,7 @@ template <typename T>
 Any MakeConstRef(const T &elem)
 {
     Any ret_value;
-    ret_value.payload = &elem;
+    ret_value.payload = const_cast<T *>(&elem);
     ret_value.typeinfo = GetType<T>();
     ret_value.storageType = Any::StorageType::ConstRef;
     if constexpr (std::is_copy_constructible_v<T>) { ret_value.ops.copy = &operations_traits<T>::Copy; }
@@ -57,10 +58,23 @@ Any MakeConstRef(const T &elem)
 }
 
 template <typename T>
-T *try_cast(Any &elem)
+T *AnyCast(const Any &elem)
 {
-    if (elem.typeinfo == GetType<T>()) { return (T *)elem.payload; }
+    if (elem.typeinfo == GetType<T>()) { return static_cast<T *>(elem.payload); }
     else return nullptr;
 }
 
+template <class T>
+std::vector<std::pair<std::shared_ptr<Property>, Any>> GetPropertiesOfInstance(const T &instance)
+{
+    const Class *typeOfInstance = GetType<T>()->template As<Class>();
+    Any anyOfInstance = MakeConstRef(instance);
+    std::vector<std::pair<std::shared_ptr<Property>, Any>> propsAndAny;
+    for (const auto &prop : typeOfInstance->GetProperties())
+    {
+        Any propsAsAny = prop->Call(anyOfInstance);
+        propsAndAny.emplace_back(prop, propsAsAny);
+    }
+    return propsAndAny;
+}
 }

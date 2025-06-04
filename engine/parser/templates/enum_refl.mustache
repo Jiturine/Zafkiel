@@ -1,0 +1,5 @@
+::Zafkiel::Reflection::Register<{{enum_name}}>("{{enum_register_name}}")
+    {{#items}}
+    .Add({{item_name}}, "{{item_register_name}}")
+    {{/items}}
+    ;

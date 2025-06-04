@@ -1,0 +1,19 @@
+#pragma once
+#include "reflection/refl.h"
+#include "{{parsed_filename}}"
+
+namespace Zafkiel::ReflectionGenerate {
+
+inline void Register_{{refl_func_name}}_ReflInfo() {
+    {{#enums}}
+    {{{enum}}} 
+        
+    {{/enums}}
+
+    {{#classes}}
+    {{{class}}}
+        
+    {{/classes}}
+}
+
+}

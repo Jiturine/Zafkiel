@@ -1,7 +1,7 @@
 #pragma once
 #include <functional>
 
-namespace Reflection
+namespace Zafkiel::Reflection
 {
 
 class Any;
@@ -64,4 +64,4 @@ struct operations_traits
 };
 }
 
-#include "Any.tpp"
+#include "any.tpp"
