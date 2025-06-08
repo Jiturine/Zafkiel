@@ -1,17 +1,12 @@
 #pragma once
-#include <string>
-#include <vector>
-#include <memory>
-#include "any.h"
 
 namespace Zafkiel::Reflection
 {
-class Any;
 
 class Type
 {
   public:
-    template <typename T, typename TypeKind>
+    template <typename, typename>
     friend class TypeInfo;
 
     enum class Kind
@@ -69,11 +64,6 @@ class Numeric : public Type
     Numeric(Kind kind, bool isSigned) : Type(GetNameOfKind(kind), Type::Kind::Numeric), kind(kind), isSigned(isSigned)
     {
     }
-
-    template <typename T>
-    T GetValue(const Any &elem) const;
-
-    void SetValue(int64_t value, const Any &elem) const;
   private:
     Kind kind;
     bool isSigned;
@@ -89,9 +79,6 @@ class String : public Type
   public:
     String() : Type(Type::Kind::String) {}
     String(const std::string &name) : Type(name, Type::Kind::String) {}
-
-    std::string GetValue(const Any &elem) const;
-    void SetValue(const std::string &value, const Any &elem) const;
 };
 
 // 枚举类型
@@ -108,7 +95,7 @@ class Enum : public Type
     Enum() : Type(Type::Kind::Enum) {}
     Enum(const std::string &name) : Type(name, Type::Kind::Enum) {}
 
-    std::vector<Item> GetItems() const { return items; }
+    const std::vector<Item> &GetItems() const { return items; }
 
     template <typename T>
     Enum &Add(const std::string &name, T value);
@@ -126,7 +113,7 @@ class Class : public Type
     Class() : Type(Type::Kind::Class) {}
     Class(const std::string &name) : Type(name, Type::Kind::Class) {}
 
-    std::vector<std::shared_ptr<Property>> GetProperties() const { return properties; }
+    const std::vector<std::shared_ptr<Property>> &GetProperties() const { return properties; }
 
     Class &AddProperty(const std::shared_ptr<Property> &prop);
 
@@ -144,7 +131,7 @@ class Property : public Type
 
     ~Property() = default;
 
-    virtual Any Call(Any &) const = 0;
+    virtual std::any Call(const std::any &) const = 0;
     virtual const Type *GetTypeInfo() const = 0;
 
     const Class *GetOwner() const { return owner; }

@@ -36,34 +36,6 @@ Numeric::Kind Numeric::DetectKind()
 }
 
 template <typename T>
-T Numeric::GetValue(const Any &elem) const
-{
-    const Numeric *type = elem.typeinfo->As<Numeric>();
-    bool isSinged = type->IsSigned();
-    switch (type->GetKind())
-    {
-        using enum Kind;
-    case Int8:
-        if (isSigned) return *(int8_t *)elem.payload;
-        else return *(uint8_t *)elem.payload;
-    case Int16:
-        if (isSigned) return *(int16_t *)elem.payload;
-        else return *(uint16_t *)elem.payload;
-    case Int32:
-        if (isSigned) return *(int32_t *)elem.payload;
-        else return *(uint32_t *)elem.payload;
-    case Int64:
-        if (isSigned) return *(int64_t *)elem.payload;
-        else return *(uint64_t *)elem.payload;
-    case Float:
-        return *(float *)elem.payload;
-    case Double:
-        return *(double *)elem.payload;
-    }
-    return -1;
-}
-
-template <typename T>
 Enum &Enum::Add(const std::string &name, T value)
 {
     items.emplace_back(name, static_cast<Item::ValueType>(value));

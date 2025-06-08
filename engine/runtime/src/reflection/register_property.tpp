@@ -1,4 +1,6 @@
 #pragma once
+#include "register_base_type.h"
+#include "register_property.h"
 
 namespace Zafkiel::Reflection
 {
@@ -35,19 +37,16 @@ TypeInfo<T, ClassProperty> &TypeInfo<T, ClassProperty>::Register(const std::stri
 }
 
 template <typename Ptr>
-Any CallProperty(Any &a, Ptr accessor, const Type *owner)
+std::any CallProperty(const std::any &a, Ptr accessor, const Type *owner)
 {
-    if (owner != a.typeinfo || a.storageType == Any::StorageType::Empty) { return {}; }
     using traits = variable_traits<Ptr>;
     using ClassType = typename traits::ClassType;
     using type = traits::type;
-
-    // 通过accessor类成员指针来访问成员
-    auto &value = ((ClassType *)a.payload)->*accessor;
-    auto &operations = operations_traits<type>::GetOperations();
-    auto info = GetType<type>();
-
-    return Any(info, (void *)&value, Any::StorageType::Ref, operations);
+    if (GetType<ClassType>() != owner)
+        throw std::runtime_error("Type mismatch");
+    auto &obj = std::any_cast<std::reference_wrapper<ClassType>>(a).get();
+    std::any result = std::ref(obj.*accessor);
+    return result;
 }
 
 // 类类型添加属性:通过类型分类，先注册属性类型，然后将类型信息存入类的TypeInfo的properties列表

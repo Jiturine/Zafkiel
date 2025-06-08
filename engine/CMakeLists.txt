@@ -2,15 +2,6 @@ add_subdirectory(parser)
 
 add_subdirectory(runtime)
 
-# 删除以前生成的文件
-file(GLOB_RECURSE FILES_TO_DELETE 
-${CMAKE_CURRENT_SOURCE_DIR}/runtime/generated/*.h
-${CMAKE_CURRENT_SOURCE_DIR}/runtime/generated/*.cpp
-)
-foreach(file IN LISTS FILES_TO_DELETE)
-file(REMOVE "${file}")
-endforeach()
-
 # 查找需要解析反射的文件
 file(GLOB_RECURSE reflection_files 
 ${CMAKE_CURRENT_SOURCE_DIR}/runtime/src/*.h
@@ -28,6 +19,7 @@ add_custom_command(
     COMMAND $<TARGET_FILE:Parser>
         ${CMAKE_CURRENT_SOURCE_DIR}/runtime/src/precompile/refl_files.txt # 第一个参数：记录了所有需要解析的文件路径的txt文件路径
         ${CMAKE_CURRENT_SOURCE_DIR}/runtime/generated    # 第二个参数：输出目录
+        ${CMAKE_CURRENT_SOURCE_DIR}/runtime/src/reflection/refl.h # 第三个参数：反射宏文件所在路径
     COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_BINARY_DIR}/reflection_generated.done  # 生成标记文件
     DEPENDS Parser ${reflection_files}  # 依赖 Parser 可执行文件和输入文件
     COMMENT "Generating reflection code..."

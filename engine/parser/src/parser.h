@@ -8,8 +8,10 @@ class Parser
 {
   public:
     Node *ParseFile(const std::string &filename);
+    Parser(std::vector<std::string> extraArgs) : extraArgs(extraArgs) {}
 
   private:
+    // 忽略所有错误
     class IgnoreDiagnosticConsumer : public clang::DiagnosticConsumer
     {
       public:
@@ -31,4 +33,5 @@ class Parser
       public:
         std::unique_ptr<ASTConsumer> CreateASTConsumer(CompilerInstance &CI, StringRef file) override;
     };
+    std::vector<std::string> extraArgs;
 };

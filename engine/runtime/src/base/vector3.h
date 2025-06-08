@@ -1,5 +1,4 @@
 #pragma once
-#include <string>
 #include "reflection/refl.h"
 
 namespace Zafkiel
@@ -7,6 +6,12 @@ namespace Zafkiel
 struct [[reflect]] vec3
 {
     float x, y, z;
-    int id;
+};
+
+struct [[reflect]] Camera
+{
+    vec3 position;
+    vec3 lookAt;
+    float fov;
 };
 }

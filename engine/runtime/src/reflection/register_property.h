@@ -1,4 +1,5 @@
 #pragma once
+#include "register_base_type.h"
 #include "property.h"
 
 namespace Zafkiel::Reflection
@@ -51,7 +52,7 @@ class TypeInfo<T, ClassProperty> : public Singleton<TypeInfo<T, ClassProperty>>
 };
 
 template <typename Ptr>
-Any CallProperty(Any &a, Ptr accessor, const Type *owner);
+std::any CallProperty(const std::any &a, Ptr accessor, const Type *owner);
 }
 
 #include "register_property.tpp"

@@ -1,6 +1,4 @@
 #pragma once
-#include <list>
-#include <iostream>
 #include "base_type.h"
 #include "../utils/singleton.h"
 

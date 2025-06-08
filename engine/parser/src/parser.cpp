@@ -1,8 +1,5 @@
 #include "parser.h"
 #include "cursor.h"
-#include <iostream>
-#include <filesystem>
-namespace fs = std::filesystem;
 
 Attribute ParseAttributes(const Cursor &cursor)
 {
@@ -157,15 +154,6 @@ std::unique_ptr<ASTConsumer> Parser::FrontendAction::CreateASTConsumer(CompilerI
 
 Node *Parser::ParseFile(const std::string &filename)
 {
-    std::vector<std::string> ExtraArgs = {
-        "-x", "c++",
-        "-std=c++20",
-        "-w", "-MG", "-M", "-DNDEBUG",
-        "-D__clang__",
-        "-ferror-limit=0", "-Wno-everything",
-        "-Dreflect=clang::annotate(\"reflect\")",
-        "-Dnoreflect=clang::annotate(\"noreflect\")",
-        "-I/usr/include/c++/13"};
     // 读取源文件内容
     llvm::ErrorOr<std::unique_ptr<llvm::MemoryBuffer>> FileOrErr = llvm::MemoryBuffer::getFile(filename);
     if (std::error_code EC = FileOrErr.getError())
@@ -174,7 +162,7 @@ Node *Parser::ParseFile(const std::string &filename)
         return nullptr;
     }
     // 运行工具
-    tooling::runToolOnCodeWithArgs(std::make_unique<FrontendAction>(), (*FileOrErr)->getBuffer(), ExtraArgs, filename.c_str());
+    tooling::runToolOnCodeWithArgs(std::make_unique<FrontendAction>(), (*FileOrErr)->getBuffer(), extraArgs, filename.c_str());
     return ParserASTConsumer::root;
 }
 

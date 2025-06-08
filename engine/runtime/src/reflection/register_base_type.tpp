@@ -1,9 +1,6 @@
 #pragma once
-#include <type_traits>
 #include "register_base_type.h"
 #include "variable_traits.h"
-
-#include <iostream>
 
 namespace Zafkiel::Reflection
 {

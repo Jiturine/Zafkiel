@@ -5,9 +5,9 @@
 namespace Zafkiel::Reflection
 {
 
-// 内部通过类成员指针，从类的Any中访问属性的Any
+// 内部通过类成员指针，从类的std::any中访问属性的std::any
 template <typename Ptr>
-Any CallProperty(Any &a, Ptr accessor, const Type *owner);
+std::any CallProperty(const std::any &a, Ptr accessor, const Type *owner);
 
 template <typename Ptr>
 class NumericProperty_Impl : public NumericProperty
@@ -15,7 +15,11 @@ class NumericProperty_Impl : public NumericProperty
   public:
     NumericProperty_Impl(const std::string &name, const Class *owner, Ptr pointer);
 
-    Any Call(Any &a) const override { return CallProperty(a, pointer, GetOwner()); }
+    std::any Call(const std::any &a) const override
+    {
+        std::any res = CallProperty(a, pointer, GetOwner());
+        return res;
+    }
 
     virtual const Type *GetTypeInfo() const override { return info; };
 
@@ -30,7 +34,10 @@ class StringProperty_Impl : public StringProperty
   public:
     StringProperty_Impl(const std::string &name, const Class *owner, Ptr pointer);
 
-    Any Call(Any &a) const override { return CallProperty(a, pointer, GetOwner()); }
+    std::any Call(const std::any &a) const override
+    {
+        return CallProperty(a, pointer, GetOwner());
+    }
 
     virtual const Type *GetTypeInfo() const override { return info; };
 
@@ -45,7 +52,10 @@ class EnumProperty_Impl : public EnumProperty
   public:
     EnumProperty_Impl(const std::string &name, const Class *owner, Ptr pointer);
 
-    Any Call(Any &a) const override { return CallProperty(a, pointer, GetOwner()); }
+    std::any Call(const std::any &a) const override
+    {
+        return CallProperty(a, pointer, GetOwner());
+    }
 
     virtual const Type *GetTypeInfo() const override { return info; };
 
@@ -60,7 +70,10 @@ class ClassProperty_Impl : public ClassProperty
   public:
     ClassProperty_Impl(const std::string &name, const Class *owner, Ptr pointer);
 
-    Any Call(Any &a) const override { return CallProperty(a, pointer, GetOwner()); }
+    std::any Call(const std::any &a) const override
+    {
+        return CallProperty(a, pointer, GetOwner());
+    }
 
     virtual const Type *GetTypeInfo() const override { return info; };
 

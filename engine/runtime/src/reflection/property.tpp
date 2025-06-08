@@ -1,5 +1,6 @@
 #pragma once
 
+#include "variable_traits.h"
 #include "property.h"
 
 namespace Zafkiel::Reflection

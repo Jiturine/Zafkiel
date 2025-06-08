@@ -8,6 +8,7 @@
 #include "code_generate.h"
 #include "utils.h"
 #include "mustache_manager.h"
+#include "clang/Serialization/ASTBitCodes.h"
 
 namespace fs = std::filesystem;
 
@@ -20,28 +21,45 @@ void save_file(const fs::path &output_dir, const std::string &filename, const st
 
 int main(int argc, char **argv)
 {
+    // 获取所有要解析的文件
     std::ifstream ifs(argv[1]);
     std::string all_input_file;
     ifs >> all_input_file;
     ifs.close();
-    std::cout << "all_input_file: " << all_input_file << std::endl;
-
     auto input_files = Utils::Split(all_input_file, ";");
 
+    // 获取输出路径
     fs::path output_dir(argv[2]);
-
     if (!fs::exists(output_dir))
     {
         fs::create_directory(output_dir);
     }
+
+    // 获取反射宏所在文件路径
+    fs::path reflection_macro_file(argv[3]);
+    auto reflection_macro_file_path = reflection_macro_file.string();
+    std::cout << "Reflection macro file path: " << reflection_macro_file_path << std::endl;
+
+    // 设置额外参数
+    std::vector<std::string> extraArgs = {
+        "-x", "c++",                   // 指定语言为C++，否则.h会解析为C语言
+        "-std=c++20",                  // 指定C++标准
+        "-w", "-MG", "-M", "-DNDEBUG", // 禁用调试信息
+        "-D__clang__",
+        "-ferror-limit=0", "-Wno-everything",   // 设置错误限制为0，忽略所有错误
+        "-D__REFLECTION_ENABLE__",              // 定义反射宏
+        "-include", reflection_macro_file_path, // 添加反射宏文件路径
+    };
     std::string output_header_filename = output_dir / "refl_generate.h";
     std::string output_impl_filename = output_dir / "refl_generate.cpp";
     fs::path base_dir = output_dir.parent_path() / "src";
     ImplMustacheFormat format;
     format.header_file = output_header_filename;
+
+    // 解析每个头文件
     for (const auto &file : input_files)
     {
-        Parser parser;
+        Parser parser(extraArgs);
         Node *root = parser.ParseFile(file);
         std::cout << "Parsing file: " << file << std::endl;
         if (root->children.empty())
@@ -49,7 +67,6 @@ int main(int argc, char **argv)
             delete root;
             continue;
         }
-        // PrintAST(file);
         fs::path relative_path = fs::relative(file, base_dir);
         std::string filename = relative_path.string();
         Utils::Replace(filename, "../", "");
@@ -59,6 +76,7 @@ int main(int argc, char **argv)
         Utils::Replace(func_name, '/', '_');
         const auto &code = GenerateCode(filename, func_name, root);
         const auto &final_filename = func_name + ".h";
+        std::cout << final_filename << std::endl;
         format.refl_header_files.push_back(final_filename);
         format.func_calls.push_back(std::format("Register_{}_ReflInfo", func_name));
         save_file(output_dir, final_filename, code);

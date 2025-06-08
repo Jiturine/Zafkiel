@@ -21,6 +21,12 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/templates
     DESTINATION ${CMAKE_BINARY_DIR}/engine/parser
 )
 
+add_custom_command(
+    TARGET Parser PRE_BUILD
+    COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_CURRENT_SOURCE_DIR}/runtime/generated
+    COMMENT "Removing file at build time"
+)
+
 target_link_libraries(Parser PUBLIC 
     clangAST
     clangBasic

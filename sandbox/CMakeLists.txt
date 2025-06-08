@@ -1,5 +1,7 @@
-SET(SANDBOX_NAME Sandbox)
 
-add_executable(${SANDBOX_NAME} main.cpp)
+file(GLOB_RECURSE HEADER_FILES src/*.h src/*.hpp src/*.tpp)
+file(GLOB_RECURSE SOURCE_FILES src/*.cpp src/*.c )
 
-target_link_libraries(${SANDBOX_NAME} PUBLIC Zafkiel)
+add_executable(Sandbox ${SOURCE_FILES} ${HEADER_FILES})
+
+target_link_libraries(Sandbox PUBLIC Zafkiel)
