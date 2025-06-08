@@ -39,13 +39,14 @@ int main(int argc, char **argv)
                 if (prop->GetTypeInfo() == GetType<vec3>())
                 {
                     auto &v = RemoveRef<vec3>(a);
-                    std::cout << "Value: " << v.x << " " << v.y << std::endl;
+                    std::cout << "Value: " << v.x << " " << v.y << " " << v.z << std::endl;
+                    v.x++;
                 }
             }
         }
+        std::cout << cam.lookAt.x << " " << cam.lookAt.y << " " << cam.lookAt.z << std::endl;
         std::cout << cnt_size << std::endl;
         std::cout << "-------------" << std::endl;
-        std::cout << v.x << " " << v.y << " " << v.z << std::endl;
     }
 
     return 0;

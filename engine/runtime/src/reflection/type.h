@@ -1,4 +1,5 @@
 #pragma once
+#include "variable_traits.h"
 
 namespace Zafkiel::Reflection
 {
@@ -139,28 +140,6 @@ class Property : public Type
     const Class *owner;
 };
 
-//每个类型的属性对应存储的基类，之后的具体实现是模板，没法存，所以必须存基类
-
-class NumericProperty : public Property
-{
-    using Property::Property;
-};
-
-class StringProperty : public Property
-{
-    using Property::Property;
-};
-
-class EnumProperty : public Property
-{
-    using Property::Property;
-};
-
-class ClassProperty : public Property
-{
-    using Property::Property;
-};
-
 }
 
-#include "base_type.tpp"
+#include "type.tpp"

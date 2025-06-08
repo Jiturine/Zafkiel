@@ -1,5 +1,5 @@
 #pragma once
-#include "base_type.h"
+#include "type.h"
 
 namespace Zafkiel::Reflection
 {
