@@ -38,7 +38,6 @@ class NamespaceNode : public Node
   public:
     NamespaceNode() : Node(Node::Type::Namespace) {}
     NamespaceNode(const std::string &name) : Node(Node::Type::Namespace, name) {}
-    void Merge(NamespaceNode *other);
 };
 
 class FieldNode : public Node
@@ -46,7 +45,6 @@ class FieldNode : public Node
   public:
     FieldNode() : Node(Node::Type::Field) {}
     FieldNode(const std::string &name) : Node(Node::Type::Field, name) {}
-    bool is_member;
 };
 
 class ClassNode : public Node

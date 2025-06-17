@@ -1,6 +1,6 @@
 #pragma once
 #include "register.h"
-#include "variable_traits.h"
+#include "property_traits.h"
 
 namespace Zafkiel::Reflection
 {
@@ -8,14 +8,14 @@ namespace Zafkiel::Reflection
 template <typename T>
 TypeInfo<T, Numeric> &TypeInfo<T, Numeric>::Register(const std::string &name)
 {
-    if (!saved)
-    {
-        typeList.push_back(&info);
-        saved = true;
-    }
     info.name = name;
     info.kind = Numeric::DetectKind<T>();
     info.isSigned = std::is_signed_v<T>;
+    if (!saved)
+    {
+        typeDict[info.name] = &info;
+        saved = true;
+    }
     return *this;
 }
 
@@ -24,14 +24,10 @@ TypeInfo<T, Numeric> &TypeInfo<T, Numeric>::Register(const std::string &name)
 template <typename T>
 void TypeInfo<T, Numeric>::AutoRegister()
 {
-    if (!saved)
-    {
-        typeList.push_back(&info);
-        saved = true;
-    }
     info.kind = Numeric::DetectKind<T>();
     info.name = Numeric::GetNameOfKind(info.kind);
     info.isSigned = std::is_signed_v<T>;
+    typeDict[info.name] = &info;
 }
 
 template <typename T>
@@ -39,7 +35,7 @@ TypeInfo<T, String> &TypeInfo<T, String>::Register(const std::string &name)
 {
     if (!saved)
     {
-        typeList.push_back(&info);
+        typeDict[info.name] = &info;
         saved = true;
     }
     info.name = name;
@@ -49,23 +45,19 @@ TypeInfo<T, String> &TypeInfo<T, String>::Register(const std::string &name)
 template <typename T>
 void TypeInfo<T, String>::AutoRegister()
 {
-    if (!saved)
-    {
-        typeList.push_back(&info);
-        saved = true;
-    }
     info.name = "std::string";
+    typeDict[info.name] = &info;
 }
 
 template <typename T>
 TypeInfo<T, Enum> &TypeInfo<T, Enum>::Register(const std::string &name)
 {
+    info.name = name;
     if (!saved)
     {
-        typeList.push_back(&info);
+        typeDict[info.name] = &info;
         saved = true;
     }
-    info.name = name;
     return *this;
 }
 
@@ -79,12 +71,12 @@ TypeInfo<T, Enum> &TypeInfo<T, Enum>::Add(auto value, const std::string &name)
 template <typename T>
 TypeInfo<T, Class> &TypeInfo<T, Class>::Register(const std::string &name)
 {
+    info.name = name;
     if (!saved)
     {
-        typeList.push_back(&info);
+        typeDict[info.name] = &info;
         saved = true;
     }
-    info.name = name;
     return *this;
 }
 
@@ -113,16 +105,16 @@ auto &Register(const std::string &name)
 }
 
 template <typename Ptr>
-Property_Impl<Ptr>::Property_Impl(const std::string &name, const Class *owner, Ptr pointer)
-    : Property(name, owner), pointer(pointer),
-      info(GetType<typename variable_traits<Ptr>::type>())
+Property_Impl<Ptr>::Property_Impl(const std::string &name, const Class *owner, Ptr accessor)
+    : Property(name, owner), accessor(accessor),
+      info(GetType<typename property_traits<Ptr>::ValueType>())
 {
 }
 
 template <typename T>
 TypeInfo<T, Property> &TypeInfo<T, Property>::Register(const std::string &name, T accessor)
 {
-    using ClassType = variable_traits<T>::ClassType;
+    using ClassType = property_traits<T>::ClassType;
     info = std::make_shared<Property_Impl<T>>(name, &TypeInfo<ClassType, Class>::Instance().GetInfo(), accessor);
     return *this;
 }

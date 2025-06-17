@@ -13,10 +13,6 @@ const AnnotateAttr *Cursor::GetAnnotateAttr() const
     return handle->getAttr<AnnotateAttr>();
 }
 
-std::string Cursor::GetSpelling(void) const
-{
-    return "";
-}
 std::string Cursor::GetDisplayName(void) const
 {
     if (const auto *namedDecl = dyn_cast<NamedDecl>(handle))

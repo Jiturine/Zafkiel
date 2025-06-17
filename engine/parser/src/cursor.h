@@ -10,7 +10,6 @@ class Cursor
     Cursor(const Decl *);
 
     Decl::Kind GetKind() const;
-    std::string GetSpelling() const;
     std::string GetDisplayName() const;
     std::vector<Cursor> GetChildren() const;
     const clang::AnnotateAttr *GetAnnotateAttr() const;

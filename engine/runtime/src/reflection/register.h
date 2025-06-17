@@ -6,7 +6,7 @@ namespace Zafkiel::Reflection
 {
 
 // 存储所有已注册的类型的类列表，便于只通过类型名string获取类型信息
-inline std::list<const Type *> typeList;
+inline std::map<std::string, const Type *> typeDict;
 
 // 所有TypeInfo类为单例，存储对应类型的唯一一份数据
 template <typename T, typename Kind>
@@ -22,16 +22,19 @@ template <typename T>
 class TypeInfo<T, Numeric> : public Singleton<TypeInfo<T, Numeric>>
 {
   public:
-
     TypeInfo &Register(const std::string &name);
-    void AutoRegister();
 
     const Numeric &GetInfo() const
     {
-        if (!TypeInfo<T, Numeric>::Instance().saved) { TypeInfo<T, Numeric>::Instance().AutoRegister(); }
+        if (!TypeInfo<T, Numeric>::Instance().saved)
+        {
+            saved = true;
+            TypeInfo<T, Numeric>::Instance().AutoRegister();
+        }
         return info;
     }
   private:
+    void AutoRegister();
     static bool saved;
     Numeric info;
 };
@@ -45,7 +48,11 @@ class TypeInfo<T, String> : public Singleton<TypeInfo<T, String>>
 
     const String &GetInfo() const
     {
-        if (!TypeInfo<T, String>::Instance().saved) { TypeInfo<T, String>::Instance().AutoRegister(); }
+        if (!TypeInfo<T, String>::Instance().saved)
+        {
+            saved = true;
+            TypeInfo<T, String>::Instance().AutoRegister();
+        }
         return info;
     }
   private:
@@ -86,6 +93,8 @@ class TypeInfo<T, Class> : public Singleton<TypeInfo<T, Class>>
 template <typename T>
 const Type *GetType();
 
+const Type *GetType(const std::string &name);
+
 // 核心的Register，根据不同类型，进行不同TypeInfo的注册
 template <typename T>
 auto &Register(const std::string &name);
@@ -96,24 +105,21 @@ template <typename Ptr>
 class Property_Impl : public Property
 {
   public:
-    Property_Impl(const std::string &name, const Class *owner, Ptr pointer);
+    Property_Impl(const std::string &name, const Class *owner, Ptr accessor);
 
     std::any Call(const std::any &a) const override
     {
-        using traits = variable_traits<Ptr>;
-        using ClassType = traits::ClassType;
-        using type = traits::type;
+        using ClassType = property_traits<Ptr>::ClassType;
         if (GetType<ClassType>() != GetOwner())
             throw std::runtime_error("Type mismatch");
         auto &obj = std::any_cast<std::reference_wrapper<ClassType>>(a).get(); //所有的std::any存储的是引用，这里要解除std::ref的引用
-        std::any result = std::ref(obj.*pointer);
-        return result;
+        return std::ref(obj.*accessor);
     }
 
     virtual const Type *GetTypeInfo() const override { return info; };
 
   private:
-    Ptr pointer = nullptr;
+    Ptr accessor = nullptr;
     const Type *info;
 };
 

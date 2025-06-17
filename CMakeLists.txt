@@ -9,3 +9,6 @@ add_subdirectory(3rdparty)
 add_subdirectory(engine)
 
 add_subdirectory(sandbox)
+
+enable_testing()
+add_subdirectory(tests)

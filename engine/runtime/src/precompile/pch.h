@@ -5,6 +5,7 @@
 #include <string>
 #include <type_traits>
 #include <list>
+#include <map>
 #include <functional>
 #include <cstdint>
 #include <cassert>

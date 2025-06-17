@@ -3,8 +3,6 @@
 #include "mustache_manager.h"
 #include <filesystem>
 
-namespace fs = std::filesystem;
-
 std::string GenerateCode(const std::string &filename, const std::string &func_name, Node *node)
 {
     MustacheFormat format;

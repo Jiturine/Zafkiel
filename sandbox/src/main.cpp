@@ -1,53 +1,33 @@
 #include "main.h"
+#include <any>
+#include "ECS/world.h"
 using namespace Zafkiel;
 
-size_t cnt_size = 0;
-
-void *operator new(size_t size)
+struct Name
 {
-    std::cout << "Allocating " << size << " bytes\n";
-    cnt_size += size;
-    return malloc(size);
-}
+    int id;
+};
 
-void operator delete(void *ptr, size_t size) noexcept
+struct Shader
 {
-    std::cout << "Deallocating " << size << " bytes\n";
-    cnt_size -= size;
-    free(ptr);
-}
+    int vs;
+};
 
 int main(int argc, char **argv)
 {
+    World world;
+    auto entity = world.SpawnEntity<Name>(Name{1});
+    entity.AddComponent<Shader>(Shader{2});
+    for (auto e : world.Query<Name, Shader>())
     {
-        using namespace Reflection;
-        ReflectionGenerate::RegisterReflectionInfo();
-        vec3 v;
-        v.x = 1.0f;
-        v.y = 2.0f;
-        v.z = 3.0f;
-        Camera cam;
-        cam.fov = 45.0f;
-        cam.position = vec3{0.0f, 0.0f, 0.0f};
-        cam.lookAt = vec3{1.0f, 1.0f, 1.0f};
-        std::cout << cnt_size << std::endl;
-        std::cout << "-------------" << std::endl;
-        {
-            for (auto &[a, prop] : GetProperties(cam))
-            {
-                std::cout << prop->GetTypeInfo()->GetName() << std::endl;
-                if (prop->GetTypeInfo() == GetType<vec3>())
-                {
-                    auto &v = RemoveRef<vec3>(a);
-                    std::cout << "Value: " << v.x << " " << v.y << " " << v.z << std::endl;
-                    v.x++;
-                }
-            }
-        }
-        std::cout << cam.lookAt.x << " " << cam.lookAt.y << " " << cam.lookAt.z << std::endl;
-        std::cout << cnt_size << std::endl;
-        std::cout << "-------------" << std::endl;
+        std::cout << e.GetComponent<Name>().id << std::endl;
     }
-
+    for (auto e : world.Query<Name>())
+    {
+        std::cout << e.GetComponent<Name>().id << std::endl;
+    }
+    world.SetResource(Shader{5});
+    auto &shader = world.GetResource<Shader>();
+    std::cout << shader.vs << std::endl;
     return 0;
 }

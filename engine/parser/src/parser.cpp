@@ -127,7 +127,6 @@ void Parser::ParserASTConsumer::RecurseVisit(const Cursor &cursor, Node *parent)
                 FieldNode *node = new FieldNode(cursor.GetDisplayName());
                 node->attr = attr;
                 auto current_class = dynamic_cast<ClassNode *>(parent);
-                node->is_member = true;
                 current_class->fields.push_back(node);
             }
         }

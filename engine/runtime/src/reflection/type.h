@@ -1,5 +1,5 @@
 #pragma once
-#include "variable_traits.h"
+#include "property_traits.h"
 
 namespace Zafkiel::Reflection
 {
@@ -122,8 +122,6 @@ class Class : public Type
     std::vector<std::shared_ptr<Property>> properties;
 };
 
-// 属性类型在所有其他类型声明之后写，免于前置声明
-
 class Property : public Type
 {
   public:
@@ -138,6 +136,7 @@ class Property : public Type
     const Class *GetOwner() const { return owner; }
   private:
     const Class *owner;
+    const Type *info;
 };
 
 }
