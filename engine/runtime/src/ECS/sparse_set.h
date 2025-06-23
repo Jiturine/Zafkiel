@@ -2,34 +2,37 @@
 
 #include <limits>
 
-template <typename T, size_t PageSize>
-    requires std::is_integral_v<T>
+template <typename EntityID, typename Component, size_t PageSize>
+    requires std::is_integral_v<EntityID>
 class SparseSet final
 {
   public:
-    void Add(T t);
+    Component &Add(EntityID id, Component &&component);
 
-    void Remove(T t);
+    Component &Get(EntityID id);
 
-    bool Contain(T t) const;
+    void Remove(EntityID id);
+
+    bool Contain(EntityID id) const;
 
     void Clear();
 
-    auto begin() { return density.begin(); }
+    auto begin() { return entities.begin(); }
 
-    auto end() { return density.end(); }
+    auto end() { return entities.end(); }
 
+    std::vector<EntityID> entities;
+    std::vector<Component> components;
+    std::vector<std::unique_ptr<std::array<EntityID, PageSize>>> sparsePages;
   private:
-    std::vector<T> density;
-    std::vector<std::unique_ptr<std::array<T, PageSize>>> sparse;
-    static constexpr T null = std::numeric_limits<T>::max();
-    size_t Page(T t) const { return t / PageSize; }
+    static constexpr EntityID null = std::numeric_limits<EntityID>::max();
+    size_t Page(EntityID t) const { return t / PageSize; }
 
-    size_t Offset(T t) const { return t % PageSize; }
+    size_t Offset(EntityID t) const { return t % PageSize; }
 
-    T &Index(T t) { return sparse[Page(t)]->at(Offset(t)); }
+    EntityID &Index(EntityID id);
 
-    void Expand(size_t p);
+    void AllocatePage(size_t pageIndex);
 };
 
 #include "sparse_set.tpp"

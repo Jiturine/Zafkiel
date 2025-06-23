@@ -4,11 +4,9 @@ void BasicWorld::Destroy(EntityID entity)
 {
     if (auto it = entities.find(entity); it != entities.end())
     {
-        for (auto [id, component] : it->second)
+        for (auto cid : it->second)
         {
-            auto &componentInfo = componentMap[id];
-            componentInfo.pool.Destroy(component);
-            componentInfo.sparseSet.Remove(entity);
+            componentMap[cid]->Remove(entity);
         }
         entities.erase(it);
     }

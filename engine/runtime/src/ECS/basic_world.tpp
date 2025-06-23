@@ -36,51 +36,10 @@ void BasicWorld::RemoveResource()
 template <typename T, typename... Remains>
 void BasicWorld::SpawnEntityRecursive(EntityID entity, T &&component, Remains &&...remains)
 {
-    auto index = IndexGetter<Component>::Get<T>();
-    if (auto it = componentMap.find(index); it == componentMap.end())
-    {
-        auto defaultCreate = []() -> void * { return new T; };
-        auto defaultDestroy = [](void *elem) { delete static_cast<T *>(elem); };
-        componentMap[index] = ComponentInfo(defaultCreate, defaultDestroy);
-    }
-    auto &componentInfo = componentMap[index];
-    void *elem = componentInfo.pool.Create();
-    *static_cast<T *>(elem) = std::forward<T>(component);
-    componentInfo.sparseSet.Add(entity);
-
-    entities[entity][index] = elem;
-
+    AddComponent(entity, std::forward<T>(component));
     if constexpr (sizeof...(remains) != 0)
     {
         SpawnEntityRecursive(entity, std::forward<Remains>(remains)...);
-    }
-}
-
-void *BasicWorld::Pool::Create()
-{
-    if (!cache.empty())
-    {
-        instances.push_back(cache.back());
-        cache.pop_back();
-    }
-    else
-    {
-        instances.push_back(create());
-    }
-    return instances.back();
-}
-
-void BasicWorld::Pool::Destroy(void *elem)
-{
-    if (auto it = std::find(instances.begin(), instances.end(), elem); it != instances.end())
-    {
-        cache.push_back(*it);
-        std::swap(*it, instances.back());
-        instances.pop_back();
-    }
-    else
-    {
-        assert(false);
     }
 }
 
@@ -93,9 +52,13 @@ std::vector<EntityID> BasicWorld::Query()
 template <typename T, typename... Remains>
 bool BasicWorld::HasComponentRecursive(EntityID entity)
 {
-    auto it = entities.find(entity);
-    auto index = IndexGetter<Component>::Get<T>();
-    bool hasCurrentComponent = it != entities.end() && it->second.find(index) != it->second.end();
+    bool hasCurrentComponent = false;
+    auto cid = IndexGetter<Component>::Get<T>();
+    if (auto it = componentMap.find(cid); it != componentMap.end())
+    {
+        auto componentData = static_cast<ComponentData<T> *>(it->second.get());
+        hasCurrentComponent = componentData->sparseSet.Contain(entity);
+    }
     if (!hasCurrentComponent) return false;
     if constexpr (sizeof...(Remains) != 0)
     {
@@ -111,9 +74,11 @@ template <typename T, typename... Remains>
 std::vector<EntityID> BasicWorld::QueryRecursive()
 {
     std::vector<EntityID> outEntities;
-    auto index = IndexGetter<Component>::Get<T>();
-    auto &componentInfo = componentMap[index];
-    for (auto entity : componentInfo.sparseSet)
+    auto cid = IndexGetter<Component>::Get<T>();
+    auto it = componentMap.find(cid);
+    if (it == componentMap.end()) return outEntities;
+    auto componentData = static_cast<ComponentData<T> *>(it->second.get());
+    for (auto entity : componentData->sparseSet.entities)
     {
         if constexpr (sizeof...(Remains) == 0)
         {
@@ -152,26 +117,44 @@ bool BasicWorld::HasComponent(EntityID entity)
 template <typename T>
 T &BasicWorld::GetComponent(EntityID entity)
 {
-    auto index = IndexGetter<Component>::Get<T>();
-    return *static_cast<T *>(entities[entity][index]);
+    auto cid = IndexGetter<Component>::Get<T>();
+    auto componentData = static_cast<ComponentData<T> *>(componentMap[cid].get());
+    return componentData->sparseSet.Get(entity);
 }
 
 template <typename T>
 T &BasicWorld::AddComponent(EntityID entity, T &&component)
 {
-    auto index = IndexGetter<Component>::Get<T>();
-    if (auto it = componentMap.find(index); it == componentMap.end())
+    auto cid = IndexGetter<Component>::Get<T>();
+    entities[entity].push_back(cid);
+    auto it = componentMap.find(cid);
+    if (it == componentMap.end())
     {
-        auto defaultCreate = []() -> void * { return new T; };
-        auto defaultDestroy = [](void *elem) { delete static_cast<T *>(elem); };
-        componentMap[index] = ComponentInfo(defaultCreate, defaultDestroy);
+        RegisterComponentType<T>();
     }
-    auto &componentInfo = componentMap[index];
-    void *elem = componentInfo.pool.Create();
-    *static_cast<T *>(elem) = std::forward<T>(component);
-    componentInfo.sparseSet.Add(entity);
-    entities[entity][index] = elem;
-    return *static_cast<T *>(elem);
+    auto componentData = static_cast<ComponentData<T> *>(componentMap[cid].get());
+    return componentData->sparseSet.Add(entity, std::forward<T>(component));
+}
+
+template <typename T>
+void BasicWorld::RemoveComponent(EntityID entity)
+{
+    auto cid = IndexGetter<Component>::Get<T>();
+    auto it = componentMap.find(cid);
+    if (it != componentMap.end())
+    {
+        entities[entity].erase(std::find(entities[entity].begin(), entities[entity].end(), cid));
+        auto componentData = static_cast<ComponentData<T> *>(componentMap[cid].get());
+        componentData->sparseSet.Remove(entity);
+    }
+}
+
+template <typename T>
+void BasicWorld::RegisterComponentType()
+{
+    auto cid = IndexGetter<Component>::Get<T>();
+    if (componentMap.find(cid) != componentMap.end()) return;
+    componentMap[cid] = std::make_unique<ComponentData<T>>();
 }
 
 template <typename... Components>

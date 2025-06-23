@@ -23,6 +23,11 @@ class Entity
     {
         return world.AddComponent<T>(id, std::forward<T>(component));
     }
+    template <typename T>
+    void RemoveComponent()
+    {
+        world.RemoveComponent<T>(id);
+    }
     operator EntityID() const { return id; }
   private:
     BasicWorld &world;

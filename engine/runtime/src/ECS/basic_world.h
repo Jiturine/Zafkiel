@@ -4,6 +4,7 @@
 #include <cassert>
 #include <cstdint>
 #include <functional>
+#include <memory>
 #include <new>
 #include <strings.h>
 #include <type_traits>
@@ -71,6 +72,9 @@ class BasicWorld final
     template <typename T>
     T &GetResource() const;
 
+    template <typename T>
+    void RegisterComponentType();
+
     template <typename... Components>
     bool HasComponent(EntityID entity);
 
@@ -79,6 +83,9 @@ class BasicWorld final
 
     template <typename T>
     T &AddComponent(EntityID entity, T &&component);
+
+    template <typename T>
+    void RemoveComponent(EntityID entity);
 
     template <typename... Components>
     std::vector<EntityID> Query();
@@ -90,30 +97,17 @@ class BasicWorld final
     template <typename T, typename... Remains>
     std::vector<EntityID> QueryRecursive();
 
-    struct Pool final
+    struct IComponentData
     {
-        std::vector<void *> instances;
-        std::vector<void *> cache;
-
-        std::function<void *(void)> create;
-        std::function<void(void *)> destroy;
-
-        Pool(std::function<void *(void)> create, std::function<void(void *)> destroy)
-            : create(create), destroy(destroy) {}
-
-        void *Create();
-
-        // TODO: 没有用到自定义的destroy
-        void Destroy(void *elem);
+        virtual ~IComponentData() = default;
+        virtual void Remove(EntityID entity) = 0;
     };
 
-    struct ComponentInfo
+    template <typename T>
+    struct ComponentData final : IComponentData // final 去虚拟化
     {
-        Pool pool;
-        SparseSet<EntityID, 32> sparseSet;
-        ComponentInfo(std::function<void *(void)> create, std::function<void(void *)> destroy)
-            : pool(create, destroy) {}
-        ComponentInfo() : pool(nullptr, nullptr) {}
+        virtual void Remove(EntityID entity) final override { sparseSet.Remove(entity); }
+        SparseSet<EntityID, T, 4096> sparseSet;
     };
 
     template <typename T, typename... Remains>
@@ -137,8 +131,8 @@ class BasicWorld final
             destroy(resource);
         }
     };
-    std::unordered_map<ComponentID, ComponentInfo> componentMap;
-    std::unordered_map<EntityID, std::unordered_map<ComponentID, void *>> entities;
+    std::unordered_map<ComponentID, std::unique_ptr<IComponentData>> componentMap;
+    std::unordered_map<EntityID, std::vector<ComponentID>> entities;
     std::unordered_map<ComponentID, ResourceInfo> resources;
 };
 
