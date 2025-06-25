@@ -1,35 +1,43 @@
 #pragma once
-
-#include "basic_world.h"
+#include "entt/entity/fwd.hpp"
+#include <entt/entt.hpp>
 
 class Entity
 {
   public:
-    Entity(EntityID id, BasicWorld &world) : id(id), world(world) {}
-    ~Entity() = default;
+    Entity(entt::entity handle, entt::registry &registry)
+        : registry(registry), handle(handle) {}
+
+    template <typename T>
+    T &AddComponent(T &&component)
+    {
+        return registry.emplace<T>(handle, std::forward<T>(component));
+    }
+
+    template <typename T>
+    T &GetComponent() const
+    {
+        return registry.get<T>(handle);
+    }
 
     template <typename... Components>
     bool HasComponent() const
     {
-        return world.HasComponent<Components...>(id);
+        return registry.all_of<Components...>();
     }
-    template <typename T>
-    T &GetComponent() const
-    {
-        return world.GetComponent<T>(id);
-    }
-    template <typename T>
-    T &AddComponent(T &&component)
-    {
-        return world.AddComponent<T>(id, std::forward<T>(component));
-    }
+
     template <typename T>
     void RemoveComponent()
     {
-        world.RemoveComponent<T>(id);
+        registry.erase<T>(handle);
     }
-    operator EntityID() const { return id; }
+
+    void Destroy()
+    {
+        registry.destroy(handle);
+    }
+
   private:
-    BasicWorld &world;
-    EntityID id;
+    entt::registry &registry;
+    entt::entity handle;
 };

@@ -1,37 +1,34 @@
 #pragma once
 
-#include "basic_world.h"
+#include <entt/entt.hpp>
+#include <utility>
 #include "entity.h"
+#include "entt/entity/fwd.hpp"
 
 class World
 {
   public:
-    World() = default;
-    World(const World &) = delete;
-    World &operator=(const World &) = delete;
-
     template <typename... Components>
-    Entity SpawnEntity(Components &&...components);
-
-    void Destroy(EntityID entity);
-
-    template <typename T>
-    T &SetResource(T &&resource);
-
-    template <typename T>
-    void RemoveResource();
-
-    template <typename T>
-    bool HasResource() const;
-
-    template <typename T>
-    T &GetResource() const;
-
+    Entity SpawnEntity(Components &&...components)
+    {
+        auto handle = registry.create();
+        Entity entity(handle, registry);
+        if constexpr (sizeof...(Components) != 0)
+            SpawnEntityRecursive(handle, std::forward<Components>(components)...);
+        return entity;
+    }
     template <typename... Components>
-    std::vector<Entity> Query();
-
+    auto Query() const
+    {
+        return registry.view<Components...>();
+    }
   private:
-    BasicWorld basicWorld;
+    template <typename T, typename... Remains>
+    void SpawnEntityRecursive(entt::entity handle, T &&component, Remains &&...remains)
+    {
+        registry.emplace<T>(handle, std::forward<T>(component));
+        if constexpr (sizeof...(Remains) != 0)
+            SpawnEntityRecursive(handle, remains...);
+    }
+    entt::registry registry;
 };
-
-#include "world.tpp"

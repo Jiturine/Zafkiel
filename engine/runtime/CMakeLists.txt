@@ -28,4 +28,4 @@ target_include_directories(Zafkiel PUBLIC
 )
 
 # 链接第三方库
-target_link_libraries(Zafkiel PUBLIC spdlog)
+target_link_libraries(Zafkiel PUBLIC spdlog mono EnTT)
