@@ -1,10 +1,9 @@
 #pragma once
 
-#include <entt/entt.hpp>
-#include <utility>
 #include "entity.h"
-#include "entt/entity/fwd.hpp"
 
+namespace Zafkiel
+{
 class World
 {
   public:
@@ -18,17 +17,27 @@ class World
         return entity;
     }
     template <typename... Components>
-    auto Query() const
+    std::vector<Entity> Query()
     {
-        return registry.view<Components...>();
+        std::vector<Entity> entities;
+        for (auto entity : registry.view<Components...>())
+        {
+            entities.push_back(Entity(entity, registry));
+        }
+        return entities;
+    }
+    Entity GetEntityByID(EntityID id)
+    {
+        return Entity(id, registry);
     }
   private:
     template <typename T, typename... Remains>
-    void SpawnEntityRecursive(entt::entity handle, T &&component, Remains &&...remains)
+    void SpawnEntityRecursive(EntityID handle, T &&component, Remains &&...remains)
     {
         registry.emplace<T>(handle, std::forward<T>(component));
         if constexpr (sizeof...(Remains) != 0)
-            SpawnEntityRecursive(handle, remains...);
+            SpawnEntityRecursive(handle, std::forward<Remains>(remains)...);
     }
     entt::registry registry;
 };
+}

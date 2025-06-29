@@ -4,7 +4,7 @@
 
 using namespace Zafkiel::Reflection;
 
-TEST_CASE("hello")
+TEST_CASE("refl")
 {
     struct vec3
     {

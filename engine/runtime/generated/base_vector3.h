@@ -13,12 +13,6 @@ inline void Register_base_vector3_ReflInfo() {
     .AddProperty(&::Zafkiel::vec3::z, "z")
     ;
         
-    ::Zafkiel::Reflection::Register<::Zafkiel::Camera>("Camera")
-    .AddProperty(&::Zafkiel::Camera::position, "position")
-    .AddProperty(&::Zafkiel::Camera::lookAt, "lookAt")
-    .AddProperty(&::Zafkiel::Camera::fov, "fov")
-    ;
-        
 }
 
 }

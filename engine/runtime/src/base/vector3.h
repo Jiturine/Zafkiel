@@ -6,12 +6,7 @@ namespace Zafkiel
 struct [[reflect]] vec3
 {
     float x, y, z;
+    vec3(float x, float y, float z) : x(x), y(y), z(z) {}
 };
 
-struct [[reflect]] Camera
-{
-    vec3 position;
-    vec3 lookAt;
-    float fov;
-};
 }

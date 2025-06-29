@@ -2,6 +2,8 @@ add_subdirectory(parser)
 
 add_subdirectory(runtime)
 
+add_subdirectory(script_core)
+
 # 查找需要解析反射的文件
 file(GLOB_RECURSE reflection_files 
 ${CMAKE_CURRENT_SOURCE_DIR}/runtime/src/*.h
@@ -32,3 +34,5 @@ add_custom_target(
 
 # 让 Zafkiel 依赖 refl_code_generate
 add_dependencies(Zafkiel refl_code_generate)
+
+add_dependencies(Zafkiel ScriptCore)

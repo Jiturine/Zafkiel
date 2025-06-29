@@ -1,5 +1,7 @@
 #pragma once
 
+namespace Zafkiel
+{
 template <typename T> class Singleton
 {
   public:
@@ -16,3 +18,4 @@ template <typename T> class Singleton
     Singleton() = default;
     virtual ~Singleton() = default;
 };
+}

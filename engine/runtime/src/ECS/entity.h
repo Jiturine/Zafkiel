@@ -1,11 +1,15 @@
 #pragma once
-#include "entt/entity/fwd.hpp"
 #include <entt/entt.hpp>
+
+namespace Zafkiel
+{
+
+using EntityID = entt::entity;
 
 class Entity
 {
   public:
-    Entity(entt::entity handle, entt::registry &registry)
+    Entity(EntityID handle, entt::registry &registry)
         : registry(registry), handle(handle) {}
 
     template <typename T>
@@ -23,7 +27,7 @@ class Entity
     template <typename... Components>
     bool HasComponent() const
     {
-        return registry.all_of<Components...>();
+        return registry.all_of<Components...>(handle);
     }
 
     template <typename T>
@@ -36,8 +40,10 @@ class Entity
     {
         registry.destroy(handle);
     }
+    EntityID GetHandle() const { return handle; }
 
   private:
     entt::registry &registry;
-    entt::entity handle;
+    EntityID handle;
 };
+}
