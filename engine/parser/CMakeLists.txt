@@ -4,15 +4,13 @@ set(CXX_STANDARD_REQUIRED ON)
 file(GLOB_RECURSE HEADER_FILES src/*.h src/*.hpp src/*.tpp)
 file(GLOB_RECURSE SOURCE_FILES src/*.cpp src/*.c)
 
-# 需要安装Clang 和 LLVM
+# 需要安装Clang
 find_package(Clang REQUIRED CONFIG)
-find_package(LLVM REQUIRED CONFIG)
 
 add_executable(Parser ${HEADER_FILES} ${SOURCE_FILES})
 
 target_include_directories(Parser PUBLIC 
     3rdparty/mustache
-    ${LLVM_INCLUDE_DIRS}
     ${CLANG_INCLUDE_DIRS}
 )
 

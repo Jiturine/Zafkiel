@@ -16,7 +16,6 @@ struct Person
 
 int main(int argc, char **argv)
 {
-    ReflectionGenerate::RegisterReflectionInfo();
     Log::CoreInfo("Hello,world!");
     ScriptEngine::Init();
 

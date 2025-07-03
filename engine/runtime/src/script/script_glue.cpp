@@ -82,7 +82,7 @@ static void Log_Critical(MonoString *string)
 static bool Entity_HasComponent(EntityID ID, MonoReflectionType *componentType)
 {
     MonoType *type = mono_reflection_type_get_type(componentType);
-    assert(entityHasComponentFuncs.find(type) != entityHasComponentFuncs.end());
+    assert(entityHasComponentFuncs.contains(type));
     Entity entity = ScriptEngine::GetWorldContext()->GetEntityByID(ID);
     return entityHasComponentFuncs[type](entity);
 }

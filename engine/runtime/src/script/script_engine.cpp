@@ -124,7 +124,7 @@ void ScriptEngine::OnRuntimeStart(World &world)
         const auto &scriptComponent = entity.GetComponent<ScriptComponent>();
         for (const auto &scriptName : scriptComponent.scripts)
         {
-            if (entityClasses.find(scriptName) != entityClasses.end())
+            if (entityClasses.contains(scriptName))
             {
                 auto instance = std::make_shared<ScriptInstance>(entityClasses[scriptName], entity.GetHandle());
                 entityInstances[entity.GetHandle()][scriptName] = instance;

@@ -2,6 +2,7 @@
 
 namespace Zafkiel::ReflectionGenerate {
 
+[[gnu::constructor]]
 void RegisterReflectionInfo();
 
 }
