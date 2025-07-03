@@ -3,11 +3,11 @@
 
 Attribute ParseAttributes(const Cursor &cursor)
 {
-    if (const auto *attr = cursor.GetAnnotateAttr())
+    const auto &attr = cursor.GetAnnotateAttr();
+    if (!attr.empty())
     {
-        const auto &spelling = attr->getAnnotation().str();
-        if (spelling == "reflect") return {true, false};
-        else if (spelling == "noreflect") return {false, true};
+        if (attr == "reflect") return {true, false};
+        else if (attr == "noreflect") return {false, true};
         else return {false, false};
     }
     return {false, false};
@@ -36,32 +36,33 @@ void ParseEnumNode(const Cursor &cursor, EnumNode *node)
     for (const auto &child : cursor.GetChildren())
     {
         auto kind = child.GetKind();
-        if (kind == Decl::Kind::EnumConstant)
+        if (kind == CXCursor_EnumConstantDecl)
         {
             auto reflect_attr = ParseAttributes(cursor);
             reflect_attr = TransformAttributesByParent(reflect_attr, node->attr);
             if (reflect_attr.need_reflect)
             {
-                node->items.push_back(child.GetDisplayName());
+                node->items.push_back(child.GetSpelling());
             }
         }
     }
 }
 
-void Parser::ParserASTConsumer::RecurseVisit(const Cursor &cursor, Node *parent)
+void Parser::RecurseVisit(const Cursor &cursor, Node *parent)
 {
-    if (Parser::ParserASTConsumer::context->getSourceManager().isInSystemHeader(cursor.GetLocation()))
+    CXSourceLocation loc = cursor.GetLocation();
+    if (clang_Location_isInSystemHeader(loc))
     {
-        return;
+        return; // 跳过系统头文件
     }
     auto kind = cursor.GetKind();
-    if (kind == Decl::Kind::TranslationUnit)
+    if (kind == CXCursor_TranslationUnit)
     {
         for (const auto &child : cursor.GetChildren()) { RecurseVisit(child, parent); }
     }
-    if (kind == Decl::Kind::Namespace)
+    if (kind == CXCursor_Namespace)
     {
-        NamespaceNode *node = new NamespaceNode(cursor.GetDisplayName());
+        NamespaceNode *node = new NamespaceNode(cursor.GetSpelling());
         for (const auto &child : cursor.GetChildren())
         {
             RecurseVisit(child, node);
@@ -75,13 +76,13 @@ void Parser::ParserASTConsumer::RecurseVisit(const Cursor &cursor, Node *parent)
             parent->children.push_back(node);
         }
     }
-    if (kind == Decl::Kind::CXXRecord)
+    if (kind == CXCursor_ClassDecl || kind == CXCursor_StructDecl)
     {
         auto attr = ParseAttributes(cursor);
         attr = TransformAttributesByParent(attr, parent->attr);
         if (attr.need_reflect)
         {
-            ClassNode *node = new ClassNode(cursor.GetDisplayName());
+            ClassNode *node = new ClassNode(cursor.GetSpelling());
             node->attr = attr;
             for (const auto &child : cursor.GetChildren())
             {
@@ -97,13 +98,13 @@ void Parser::ParserASTConsumer::RecurseVisit(const Cursor &cursor, Node *parent)
             }
         }
     }
-    if (kind == Decl::Kind::Enum)
+    if (kind == CXCursor_EnumDecl)
     {
         auto attr = ParseAttributes(cursor);
         attr = TransformAttributesByParent(attr, parent->attr);
         if (attr.need_reflect)
         {
-            EnumNode *node = new EnumNode(cursor.GetDisplayName());
+            EnumNode *node = new EnumNode(cursor.GetSpelling());
             node->attr = attr;
             ParseEnumNode(cursor, node);
             if (node->items.empty())
@@ -116,7 +117,7 @@ void Parser::ParserASTConsumer::RecurseVisit(const Cursor &cursor, Node *parent)
             }
         }
     }
-    if (kind == Decl::Kind::Field)
+    if (kind == CXCursor_FieldDecl)
     {
         if (parent->type == Node::Type::Class)
         {
@@ -124,7 +125,7 @@ void Parser::ParserASTConsumer::RecurseVisit(const Cursor &cursor, Node *parent)
             attr = TransformAttributesByParent(attr, parent->attr);
             if (attr.need_reflect)
             {
-                FieldNode *node = new FieldNode(cursor.GetDisplayName());
+                FieldNode *node = new FieldNode(cursor.GetSpelling());
                 node->attr = attr;
                 auto current_class = dynamic_cast<ClassNode *>(parent);
                 current_class->fields.push_back(node);
@@ -133,37 +134,20 @@ void Parser::ParserASTConsumer::RecurseVisit(const Cursor &cursor, Node *parent)
     }
 }
 
-void Parser::ParserASTConsumer::HandleTranslationUnit(ASTContext &Context)
-{
-    context = &Context;
-    const Cursor cursor(Context.getTranslationUnitDecl());
-    root = new Node;
-    RecurseVisit(cursor, root);
-}
-
-std::unique_ptr<ASTConsumer> Parser::FrontendAction::CreateASTConsumer(CompilerInstance &CI, StringRef file)
-{
-    CI.getFileManager().clearStatCache();
-    // 配置诊断引擎忽略所有错误
-    CI.getDiagnostics().setClient(new IgnoreDiagnosticConsumer, true);
-    CI.getDiagnostics().setSuppressAllDiagnostics(true);
-    CI.getDiagnostics().setIgnoreAllWarnings(true);
-    return std::make_unique<ParserASTConsumer>();
-}
-
 Node *Parser::ParseFile(const std::string &filename)
 {
-    // 读取源文件内容
-    llvm::ErrorOr<std::unique_ptr<llvm::MemoryBuffer>> FileOrErr = llvm::MemoryBuffer::getFile(filename);
-    if (std::error_code EC = FileOrErr.getError())
-    {
-        llvm::errs() << "Error reading file: " << EC.message() << "\n";
-        return nullptr;
-    }
-    // 运行工具
-    tooling::runToolOnCodeWithArgs(std::make_unique<FrontendAction>(), (*FileOrErr)->getBuffer(), extraArgs, filename.c_str());
-    return ParserASTConsumer::root;
-}
+    CXIndex index = clang_createIndex(0, 0);
 
-Node *Parser::ParserASTConsumer::root = nullptr;
-ASTContext *Parser::ParserASTConsumer::context = nullptr;
+    // 解析源文件
+    CXTranslationUnit unit = clang_parseTranslationUnit(
+        index,
+        filename.c_str(),
+        extraArgs.data(), extraArgs.size(),
+        NULL, 0,
+        CXTranslationUnit_None);
+    CXCursor rootCursor = clang_getTranslationUnitCursor(unit);
+    Node *root = new Node;
+    RecurseVisit(rootCursor, root);
+
+    return root;
+}

@@ -1,42 +1,71 @@
 #include "cursor.h"
 #include "utils.h"
 
-Cursor::Cursor(const Decl *handle) : handle(handle) {}
-
-Decl::Kind Cursor::GetKind() const
+static std::string ToString(const CXString &str)
 {
-    return handle->getKind();
+    auto cstr = clang_getCString(str);
+    std::string res = cstr;
+    clang_disposeString(str);
+    return res;
 }
 
-const AnnotateAttr *Cursor::GetAnnotateAttr() const
+Cursor::Cursor(const CXCursor &handle) : handle(handle) {}
+
+CXCursorKind Cursor::GetKind() const
 {
-    return handle->getAttr<AnnotateAttr>();
+    return handle.kind;
 }
 
-std::string Cursor::GetDisplayName(void) const
+CXSourceLocation Cursor::GetLocation() const
 {
-    if (const auto *namedDecl = dyn_cast<NamedDecl>(handle))
-    {
-        return namedDecl->getNameAsString();
-    }
-    return "";
+    return clang_getCursorLocation(handle);
 }
 
-SourceLocation Cursor::GetLocation() const
+std::string Cursor::GetAnnotateAttr() const
 {
-    return handle->getLocation();
+    std::string res{};
+
+    auto visitor = [](CXCursor cursor, CXCursor parent, CXClientData data) {
+        auto str = static_cast<std::string *>(data);
+
+        if (cursor.kind == CXCursor_AnnotateAttr)
+        {
+            *str = clang_getCString(clang_getCursorSpelling(cursor));
+            return CXChildVisit_Break;
+        }
+
+        if (cursor.kind == CXCursor_LastPreprocessing)
+            return CXChildVisit_Break;
+
+        return CXChildVisit_Continue;
+    };
+
+    clang_visitChildren(handle, visitor, &res);
+
+    return res;
+}
+
+std::string Cursor::GetSpelling() const
+{
+    return ToString(clang_getCursorSpelling(handle));
 }
 
 std::vector<Cursor> Cursor::GetChildren() const
 {
     std::vector<Cursor> children;
-    if (auto *parent = dyn_cast<DeclContext>(handle))
-    {
-        for (Decl *child : parent->decls())
-        {
-            if (child->isImplicit()) continue;
-            children.push_back(child);
-        }
-    }
+
+    auto visitor = [](CXCursor cursor, CXCursor parent, CXClientData data) {
+        auto container = static_cast<std::vector<Cursor> *>(data);
+
+        container->emplace_back(cursor);
+
+        if (cursor.kind == CXCursor_LastPreprocessing)
+            return CXChildVisit_Break;
+
+        return CXChildVisit_Continue;
+    };
+
+    clang_visitChildren(handle, visitor, &children);
+
     return children;
 }

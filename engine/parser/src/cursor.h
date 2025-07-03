@@ -2,19 +2,19 @@
 
 #include <vector>
 #include <string>
-#include "llvm_headers.h"
+#include <clang-c/Index.h>
 
 class Cursor
 {
   public:
-    Cursor(const Decl *);
+    Cursor(const CXCursor &handle);
 
-    Decl::Kind GetKind() const;
-    std::string GetDisplayName() const;
+    CXCursorKind GetKind() const;
+    std::string GetSpelling() const;
     std::vector<Cursor> GetChildren() const;
-    const clang::AnnotateAttr *GetAnnotateAttr() const;
-    SourceLocation GetLocation() const;
+    CXSourceLocation GetLocation() const;
+    std::string GetAnnotateAttr() const;
 
   private:
-    const Decl *handle;
+    CXCursor handle;
 };

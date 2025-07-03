@@ -1,4 +1,5 @@
 #include <clang-c/Index.h>
+#include <format>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -8,7 +9,6 @@
 #include "code_generate.h"
 #include "utils.h"
 #include "mustache_manager.h"
-#include "clang/Serialization/ASTBitCodes.h"
 
 namespace fs = std::filesystem;
 
@@ -41,14 +41,10 @@ int main(int argc, char **argv)
     std::cout << "Reflection macro file path: " << reflection_macro_file_path << std::endl;
 
     // 设置额外参数
-    std::vector<std::string> extraArgs = {
-        "-x", "c++",                   // 指定语言为C++，否则.h会解析为C语言
-        "-std=c++20",                  // 指定C++标准
-        "-w", "-MG", "-M", "-DNDEBUG", // 禁用调试信息
-        "-D__clang__",
-        "-ferror-limit=0", "-Wno-everything",   // 设置错误限制为0，忽略所有错误
-        "-D__REFLECTION_ENABLE__",              // 定义反射宏
-        "-include", reflection_macro_file_path, // 添加反射宏文件路径
+    std::vector<const char *> extraArgs = {
+        "-std=c++20",                                   // 指定C++标准
+        "-D__REFLECTION_ENABLE__",                      // 定义反射宏
+        "-include", reflection_macro_file_path.c_str(), // 添加反射宏文件路径
     };
     std::string output_header_filename = output_dir / "refl_generate.h";
     std::string output_impl_filename = output_dir / "refl_generate.cpp";
@@ -61,12 +57,12 @@ int main(int argc, char **argv)
     {
         Parser parser(extraArgs);
         Node *root = parser.ParseFile(file);
-        std::cout << "Parsing file: " << file << std::endl;
         if (root->children.empty())
         {
             delete root;
             continue;
         }
+        std::cout << "Parsing file: " << file << std::endl;
         fs::path relative_path = fs::relative(file, base_dir);
         std::string filename = relative_path.string();
         Utils::Replace(filename, "../", "");
