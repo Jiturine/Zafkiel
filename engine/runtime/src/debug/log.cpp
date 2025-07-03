@@ -13,7 +13,7 @@ void Log::Init()
     clientLogger = spdlog::stdout_color_mt("APP");
     clientLogger->set_level(spdlog::level::trace);
 }
-std::shared_ptr<spdlog::logger> Log::coreLogger;
-std::shared_ptr<spdlog::logger> Log::clientLogger;
+std::shared_ptr<spdlog::logger> Log::coreLogger = nullptr;
+std::shared_ptr<spdlog::logger> Log::clientLogger = nullptr;
 
 }

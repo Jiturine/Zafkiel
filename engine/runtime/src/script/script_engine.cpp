@@ -96,7 +96,7 @@ void ScriptEngine::LoadCoreAssembly(const std::filesystem::path &assemblyPath)
     assert(appDomain);
     mono_domain_set(appDomain, true);
 
-    coreAssembly = mono_domain_assembly_open(appDomain, assemblyPath.c_str());
+    coreAssembly = mono_domain_assembly_open(appDomain, assemblyPath.string().c_str());
     assert(coreAssembly);
     coreAssemblyImage = mono_assembly_get_image(coreAssembly);
     assert(coreAssemblyImage);
@@ -107,7 +107,7 @@ void ScriptEngine::LoadCoreAssembly(const std::filesystem::path &assemblyPath)
 
 void ScriptEngine::LoadAppAssembly(const std::filesystem::path &assemblyPath)
 {
-    appAssembly = mono_domain_assembly_open(appDomain, assemblyPath.c_str());
+    appAssembly = mono_domain_assembly_open(appDomain, assemblyPath.string().c_str());
     assert(coreAssembly);
     appAssemblyImage = mono_assembly_get_image(appAssembly);
     assert(coreAssemblyImage);

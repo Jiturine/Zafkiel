@@ -12,7 +12,7 @@
 
 namespace fs = std::filesystem;
 
-void save_file(const fs::path &output_dir, const std::string &filename, const std::string &content)
+void save_file(const fs::path &output_dir, const fs::path &filename, const std::string &content)
 {
     std::ofstream output_impl_stream(output_dir / filename);
     output_impl_stream << content;
@@ -46,11 +46,11 @@ int main(int argc, char **argv)
         "-D__REFLECTION_ENABLE__",                      // 定义反射宏
         "-include", reflection_macro_file_path.c_str(), // 添加反射宏文件路径
     };
-    std::string output_header_filename = output_dir / "refl_generate.h";
-    std::string output_impl_filename = output_dir / "refl_generate.cpp";
+    fs::path output_header_filename = output_dir / "refl_generate.h";
+    fs::path output_impl_filename = output_dir / "refl_generate.cpp";
     fs::path base_dir = output_dir.parent_path() / "src";
     ImplMustacheFormat format;
-    format.header_file = output_header_filename;
+    format.header_file = output_header_filename.string();
 
     // 解析每个头文件
     for (const auto &file : input_files)
