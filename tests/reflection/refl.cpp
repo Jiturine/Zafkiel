@@ -37,7 +37,6 @@ TEST_CASE("refl")
     {
         for (auto &[a, prop] : GetProperties(cam))
         {
-            std::cout << prop->GetName() << std::endl;
             if (prop->GetTypeInfo() == GetType("vec3"))
             {
                 auto &vec = RemoveRef<vec3>(a);

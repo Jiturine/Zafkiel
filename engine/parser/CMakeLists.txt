@@ -14,7 +14,7 @@ target_include_directories(Parser PUBLIC
 
 # 把mustache模板文件拷贝到运行目录
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/templates
-    DESTINATION ${CMAKE_BINARY_DIR}/engine/parser
+    DESTINATION ${CMAKE_BINARY_DIR}/bin/parser
 )
 
 add_custom_command(

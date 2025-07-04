@@ -6,7 +6,7 @@ namespace Zafkiel::Reflection
 {
 
 // 存储所有已注册的类型的类列表，便于只通过类型名string获取类型信息
-inline std::map<std::string, const Type *> typeDict;
+inline std::unordered_map<std::string, const Type *> typeDict;
 
 // 所有TypeInfo类为单例，存储对应类型的唯一一份数据
 template <typename T, typename Kind>

@@ -42,7 +42,8 @@ int main(int argc, char **argv)
 
     // 设置额外参数
     std::vector<const char *> extraArgs = {
-        "-std=c++20",                                   // 指定C++标准
+        "-std=c++20", "-xc++",
+        "-ferror-limit=0", "-Wno-everything",  
         "-D__REFLECTION_ENABLE__",                      // 定义反射宏
         "-include", reflection_macro_file_path.c_str(), // 添加反射宏文件路径
     };

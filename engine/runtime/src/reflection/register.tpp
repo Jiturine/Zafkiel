@@ -1,6 +1,7 @@
 #pragma once
 #include "register.h"
 #include "property_traits.h"
+#include <iostream>
 
 namespace Zafkiel::Reflection
 {

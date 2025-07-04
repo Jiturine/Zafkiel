@@ -1,5 +1,7 @@
 #include "parser.h"
 #include "cursor.h"
+#include <format>
+#include <iostream>
 
 Attribute ParseAttributes(const Cursor &cursor)
 {
@@ -58,7 +60,10 @@ void Parser::RecurseVisit(const Cursor &cursor, Node *parent)
     auto kind = cursor.GetKind();
     if (kind == CXCursor_TranslationUnit)
     {
-        for (const auto &child : cursor.GetChildren()) { RecurseVisit(child, parent); }
+        for (const auto &child : cursor.GetChildren())
+        {
+            RecurseVisit(child, parent);
+        }
     }
     if (kind == CXCursor_Namespace)
     {
@@ -145,9 +150,15 @@ Node *Parser::ParseFile(const std::string &filename)
         extraArgs.data(), extraArgs.size(),
         NULL, 0,
         CXTranslationUnit_None);
+    if (!unit)
+    {
+        std::cout << "fail to parse the file!" << std::endl;
+    }
     CXCursor rootCursor = clang_getTranslationUnitCursor(unit);
     Node *root = new Node;
     RecurseVisit(rootCursor, root);
 
+    clang_disposeTranslationUnit(unit);
+    clang_disposeIndex(index);
     return root;
 }
