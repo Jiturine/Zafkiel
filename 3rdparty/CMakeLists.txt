@@ -13,3 +13,11 @@ endif()
 if (NOT TARGET EnTT)
     add_subdirectory(entt)
 endif()
+
+if (NOT TARGET imgui)
+    add_subdirectory(imgui)
+endif()
+
+if (NOT TARGET SDL3::SDL3)
+    add_subdirectory(SDL)
+endif()

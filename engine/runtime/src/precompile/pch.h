@@ -13,3 +13,5 @@
 #include <cassert>
 #include <memory>
 #include <iostream>
+
+#include "debug/log.h"

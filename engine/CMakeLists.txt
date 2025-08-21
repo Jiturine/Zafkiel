@@ -4,6 +4,8 @@ add_subdirectory(runtime)
 
 add_subdirectory(script_core)
 
+add_subdirectory(editor)
+
 # 查找需要解析反射的文件
 file(GLOB_RECURSE reflection_files 
 ${CMAKE_CURRENT_SOURCE_DIR}/runtime/src/*.h
