@@ -21,3 +21,11 @@ endif()
 if (NOT TARGET SDL3::SDL3)
     add_subdirectory(SDL)
 endif()
+
+if (NOT TARGET glad)
+    add_subdirectory(glad)
+endif()
+
+if (NOT TARGET glm)
+    add_subdirectory(glm)
+endif()

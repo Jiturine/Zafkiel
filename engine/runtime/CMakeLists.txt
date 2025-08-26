@@ -24,8 +24,7 @@ target_precompile_headers(Zafkiel PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src/precomp
 
 target_include_directories(Zafkiel PUBLIC 
     ${CMAKE_CURRENT_SOURCE_DIR}/src 
-    ${CMAKE_CURRENT_SOURCE_DIR}/generated
-)
+    ${CMAKE_CURRENT_SOURCE_DIR}/generated)
 
 # 链接第三方库
-target_link_libraries(Zafkiel PUBLIC spdlog mono EnTT SDL3::SDL3 GL)
+target_link_libraries(Zafkiel PUBLIC spdlog mono EnTT SDL3::SDL3 GL glad glm)

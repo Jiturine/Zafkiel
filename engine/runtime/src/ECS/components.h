@@ -1,10 +1,10 @@
 #pragma once
-#include "base/vector3.h"
+#include "base/maths.h"
 
 namespace Zafkiel
 {
 
-struct [[reflect]] TransformComponent
+struct [[refl]] TransformComponent
 {
     vec3 position;
     vec3 scale;

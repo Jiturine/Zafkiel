@@ -93,14 +93,7 @@ void Parser::RecurseVisit(const Cursor &cursor, Node *parent)
             {
                 RecurseVisit(child, node);
             }
-            if (node->children.empty() && node->fields.empty())
-            {
-                delete node;
-            }
-            else
-            {
-                parent->children.push_back(node);
-            }
+            parent->children.push_back(node);
         }
     }
     if (kind == CXCursor_EnumDecl)

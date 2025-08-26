@@ -1,7 +1,6 @@
 #pragma once
 #include <SDL3/SDL.h>
 #include "renderer/graphics_context.h"
-#include "renderer/opengl_context.h"
 #include "event.h"
 
 namespace Zafkiel
@@ -11,6 +10,7 @@ class Window
   public:
     Window(const std::string &title, size_t width, size_t height);
     virtual ~Window();
+    void SetContext(Ref<GraphicsContext> context);
     void OnUpdate(float timestep);
     bool ShouldClose() { return shouldClose; }
     virtual void OnEvent(Event &event);
@@ -18,7 +18,7 @@ class Window
 
   protected:
     SDL_Window *handle;
-    std::unique_ptr<GraphicsContext> graphicsContext;
+    Ref<GraphicsContext> graphicsContext;
     size_t width;
     size_t height;
     std::string title;

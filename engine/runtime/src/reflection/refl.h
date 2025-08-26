@@ -3,9 +3,9 @@
 #include "register.h"
 
 #ifdef __REFLECTION_ENABLE__
-    #define reflect clang::annotate("reflect")
-    #define noreflect clang::annotate("noreflect")
+    #define refl clang::annotate("reflect")
+    #define norefl clang::annotate("noreflect")
 #else
-    #define reflect
-    #define noreflect
+    #define refl
+    #define norefl
 #endif

@@ -3,6 +3,7 @@
 #include "backends/imgui_impl_sdl3.h"
 #include <imgui.h>
 #include "core/window.h"
+#include "base/maths.h"
 
 namespace Zafkiel
 {
@@ -29,6 +30,13 @@ class EditorGUI
     {
         if (sameLine) ImGui::SameLine();
         if (ImGui::Button(label.c_str())) onClick();
+        sameLine = true;
+        return *this;
+    }
+    EditorGUI Image(uint32_t id, vec2 size, vec2 uv0 = vec2(0.0f, 0.0f), vec2 uv1 = vec2(1.0f, 1.0f))
+    {
+        if (sameLine) ImGui::SameLine();
+        ImGui::Image(id, ImVec2(size.x, size.y), ImVec2(uv0.x, uv0.y), ImVec2(uv1.x, uv1.y));
         sameLine = true;
         return *this;
     }
@@ -69,6 +77,21 @@ class GUIWindow
     ~GUIWindow()
     {
         ImGui::End();
+    }
+    vec2 GetPosition()
+    {
+        ImVec2 pos = ImGui::GetWindowPos();
+        return vec2(pos.x, pos.y);
+    }
+    vec2 GetWindowSize()
+    {
+        ImVec2 size = ImGui::GetWindowSize();
+        return vec2(size.x, size.y);
+    }
+    vec2 GetContentSize()
+    {
+        ImVec2 size = ImGui::GetContentRegionAvail();
+        return vec2(size.x, size.y);
     }
 };
 }
