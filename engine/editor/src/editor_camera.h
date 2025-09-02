@@ -1,5 +1,5 @@
 #pragma once
-#include "renderer/camera.h"
+#include "function/render/camera.h"
 
 namespace Zafkiel
 {

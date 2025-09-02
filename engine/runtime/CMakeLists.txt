@@ -12,19 +12,24 @@ set_source_files_properties(
     PROPERTIES GENERATED TRUE
 )
 
-add_library(Zafkiel SHARED 
+add_library(Zafkiel STATIC 
     ${HEADER_FILES}
     ${SOURCE_FILES} 
     ${CMAKE_CURRENT_SOURCE_DIR}/generated/refl_generate.h
     ${CMAKE_CURRENT_SOURCE_DIR}/generated/refl_generate.cpp
 )
 
+set_target_properties(Zafkiel PROPERTIES 
+    ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/Zafkiel
+)
+
 # 添加预编译头文件
-target_precompile_headers(Zafkiel PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src/precompile/pch.h )
+target_precompile_headers(Zafkiel PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/precompile/pch.h )
 
 target_include_directories(Zafkiel PUBLIC 
     ${CMAKE_CURRENT_SOURCE_DIR}/src 
     ${CMAKE_CURRENT_SOURCE_DIR}/generated)
 
 # 链接第三方库
-target_link_libraries(Zafkiel PUBLIC spdlog mono EnTT SDL3::SDL3 GL glad glm)
+target_link_libraries(Zafkiel PUBLIC spdlog mono EnTT SDL3::SDL3 GL glad glm yaml-cpp stb_image)
+

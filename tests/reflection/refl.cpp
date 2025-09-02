@@ -1,6 +1,5 @@
 #include <catch2/catch_test_macros.hpp>
-#include "reflection/refl.h"
-#include "reflection/register.h"
+#include "core/meta/reflection/refl.h"
 
 using namespace Zafkiel::Reflection;
 

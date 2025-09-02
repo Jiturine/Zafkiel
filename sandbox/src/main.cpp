@@ -1,11 +1,9 @@
 #include "main.h"
 #include "refl_generate.h"
-#include "reflection/register.h"
-#include <iostream>
-#include <ECS/world.h>
-#include <ECS/components.h>
-#include <script/script_engine.h>
-#include <debug/log.h>
+#include "core/meta/reflection/refl.h"
+#include <function/scene/world.h>
+#include <function/scene/components.h>
+#include <function/script/script_engine.h>
 
 using namespace Zafkiel;
 
@@ -16,6 +14,7 @@ struct Person
 
 int main(int argc, char **argv)
 {
+    ReflectionGenerate::RegisterReflectionInfo();
     Log::CoreInfo("Hello,world!");
     ScriptEngine::Init();
 

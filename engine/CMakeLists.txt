@@ -14,16 +14,17 @@ ${CMAKE_CURRENT_SOURCE_DIR}/runtime/src/*.hpp
 
 # 将reflection_files的内容写入txt，方便parser读取
 configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/runtime/src/precompile/refl_files.txt.in 
-    ${CMAKE_CURRENT_SOURCE_DIR}/runtime/src/precompile/refl_files.txt)
+    ${CMAKE_CURRENT_SOURCE_DIR}/runtime/precompile/refl_files.txt.in 
+    ${CMAKE_CURRENT_SOURCE_DIR}/runtime/precompile/refl_files.txt)
     
 # 调用Parser解析反射文件
 add_custom_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/reflection_generated.done  # 标记文件
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/bin/Parser
     COMMAND $<TARGET_FILE:Parser>
-        ${CMAKE_CURRENT_SOURCE_DIR}/runtime/src/precompile/refl_files.txt # 第一个参数：记录了所有需要解析的文件路径的txt文件路径
+        ${CMAKE_CURRENT_SOURCE_DIR}/runtime/precompile/refl_files.txt # 第一个参数：记录了所有需要解析的文件路径的txt文件路径
         ${CMAKE_CURRENT_SOURCE_DIR}/runtime/generated    # 第二个参数：输出目录
-        ${CMAKE_CURRENT_SOURCE_DIR}/runtime/src/reflection/refl.h # 第三个参数：反射宏文件所在路径
+        ${CMAKE_CURRENT_SOURCE_DIR}/runtime/src/core/meta/reflection/refl.h # 第三个参数：反射宏文件所在路径
     COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_BINARY_DIR}/reflection_generated.done  # 生成标记文件
     DEPENDS Parser ${reflection_files}  # 依赖 Parser 可执行文件和输入文件
     COMMENT "Generating reflection code..."
@@ -31,11 +32,11 @@ add_custom_command(
 
 add_custom_target( refl_parse
     COMMAND $<TARGET_FILE:Parser>
-        ${CMAKE_CURRENT_SOURCE_DIR}/runtime/src/precompile/refl_files.txt # 第一个参数：记录了所有需要解析的文件路径的txt文件路径
-        ${CMAKE_CURRENT_SOURCE_DIR}/runtime/generated    # 第二个参数：输出目录
-        ${CMAKE_CURRENT_SOURCE_DIR}/runtime/src/reflection/refl.h # 第三个参数：反射宏文件所在路径
-    COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_BINARY_DIR}/reflection_generated.done  # 生成标记文件
-    DEPENDS Parser ${reflection_files}  # 依赖 Parser 可执行文件和输入文件
+        ${CMAKE_CURRENT_SOURCE_DIR}/runtime/precompile/refl_files.txt 
+        ${CMAKE_CURRENT_SOURCE_DIR}/runtime/generated    
+        ${CMAKE_CURRENT_SOURCE_DIR}/runtime/src/core/meta/reflection/refl.h 
+    COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_BINARY_DIR}/reflection_generated.done  
+    DEPENDS Parser ${reflection_files}  
     COMMENT "Generating reflection code..."
 )
     

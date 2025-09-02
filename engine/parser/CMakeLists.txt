@@ -8,13 +8,17 @@ add_subdirectory(3rdparty/LLVM)
 
 add_executable(Parser ${HEADER_FILES} ${SOURCE_FILES})
 
+set_target_properties(Parser PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/Parser
+)
+
 target_include_directories(Parser PUBLIC 
     3rdparty/mustache
 )
 
 # 把mustache模板文件拷贝到运行目录
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/templates
-    DESTINATION ${CMAKE_BINARY_DIR}/bin/parser
+    DESTINATION ${CMAKE_BINARY_DIR}/bin/Parser
 )
 
 add_custom_command(

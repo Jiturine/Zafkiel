@@ -1,13 +1,9 @@
 #include "scene_panel.h"
-#include "../editorGUI/editorGUI.h"
-
-//debug
-#include "renderer/backends/opengl/opengl_shader.h"
+#include "editorGUI/editorGUI.h"
 
 namespace Zafkiel
 {
-static Ref<VertexArray> vertexArray;
-static Ref<OpenGLShader> shader;
+
 ScenePanel::ScenePanel(Ref<GraphicsContext> context)
     : context(context)
 {
@@ -23,26 +19,9 @@ ScenePanel::ScenePanel(Ref<GraphicsContext> context)
     spec.height = 720;
     sceneFrameBuffer = context->CreateFrameBuffer(spec);
 
-    // --------------------debug------------------------
-    vertexArray = context->CreateVertexArray();
-    uint32_t indices[] = {0, 1, 2, 2, 3, 0};
-    Ref<IndexBuffer> indexBuffer = context->CreateIndexBuffer(indices, sizeof(indices) / sizeof(uint32_t));
-    BufferLayout layout = {
-        {ShaderDataType::Float3, "a_Position"},
-        {ShaderDataType::Float4, "a_Color"}};
-    float vertices[] = {
-        0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-        -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
-        -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f,
-        0.5f, -0.5f, 0.0f, 0.0f, 0.5f, 0.5f, 1.0f};
-    Ref<VertexBuffer> vertexBuffer = context->CreateVertexBuffer(vertices, sizeof(vertices));
-    vertexBuffer->SetLayout(layout);
-    vertexArray->AddVertexBuffer(vertexBuffer);
-    vertexArray->SetIndexBuffer(indexBuffer);
+    texture = context->CreateTexture2D("assets/textures/furina.png");
 
-    shader = MakeRef<OpenGLShader>("assets/shaders/flat_shader.glsl");
-
-    // --------------------debug------------------------
+    renderer = MakeRef<Renderer2D>(context);
 }
 
 void ScenePanel::Render()
@@ -59,11 +38,18 @@ void ScenePanel::RenderScene()
 {
     sceneFrameBuffer->Bind();
 
-    context->Clear(vec4(0.1f, 0.1f, 0.1f, 1.0f));
+    context->Clear(vec4(0.3f, 0.5f, 0.8f, 1.0f));
 
-    shader->Set("u_ViewProjection", editorCamera->GetProjectionMatrix() * editorCamera->GetViewMatrix());
+    renderer->BeginScene(editorCamera->GetProjectionMatrix() * editorCamera->GetViewMatrix());
 
-    context->DrawIndexed(vertexArray, shader);
+    Renderer2D::QuadProps props;
+    props.color = vec4(1.0f, 1.0f, 0.0f, 1.0f);
+    props.size = vec2(1.0f, 1.0f);
+    props.position = vec3(0.0f, 0.0f, 0.0f);
+    props.texture = texture;
+    renderer->DrawQuad(props);
+
+    renderer->EndScene();
 
     sceneFrameBuffer->Unbind();
 }

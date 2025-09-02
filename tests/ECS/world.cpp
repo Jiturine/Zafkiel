@@ -1,5 +1,5 @@
 #include <catch2/catch_test_macros.hpp>
-#include <ECS/world.h>
+#include <function/scene/world.h>
 
 using namespace Zafkiel;
 

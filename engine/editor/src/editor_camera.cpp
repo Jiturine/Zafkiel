@@ -1,5 +1,5 @@
 #include "editor_camera.h"
-#include "core/input.h"
+#include "function/input/input.h"
 
 namespace Zafkiel
 {

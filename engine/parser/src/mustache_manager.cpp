@@ -4,11 +4,11 @@
 
 MustacheManager::MustacheManager()
 {
-    class_code_template = mustache::mustache{ReadFile("parser/templates/class_refl.mustache")};
-    enum_code_template = mustache::mustache{ReadFile("parser/templates/enum_refl.mustache")};
-    code_template = mustache::mustache{ReadFile("parser/templates/refl.mustache")};
-    header_template = mustache::mustache{ReadFile("parser/templates/header.mustache")};
-    impl_template = mustache::mustache{ReadFile("parser/templates/impl.mustache")};
+    class_code_template = mustache::mustache{ReadFile("templates/class_refl.mustache")};
+    enum_code_template = mustache::mustache{ReadFile("templates/enum_refl.mustache")};
+    code_template = mustache::mustache{ReadFile("templates/refl.mustache")};
+    header_template = mustache::mustache{ReadFile("templates/header.mustache")};
+    impl_template = mustache::mustache{ReadFile("templates/impl.mustache")};
 }
 
 std::string MustacheManager::ReadFile(const std::string &path)

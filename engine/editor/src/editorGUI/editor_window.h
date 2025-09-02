@@ -1,9 +1,9 @@
 #pragma once
-#include "backends/imgui_impl_opengl3.h"
-#include "backends/imgui_impl_sdl3.h"
 #include <imgui.h>
-#include "core/window.h"
-#include "../panels/panel.h"
+#include "function/scene/scene.h"
+#include "function/window/window.h"
+#include "panels/panel.h"
+#include "resource/editor_asset_manager.h"
 
 namespace Zafkiel
 {
@@ -18,9 +18,17 @@ class EditorWindow : public Window
 
     template <typename T>
         requires std::is_base_of_v<Panel, T>
-    std::unique_ptr<T> CreatePanel()
+    Ref<T> GetActivePanel()
     {
-        return std::make_unique<T>(graphicsContext);
+        for (auto &panel : panels)
+        {
+            if (panel.Is<T>()) return panel.As<T>();
+        }
+        return nullptr;
     }
+
+    std::vector<Ref<Panel>> panels;
+    Ref<EditorAssetManager> assetManager;
+    Ref<Scene> currentScene;
 };
 }

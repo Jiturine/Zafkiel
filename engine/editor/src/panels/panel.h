@@ -1,10 +1,9 @@
 #pragma once
-#include "base/maths.h"
 
 namespace Zafkiel
 {
 
-class Panel
+class Panel : public RefCounted
 {
   public:
     virtual ~Panel() = default;
