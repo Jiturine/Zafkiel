@@ -32,6 +32,7 @@ if (NOT TARGET imgui)
 endif()
 
 if (NOT TARGET SDL3::SDL3)
+    set(SDL_OPENGLES OFF)
     add_subdirectory(SDL)
 endif()
 

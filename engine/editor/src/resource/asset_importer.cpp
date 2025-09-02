@@ -22,7 +22,7 @@ Ref<Asset> AssetImporter::ImportTexture2D(const Path &path) const
 {
     int width, height, channels;
     stbi_set_flip_vertically_on_load(1);
-    auto data = stbi_load(path.c_str(), &width, &height, &channels, 0);
+    auto data = stbi_load(path.string().c_str(), &width, &height, &channels, 0);
     if (!data)
     {
         Log::CoreError("Failed to load image!");

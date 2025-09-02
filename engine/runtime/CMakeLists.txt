@@ -31,5 +31,9 @@ target_include_directories(Zafkiel PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/generated)
 
 # 链接第三方库
-target_link_libraries(Zafkiel PUBLIC spdlog mono EnTT SDL3::SDL3 GL glad glm yaml-cpp stb_image)
-
+target_link_libraries(Zafkiel PUBLIC spdlog mono EnTT SDL3::SDL3 glad glm yaml-cpp stb_image)
+if(WIN32)
+    target_link_libraries(Zafkiel PUBLIC opengl32)
+elseif(UNIX)
+    target_link_libraries(Zafkiel PUBLIC GL)
+endif()

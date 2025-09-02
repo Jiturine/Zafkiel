@@ -28,7 +28,7 @@ std::string FileSystem::ReadText(const Path &filePath)
     std::ifstream file(filePath, std::ios::binary);
     if (!file.is_open())
     {
-        Log::CoreError("Failed to open file: {}", filePath.c_str());
+        Log::CoreError("Failed to open file: {}", filePath.string().c_str());
     }
     return std::string(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>());
 }
