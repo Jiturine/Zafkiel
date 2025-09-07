@@ -39,7 +39,7 @@ class World
         }
         return entities;
     }
-  private:
+    //   private:
     template <typename T, typename... Remains>
     void SpawnEntityRecursive(EntityID handle, T &&component, Remains &&...remains)
     {

@@ -1,5 +1,7 @@
 #pragma once
 #include "core/meta/reflection/refl.h"
+#include "core/meta/serializer/custom_serialize.h"
+
 #include <glm/glm.hpp>
 #include <glm/ext/matrix_clip_space.hpp>
 #include <glm/ext/matrix_transform.hpp>
@@ -13,6 +15,19 @@ struct [[refl]] vec2 : public glm::vec2
     vec2(glm::vec2 raw) : glm::vec2(raw) {}
 };
 
+static void SerializeVec2(const Any &instance, const Type *typeInfo, YAML::Emitter &out)
+{
+    const vec2 obj = instance.As<vec2>();
+    out << YAML::Flow << YAML::BeginSeq << obj.x << obj.y << YAML::EndSeq;
+}
+static void DeserializeVec2(Any &instance, const Type *typeInfo, const YAML::Node &data)
+{
+    vec2 &obj = instance.As<vec2>();
+    obj.x = data[0].as<float>();
+    obj.y = data[1].as<float>();
+}
+static CustomSerialize<vec2> customSerializeVec2({SerializeVec2, DeserializeVec2});
+
 struct [[refl]] vec3 : public glm::vec3
 {
     using glm::vec3::vec3;
@@ -23,11 +38,40 @@ struct [[refl]] vec3 : public glm::vec3
     }
 };
 
+static void SerializeVec3(const Any &instance, const Type *typeInfo, YAML::Emitter &out)
+{
+    const vec3 obj = instance.As<vec3>();
+    out << YAML::Flow << YAML::BeginSeq << obj.x << obj.y << obj.z << YAML::EndSeq;
+}
+static void DeserializeVec3(Any &instance, const Type *typeInfo, const YAML::Node &data)
+{
+    vec3 &obj = instance.As<vec3>();
+    obj.x = data[0].as<float>();
+    obj.y = data[1].as<float>();
+    obj.z = data[2].as<float>();
+}
+static CustomSerialize<vec3> customSerializeVec3({SerializeVec3, DeserializeVec3});
+
 struct [[refl]] vec4 : public glm::vec4
 {
     using glm::vec4::vec4;
     vec4(glm::vec4 raw) : glm::vec4(raw) {}
 };
+
+static void SerializeVec4(const Any &instance, const Type *typeInfo, YAML::Emitter &out)
+{
+    const vec4 obj = instance.As<vec4>();
+    out << YAML::Flow << YAML::BeginSeq << obj.x << obj.y << obj.z << obj.w << YAML::EndSeq;
+}
+static void DeserializeVec4(Any &instance, const Type *typeInfo, const YAML::Node &data)
+{
+    vec4 &obj = instance.As<vec4>();
+    obj.x = data[0].as<float>();
+    obj.y = data[1].as<float>();
+    obj.z = data[2].as<float>();
+    obj.w = data[3].as<float>();
+}
+static CustomSerialize<vec4> customSerializeVec4({SerializeVec4, DeserializeVec4});
 
 struct [[refl]] mat3 : public glm::mat3
 {
@@ -40,13 +84,6 @@ struct [[refl]] mat4 : public glm::mat4
     using glm::mat4::mat4;
     mat4(glm::mat4 raw) : glm::mat4(raw) {}
     const float *value() const { return glm::value_ptr(*static_cast<const glm::mat4 *>(this)); }
-};
-
-struct [[refl]] testStruct
-{
-    float oneProp;
-    float anotherProp;
-    float evenMoreProp;
 };
 
 namespace Maths

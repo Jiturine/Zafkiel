@@ -11,6 +11,7 @@ class Scene : public RefCounted
         return world;
     }
     const World &GetWorld() const { return world; }
+    Entity selectedEntity;
   private:
     World world;
 };

@@ -146,6 +146,8 @@ Node *Parser::ParseFile(const std::string &filename)
     if (!unit)
     {
         std::cout << "fail to parse the file!" << std::endl;
+        clang_disposeIndex(index);
+        return nullptr;
     }
     CXCursor rootCursor = clang_getTranslationUnitCursor(unit);
     Node *root = new Node;

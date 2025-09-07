@@ -1,6 +1,7 @@
 #pragma once
 #include "core/meta/reflection/refl.h"
 #include "function/render/texture.h"
+#include "core/base/uuid.h"
 
 namespace Zafkiel
 {
@@ -15,6 +16,11 @@ struct [[refl]] TagComponent
 {
     std::string name;
     std::string tag;
+};
+
+struct [[refl]] UUIDComponent
+{
+    UUID id;
 };
 
 struct [[refl]] SpriteRendererComponent

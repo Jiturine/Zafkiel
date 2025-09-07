@@ -39,6 +39,40 @@ class EditorGUI
         sameLine = true;
         return *this;
     }
+    EditorGUI InputText(const std::string &label, std::string &text)
+    {
+        if (sameLine) ImGui::SameLine();
+        char buffer[256];
+        memset(buffer, 0, sizeof(buffer));
+        strcpy(buffer, text.c_str());
+        if (ImGui::InputText(label.c_str(), buffer, sizeof(buffer)))
+        {
+            text = std::string(buffer);
+        }
+        sameLine = true;
+        return *this;
+    }
+    EditorGUI DragVec2(const std::string &label, vec2 &data, float speed = 0.5f)
+    {
+        if (sameLine) ImGui::SameLine();
+        ImGui::DragFloat2(label.c_str(), (float *)&data, speed);
+        sameLine = true;
+        return *this;
+    }
+    EditorGUI DragVec3(const std::string &label, vec3 &data, float speed = 0.5f)
+    {
+        if (sameLine) ImGui::SameLine();
+        ImGui::DragFloat3(label.c_str(), (float *)&data, speed);
+        sameLine = true;
+        return *this;
+    }
+    EditorGUI DragVec4(const std::string &label, vec4 &data, float speed = 0.5f)
+    {
+        if (sameLine) ImGui::SameLine();
+        ImGui::DragFloat4(label.c_str(), (float *)&data, speed);
+        sameLine = true;
+        return *this;
+    }
 
     static void StartFrame()
     {
@@ -94,6 +128,31 @@ class GUIWindow
     }
 };
 }
+
+class GUITreeNode
+{
+  public:
+    GUITreeNode(uint32_t id, ImGuiTreeNodeFlags flags, const std::string &name)
+    {
+        opened = ImGui::TreeNodeEx(reinterpret_cast<void *>((uintptr_t)id), flags, "%s", name.c_str());
+        clicked = ImGui::IsItemClicked();
+    }
+    GUITreeNode(const void *id, ImGuiTreeNodeFlags flags, const std::string &name)
+    {
+        opened = ImGui::TreeNodeEx(id, flags, "%s", name.c_str());
+        clicked = ImGui::IsItemClicked();
+    }
+    void Expand(std::function<void(void)> expandFunc)
+    {
+        if (opened)
+        {
+            expandFunc();
+            ImGui::TreePop();
+        }
+    }
+    bool opened;
+    bool clicked;
+};
 
 class GUIDockSpace
 {

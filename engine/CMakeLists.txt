@@ -31,6 +31,7 @@ add_custom_command(
 )
 
 add_custom_target( refl_parse
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/bin/Parser
     COMMAND $<TARGET_FILE:Parser>
         ${CMAKE_CURRENT_SOURCE_DIR}/runtime/precompile/refl_files.txt 
         ${CMAKE_CURRENT_SOURCE_DIR}/runtime/generated    

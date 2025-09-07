@@ -2,44 +2,85 @@
 
 namespace Zafkiel::Reflection
 {
-std::string Numeric::GetNameOfKind(Kind kind)
+Fundamental::Fundamental(const std::string &name, FundamentalKind kind)
+    : Type(name, TypeCategory::Fundamental), kind(kind)
 {
-    switch (kind)
-    {
-        using enum Kind;
-    case Int8: return "Int8";
-    case Int16: return "Int16";
-    case Int32: return "Int32";
-    case Int64: return "Int64";
-    case Float: return "Float";
-    case Double: return "Double";
-    default: return "Unknown";
-    }
+    typeDict[name] = this;
 }
 
-std::any Array::GetElem(size_t index, const std::any &array) const
+String::String() : Type("std::string", TypeCategory::String)
 {
-    return getElemFunc(index, array);
+    typeDict[name] = this;
 }
-std::any Array::GetElemConst(size_t index, const std::any &array) const
+
+Enum::Enum(const EnumFunctions &enumFunctions)
+    : Type(TypeCategory::Enum), enumFunctions(enumFunctions) {}
+
+List::List(const Type *elemType, const ListFunctions &listFuncs)
+    : Type(std::format("std::vector<{}>", elemType->GetName()), TypeCategory::List),
+      elemType(elemType), listFunctions(listFuncs)
 {
-    return getElemConstFunc(index, array);
+    typeDict[name] = this;
 }
-std::any Array::GetBack(const std::any &array) const
+
+Any List::GetElem(size_t index, Any &instance) const
 {
-    return getBackFunc(array);
+    return listFunctions.getElemFunc(index, instance);
 }
-std::any Array::GetBackConst(const std::any &array) const
+const Any List::GetElem(size_t index, const Any &instance) const
 {
-    return getBackConstFunc(array);
+    return listFunctions.getElemConstFunc(index, instance);
 }
-size_t Array::GetSize(const std::any &array) const
+Any List::GetBack(Any &instance) const
 {
-    return getSizeFunc(array);
+    return listFunctions.getBackFunc(instance);
 }
-size_t Array::GetSizeConst(const std::any &array) const
+const Any List::GetBack(const Any &instance) const
 {
-    return getSizeConstFunc(array);
+    return listFunctions.getBackConstFunc(instance);
+}
+size_t List::GetSize(const Any &instance) const
+{
+    return listFunctions.getSizeFunc(instance);
+}
+void List::Resize(size_t size, Any &instance) const
+{
+    listFunctions.resizeFunc(size, instance);
+}
+
+int Enum::GetValue(const Any &instance) const
+{
+    return enumFunctions.getValueFunc(instance);
+}
+
+std::string Enum::GetValueName(const Any &instance) const
+{
+    int val = GetValue(instance);
+    for (const auto &item : items)
+    {
+        if (item.value == val)
+        {
+            return item.name;
+        }
+    }
+    return nullptr;
+}
+
+void Enum::SetValue(Any &instance, int value) const
+{
+    enumFunctions.setValueFunc(instance, value);
+}
+
+void Enum::SetValueName(Any &instance, const std::string &itemName) const
+{
+    for (const auto &item : items)
+    {
+        if (item.name == itemName)
+        {
+            SetValue(instance, item.value);
+            break;
+        }
+    }
 }
 
 Class &Class::AddProperty(const std::shared_ptr<Property> &prop)

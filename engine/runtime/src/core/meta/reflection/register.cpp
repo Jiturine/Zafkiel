@@ -12,14 +12,4 @@ const Type *GetType(const std::string &name)
     return nullptr;
 }
 
-std::vector<std::pair<std::any, std::shared_ptr<Property>>> GetProperties(const Class *type, std::any obj)
-{
-    std::vector<std::pair<std::any, std::shared_ptr<Property>>> ret;
-    for (const auto &prop : type->GetProperties())
-    {
-        std::any val_ptr = prop->Call(obj);
-        ret.emplace_back(val_ptr, prop);
-    }
-    return ret;
-}
 }

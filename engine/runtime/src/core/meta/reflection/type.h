@@ -1,4 +1,5 @@
 #pragma once
+#include "any.h"
 #include "type_traits.h"
 
 namespace Zafkiel::Reflection
@@ -7,22 +8,15 @@ namespace Zafkiel::Reflection
 class Type
 {
   public:
-    template <typename, typename>
-    friend class TypeInfo;
+    template <typename>
+    friend class EnumTypeInfo;
+    template <typename>
+    friend class ClassTypeInfo;
 
-    enum class Kind
-    {
-        Unknown,
-        Numeric, // 数字类型
-        String,  // 字符串类型
-        Enum,    // 枚举类型
-        Array,   // 数组类型
-        Class,   // 类类型
-        Property // 属性(类成员)类型
-    };
     virtual ~Type() = default;
-    Type(Kind kind) : kind(kind) {}
-    Type(const std::string &name, Kind kind) : name(name), kind(kind) {}
+
+    Type(TypeCategory category) : category(category) {}
+    Type(const std::string &name, TypeCategory category) : name(name), category(category) {}
 
     // 将基类Type转换为对应子类
     template <typename T>
@@ -30,105 +24,144 @@ class Type
     const T *As() const;
 
     std::string GetName() const { return name; }
-    Kind GetKind() const { return kind; }
+    TypeCategory GetCategory() const { return category; }
 
-  private:
-    template <typename T>
-        requires std::derived_from<T, Type>
-    static Kind DetectKind();
-
+  protected:
     std::string name;
-    Kind kind;
+    TypeCategory category;
 };
 
-// 数字类型
-class Numeric : public Type
+// 存储所有已注册的类型的类列表，便于只通过类型名string获取类型信息
+inline std::unordered_map<std::string, const Type *> typeDict;
+
+class Fundamental : public Type
 {
   public:
-    template <typename T, typename TypeKind>
-    friend class TypeInfo;
+    Fundamental(const std::string &name, FundamentalKind kind);
 
-    enum class Kind
-    {
-        Unknown,
-        Int8,
-        Int16,
-        Int32,
-        Int64,
-        Float,
-        Double
-    };
-    Kind GetKind() const { return kind; }
-    bool IsSigned() const { return isSigned; }
-    static std::string GetNameOfKind(Kind kind);
-
-    Numeric() : Type(Type::Kind::Numeric) {}
-    Numeric(Kind kind, bool isSigned) : Type(GetNameOfKind(kind), Type::Kind::Numeric), kind(kind), isSigned(isSigned) {}
+    FundamentalKind GetKind() const { return kind; }
   private:
-    Kind kind;
-    bool isSigned;
-
-    template <typename T>
-        requires std::is_fundamental_v<T>
-    static Kind DetectKind();
+    FundamentalKind kind;
 };
 
-// 字符串类型
 class String : public Type
 {
   public:
-    String() : Type(Type::Kind::String) {}
-    String(const std::string &name) : Type(name, Type::Kind::String) {}
+    String();
 };
 
-// 枚举类型
+struct EnumFunctions
+{
+    std::function<int(const Any &)> getValueFunc;
+    std::function<void(Any &, int)> setValueFunc;
+};
+
+template <typename ElemType>
+struct EnumOperations
+{
+    static int GetValue(const Any &instance)
+    {
+        return static_cast<int>(instance.As<ElemType>());
+    }
+    static void SetValue(Any &instance, int value)
+    {
+        instance.As<ElemType>() = static_cast<ElemType>(value);
+    }
+};
+
 class Enum : public Type
 {
   public:
+    template <typename>
+    friend class EnumTypeInfo;
+
+    Enum(const EnumFunctions &enumFunctions);
+
     struct Item
     {
-        using ValueType = int;
         std::string name;
-        ValueType value;
+        int value;
     };
-
-    Enum() : Type(Type::Kind::Enum) {}
-    Enum(const std::string &name) : Type(name, Type::Kind::Enum) {}
 
     const std::vector<Item> &GetItems() const { return items; }
 
-    template <typename T>
-    Enum &Add(const std::string &name, T value);
+    Enum &Add(auto value, const std::string &name);
+
+    int GetValue(const Any &) const;
+
+    std::string GetValueName(const Any &) const;
+
+    void SetValue(Any &, int value) const;
+
+    void SetValueName(Any &, const std::string &itemName) const;
 
   private:
     std::vector<Item> items;
+    EnumFunctions enumFunctions;
 };
 
-//数组类型
-class Array : public Type
+struct ListFunctions
+{
+    std::function<Any(size_t, Any &)> getElemFunc;
+    std::function<const Any(size_t, const Any &)> getElemConstFunc;
+    std::function<Any(Any &)> getBackFunc;
+    std::function<const Any(const Any &)> getBackConstFunc;
+    std::function<size_t(const Any &)> getSizeFunc;
+    std::function<void(size_t, Any &)> resizeFunc;
+};
+
+template <typename ElemType>
+struct ListOperations
+{
+    static Any GetElem(size_t index, Any &instance)
+    {
+        auto &lst = instance.As<std::vector<ElemType>>();
+        return lst[index];
+    }
+    static const Any GetElemConst(size_t index, const Any &instance)
+    {
+        auto &lst = instance.As<std::vector<ElemType>>();
+        return lst[index];
+    }
+    static Any GetBack(Any &instance)
+    {
+        auto &lst = instance.As<std::vector<ElemType>>();
+        return lst.back();
+    }
+    static const Any GetBackConst(const Any &instance)
+    {
+        auto &lst = instance.As<std::vector<ElemType>>();
+        return lst.back();
+    }
+    static size_t GetSize(const Any &instance)
+    {
+        auto &lst = instance.As<std::vector<ElemType>>();
+        return lst.size();
+    }
+    static void Resize(size_t size, Any &instance)
+    {
+        auto &lst = instance.As<std::vector<ElemType>>();
+        lst.resize(size);
+    }
+};
+
+class List : public Type
 {
   public:
-    template <typename T, typename TypeKind>
-    friend class TypeInfo;
+    List(const Type *elemType, const ListFunctions &listFuncs);
 
-    Array() : Type(Type::Kind::Array) {}
-    Array(const std::string &name) : Type(name, Type::Kind::Array) {}
     const Type *GetElemType() const { return elemType; }
-    std::any GetElem(size_t index, const std::any &) const;
-    std::any GetElemConst(size_t index, const std::any &) const;
-    std::any GetBack(const std::any &) const;
-    std::any GetBackConst(const std::any &) const;
-    size_t GetSize(const std::any &) const;
-    size_t GetSizeConst(const std::any &) const;
+
+    Any GetElem(size_t index, Any &) const;
+    const Any GetElem(size_t index, const Any &) const;
+    Any GetBack(Any &) const;
+    const Any GetBack(const Any &) const;
+    size_t GetSize(const Any &) const;
+    void Resize(size_t, Any &) const;
 
   private:
     const Type *elemType;
-    std::function<std::any(size_t, const std::any &)> getElemFunc;
-    std::function<std::any(size_t index, const std::any &array)> getElemConstFunc;
-    std::function<std::any(const std::any &)> getBackFunc;
-    std::function<std::any(const std::any &)> getBackConstFunc;
-    std::function<size_t(const std::any &)> getSizeFunc;
-    std::function<size_t(const std::any &)> getSizeConstFunc;
+    const ListFunctions listFunctions;
 };
 
 class Property;
@@ -137,8 +170,7 @@ class Property;
 class Class : public Type
 {
   public:
-    Class() : Type(Type::Kind::Class) {}
-    Class(const std::string &name) : Type(name, Type::Kind::Class) {}
+    Class() : Type(TypeCategory::Class) {}
 
     const std::vector<std::shared_ptr<Property>> &GetProperties() const { return properties; }
 
@@ -151,13 +183,13 @@ class Class : public Type
 class Property : public Type
 {
   public:
-    Property() : Type(Type::Kind::Property) {}
-    Property(const std::string &name, const Class *owner) : Type(name, Type::Kind::Property), owner(owner) {}
+    Property(const std::string &name, const Class *owner)
+        : Type(name, TypeCategory::Property), owner(owner) {}
 
     ~Property() = default;
 
-    virtual std::any Call(const std::any &) const = 0;
-    virtual std::any CallConst(const std::any &) const = 0;
+    virtual Any Call(Any &) const = 0;
+    virtual Any Call(const Any &) const = 0;
     virtual const Type *GetTypeInfo() const = 0;
 
     const Class *GetOwner() const { return owner; }

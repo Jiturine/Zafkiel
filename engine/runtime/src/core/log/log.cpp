@@ -4,16 +4,32 @@
 
 namespace Zafkiel
 {
-
-void Log::Init()
+std::shared_ptr<spdlog::logger> &Log::GetCoreLogger()
 {
-    spdlog::set_pattern("%^[%T] %n: %v%$");
-    coreLogger = spdlog::stdout_color_mt("ZAFKIEL");
-    coreLogger->set_level(spdlog::level::trace);
-    clientLogger = spdlog::stdout_color_mt("APP");
-    clientLogger->set_level(spdlog::level::trace);
+    static bool init = false;
+    static std::shared_ptr<spdlog::logger> coreLogger;
+    if (!init)
+    {
+        init = true;
+        spdlog::set_pattern("%^[%T] %n: %v%$");
+        coreLogger = spdlog::stdout_color_mt("ZAFKIEL");
+        coreLogger->set_level(spdlog::level::trace);
+    }
+    return coreLogger;
 }
-std::shared_ptr<spdlog::logger> Log::coreLogger = nullptr;
-std::shared_ptr<spdlog::logger> Log::clientLogger = nullptr;
+
+std::shared_ptr<spdlog::logger> &Log::GetClientLogger()
+{
+    static bool init = false;
+    static std::shared_ptr<spdlog::logger> clientLogger;
+    if (!init)
+    {
+        init = true;
+        spdlog::set_pattern("%^[%T] %n: %v%$");
+        clientLogger = spdlog::stdout_color_mt("APP");
+        clientLogger->set_level(spdlog::level::trace);
+    }
+    return clientLogger;
+}
 
 }

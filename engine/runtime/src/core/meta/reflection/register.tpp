@@ -7,78 +7,21 @@ namespace Zafkiel::Reflection
 {
 
 template <typename T>
-TypeInfo<T, Numeric> &TypeInfo<T, Numeric>::Register(const std::string &name)
+Enum &EnumTypeInfo<T>::Register(const std::string &name)
 {
+    Enum &info = GetInfo();
     info.name = name;
-    info.kind = Numeric::DetectKind<T>();
-    info.isSigned = std::is_signed_v<T>;
-    if (!saved)
-    {
-        typeDict[info.name] = &info;
-        saved = true;
-    }
-    return *this;
-}
-
-// 由于基础类型其实可以不用注册，所以在GetInfo时检测如果没注册过，会调用这个函数自动注册
-
-template <typename T>
-void TypeInfo<T, Numeric>::AutoRegister()
-{
-    info.kind = Numeric::DetectKind<T>();
-    info.name = Numeric::GetNameOfKind(info.kind);
-    info.isSigned = std::is_signed_v<T>;
     typeDict[info.name] = &info;
+    return info;
 }
 
 template <typename T>
-TypeInfo<T, String> &TypeInfo<T, String>::Register(const std::string &name)
+ClassTypeInfo<T> &ClassTypeInfo<T>::Register(const std::string &name)
 {
-    if (!saved)
-    {
-        typeDict[info.name] = &info;
-        saved = true;
-    }
+    Class &info = GetInfo();
     info.name = name;
-    return *this;
-}
-
-template <typename T>
-void TypeInfo<T, String>::AutoRegister()
-{
-    info.name = "std::string";
     typeDict[info.name] = &info;
-}
-
-template <typename T>
-TypeInfo<T, Enum> &TypeInfo<T, Enum>::Register(const std::string &name)
-{
-    info.name = name;
-    if (!saved)
-    {
-        typeDict[info.name] = &info;
-        saved = true;
-    }
-    return *this;
-}
-
-template <typename T>
-TypeInfo<T, Enum> &TypeInfo<T, Enum>::Add(auto value, const std::string &name)
-{
-    info.Add(name, value);
-    return *this;
-}
-
-template <typename T>
-TypeInfo<T, Class> &TypeInfo<T, Class>::Register(const std::string &name)
-{
-    info.name = name;
-    if (!saved)
-    {
-        typeDict[info.name] = &info;
-        saved = true;
-    }
-    return *this;
+    return Singleton<ClassTypeInfo<T>>::Instance();
 }
 
 // 核心的GetType函数,后面属性的具体实现要用到
@@ -86,97 +29,19 @@ TypeInfo<T, Class> &TypeInfo<T, Class>::Register(const std::string &name)
 template <typename T>
 const Type *GetType()
 {
-    if constexpr (std::is_fundamental_v<T>) { return &TypeInfo<T, Numeric>::Instance().GetInfo(); }
-    else if constexpr (std::is_same_v<T, std::string>)
-    {
-        return &TypeInfo<T, String>::Instance().GetInfo();
-    }
-    else if constexpr (std::is_enum_v<T>) { return &TypeInfo<T, Enum>::Instance().GetInfo(); }
-    else if constexpr (is_array_v<T>) { return &TypeInfo<T, Array>::Instance().GetInfo(); }
-    else if constexpr (std::is_class_v<T>) { return &TypeInfo<T, Class>::Instance().GetInfo(); }
+    if constexpr (std::is_fundamental_v<T>) { return &FundamentalTypeInfo<T>::GetInfo(); }
+    else if constexpr (std::is_same_v<T, std::string>) { return &StringTypeInfo<T>::GetInfo(); }
+    else if constexpr (std::is_enum_v<T>) { return &EnumTypeInfo<T>::GetInfo(); }
+    else if constexpr (is_list_v<T>) { return &ListTypeInfo<T>::GetInfo(); }
+    else if constexpr (std::is_class_v<T>) { return &ClassTypeInfo<T>::GetInfo(); }
     else return nullptr;
 }
 
 template <typename T>
 auto &Register(const std::string &name)
 {
-    if constexpr (std::is_fundamental_v<T>) { return TypeInfo<T, Numeric>::Instance().Register(name); }
-    else if constexpr (std::is_same_v<T, std::string>) { return TypeInfo<T, String>::Instance().Register(name); }
-    else if constexpr (std::is_enum_v<T>) { return TypeInfo<T, Enum>::Instance().Register(name); }
-    else if constexpr (is_array_v<T>) { return TypeInfo<T, Array>::Instance().Register(name); }
-    else if constexpr (std::is_class_v<T>) { return TypeInfo<T, Class>::Instance().Register(name); }
-}
-
-template <typename ElemType>
-struct ArrayOperations
-{
-    static std::any GetElem(size_t index, const std::any &a)
-    {
-        auto &arr = std::any_cast<std::reference_wrapper<std::vector<ElemType>>>(a).get();
-        return std::ref(arr[index]);
-    }
-    static std::any GetElemConst(size_t index, const std::any &a)
-    {
-        auto &arr = std::any_cast<std::reference_wrapper<const std::vector<ElemType>>>(a).get();
-        return std::cref(arr[index]);
-    }
-    static std::any GetBack(const std::any &a)
-    {
-        auto &arr = std::any_cast<std::reference_wrapper<std::vector<ElemType>>>(a).get();
-        return std::ref(arr.back());
-    }
-    static std::any GetBackConst(const std::any &a)
-    {
-        auto &arr = std::any_cast<std::reference_wrapper<const std::vector<ElemType>>>(a).get();
-        return std::cref(arr.back());
-    }
-    static size_t GetSize(const std::any &a)
-    {
-        auto &arr = std::any_cast<std::reference_wrapper<std::vector<ElemType>>>(a).get();
-        return arr.size();
-    }
-    static size_t GetSizeConst(const std::any &a)
-    {
-        auto &arr = std::any_cast<std::reference_wrapper<const std::vector<ElemType>>>(a).get();
-        return arr.size();
-    }
-};
-
-template <typename T>
-TypeInfo<T, Array> &TypeInfo<T, Array>::Register(const std::string &name)
-{
-    using ElemT = array_traits<T>::ElemType;
-    using Operations = ArrayOperations<ElemT>;
-    info.elemType = GetType<ElemT>();
-    info.getElemFunc = Operations::GetElem;
-    info.getElemConstFunc = Operations::GetElemConst;
-    info.getBackFunc = Operations::GetBack;
-    info.getBackConstFunc = Operations::GetBackConst;
-    info.getSizeFunc = Operations::GetSize;
-    info.getSizeConstFunc = Operations::GetSizeConst;
-    info.name = name;
-    if (!saved)
-    {
-        typeDict[info.name] = &info;
-        saved = true;
-    }
-    return *this;
-}
-
-template <typename T>
-void TypeInfo<T, Array>::AutoRegister()
-{
-    info.name = std::format("std::vector<{}>", GetType<typename array_traits<T>::ElemType>()->name);
-    typeDict[info.name] = &info;
-    using ElemT = array_traits<T>::ElemType;
-    using Operations = ArrayOperations<ElemT>;
-    info.elemType = GetType<ElemT>();
-    info.getElemFunc = Operations::GetElem;
-    info.getElemConstFunc = Operations::GetElemConst;
-    info.getBackFunc = Operations::GetBack;
-    info.getBackConstFunc = Operations::GetBackConst;
-    info.getSizeFunc = Operations::GetSize;
-    info.getSizeConstFunc = Operations::GetSizeConst;
+    if constexpr (std::is_enum_v<T>) { return EnumTypeInfo<T>::Register(name); }
+    else if constexpr (std::is_class_v<T>) { return ClassTypeInfo<T>::Register(name); }
 }
 
 template <typename Ptr>
@@ -186,55 +51,75 @@ Property_Impl<Ptr>::Property_Impl(const std::string &name, const Class *owner, P
 {
 }
 
+template <typename Ptr>
+Any Property_Impl<Ptr>::Call(Any &instance) const
+{
+    using ClassType = property_traits<Ptr>::ClassType;
+    if (GetType<ClassType>() != GetOwner())
+        throw std::runtime_error("Type mismatch");
+    auto &obj = instance.As<ClassType>();
+    auto &val = obj.*accessor;
+    return val;
+}
+
+template <typename Ptr>
+Any Property_Impl<Ptr>::Call(const Any &instance) const
+{
+    using ClassType = property_traits<Ptr>::ClassType;
+    if (GetType<ClassType>() != GetOwner())
+        throw std::runtime_error("Type mismatch");
+    auto &obj = instance.As<ClassType>();
+    const auto &val = obj.*accessor;
+    return val;
+}
+
 template <typename T>
-TypeInfo<T, Property> &TypeInfo<T, Property>::Register(const std::string &name, T accessor)
+PropertyTypeInfo<T> &PropertyTypeInfo<T>::Register(const std::string &name, T accessor)
 {
     using ClassType = property_traits<T>::ClassType;
-    info = std::make_shared<Property_Impl<T>>(name, &TypeInfo<ClassType, Class>::Instance().GetInfo(), accessor);
-    return *this;
+    info = std::make_shared<Property_Impl<T>>(name, &ClassTypeInfo<ClassType>::GetInfo(), accessor);
+    return Singleton<PropertyTypeInfo<T>>::Instance();
 }
 
 // 最后实现类添加属性的方法，在内部就完成对属性子类型的注册
 
 template <typename T>
 template <typename Ptr>
-TypeInfo<T, Class> &TypeInfo<T, Class>::AddProperty(Ptr accessor, const std::string &name)
+ClassTypeInfo<T> &ClassTypeInfo<T>::AddProperty(Ptr accessor, const std::string &name)
 {
-    info.AddProperty(TypeInfo<Ptr, Property>::Instance().Register(name, accessor).GetInfo());
-    return *this;
+    Class &info = GetInfo();
+    info.AddProperty(PropertyTypeInfo<Ptr>::Register(name, accessor).GetInfo());
+    return Singleton<ClassTypeInfo<T>>::Instance();
 }
 
 // 简化用户接口
 
 template <typename T>
-std::vector<std::pair<std::any, std::shared_ptr<Property>>> GetProperties(T &obj)
+std::vector<std::pair<Any, std::shared_ptr<Property>>> GetProperties(T &obj)
 {
     const Class *type = GetType<T>()->template As<Class>();
-    std::any a = std::ref(obj); // 通过std::ref使std::any存储引用
-    std::vector<std::pair<std::any, std::shared_ptr<Property>>> ret;
+    Any instance = obj;
+    std::vector<std::pair<Any, std::shared_ptr<Property>>> ret;
     for (const auto &prop : type->GetProperties())
     {
-        std::any val_ptr = prop->Call(a);
-        ret.emplace_back(val_ptr, prop);
+        Any subInstance = prop->Call(instance);
+        ret.emplace_back(subInstance, prop);
     }
     return ret;
 }
 
 template <typename T>
-T &RemoveRef(std::any obj)
+std::vector<std::pair<Any, std::shared_ptr<Property>>> GetProperties(const T &obj)
 {
-    return std::any_cast<std::reference_wrapper<T>>(obj).get();
+    const Class *type = GetType<T>()->template As<Class>();
+    const Any instance = obj;
+    std::vector<std::pair<Any, std::shared_ptr<Property>>> ret;
+    for (const auto &prop : type->GetProperties())
+    {
+        Any subInstance = prop->Call(instance);
+        ret.emplace_back(subInstance, prop);
+    }
+    return ret;
 }
 
-template <typename T>
-const T &RemoveConstRef(std::any obj)
-{
-    return std::any_cast<std::reference_wrapper<const T>>(obj).get();
-}
-
-template <typename T> bool TypeInfo<T, Class>::saved = false;
-template <typename T> bool TypeInfo<T, String>::saved = false;
-template <typename T> bool TypeInfo<T, Numeric>::saved = false;
-template <typename T> bool TypeInfo<T, Array>::saved = false;
-template <typename T> bool TypeInfo<T, Enum>::saved = false;
 }

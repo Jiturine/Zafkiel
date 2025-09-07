@@ -4,3 +4,4 @@ build
 .clangd
 /engine/runtime/generated
 engine/runtime/src/precompile/refl_files.txt
+CLAUDE.md

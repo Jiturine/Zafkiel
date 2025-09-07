@@ -5,11 +5,17 @@
 #include "panels/scene_panel.h"
 
 #include "core/meta/serializer/serialize.h"
+#include "core/meta/serializer/deserialize.h"
+#include "function/scene/components.h"
+
+#include "core/meta/reflection/any.h"
+#include "refl_generate.h"
 
 using namespace Zafkiel;
 
 int main()
 {
+    ReflectionGenerate::RegisterReflectionInfo();
     {
         EditorWindow window("Zafkiel Editor", 1920, 1080);
 
@@ -17,11 +23,18 @@ int main()
         bool value = false;
         bool dockspace_open = true;
 
-        //-----------debug------------
-        // testStruct ins{1.0f, 2.0f, 3.5f};
-        // std::string strOut = Serialize(ins);
-        // Log::CoreInfo("{}", strOut);
-        //-----------debug------------
+        // clang-format off
+const char* str = R"(
+testStruct:
+  oneProp: 1
+  scripts:
+    - hello
+    - world
+  foobar: Bar
+)";
+        // clang-format on
+        UUIDComponent uuid;
+        Log::CoreTrace("{}", Serialize(uuid));
 
         while (!window.ShouldClose())
         {
