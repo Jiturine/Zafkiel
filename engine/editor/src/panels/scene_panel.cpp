@@ -1,11 +1,12 @@
 #include "scene_panel.h"
 #include "editorGUI/editorGUI.h"
+#include "function/scene/components.h"
 
 namespace Zafkiel
 {
 
-ScenePanel::ScenePanel(Ref<GraphicsContext> context)
-    : context(context)
+ScenePanel::ScenePanel(Ref<GraphicsContext> context, AssetHandle handle, Ref<EditorAssetManager> editorAssetManager)
+    : context(context), editorAssetManager(editorAssetManager)
 {
     editorCamera = std::make_unique<EditorCamera>();
     editorCamera->SetPerspective(45, 0.001f, 1000.0f);
@@ -19,7 +20,7 @@ ScenePanel::ScenePanel(Ref<GraphicsContext> context)
     spec.height = 720;
     sceneFrameBuffer = context->CreateFrameBuffer(spec);
 
-    texture = context->CreateTexture2D("assets/textures/furina.png");
+    texture = editorAssetManager->GetAsset(handle).As<Texture2D>();
 
     renderer = MakeRef<Renderer2D>(context);
 }
@@ -34,7 +35,7 @@ void ScenePanel::Render()
     EditorGUI().Image(textureID, size, vec2(0.0f, 1.0f), vec2(1.0f, 0.0f));
 }
 
-void ScenePanel::RenderScene()
+void ScenePanel::RenderScene(Ref<Scene> scene)
 {
     sceneFrameBuffer->Bind();
 
@@ -42,12 +43,17 @@ void ScenePanel::RenderScene()
 
     renderer->BeginScene(editorCamera->GetProjectionMatrix() * editorCamera->GetViewMatrix());
 
-    Renderer2D::QuadProps props;
-    props.color = vec4(1.0f, 1.0f, 0.0f, 1.0f);
-    props.size = vec2(1.0f, 1.0f);
-    props.position = vec3(0.0f, 0.0f, 0.0f);
-    props.texture = texture;
-    renderer->DrawQuad(props);
+    for (auto entity : scene->GetWorld().Query<TransformComponent, SpriteRendererComponent>())
+    {
+        auto &transform = entity.GetComponent<TransformComponent>();
+        auto &spriteRenderer = entity.GetComponent<SpriteRendererComponent>();
+        Renderer2D::QuadProps props;
+        props.position = transform.position;
+        props.size = transform.scale;
+        props.color = spriteRenderer.color;
+        props.texture = editorAssetManager->GetAsset(spriteRenderer.texture).As<Texture2D>();
+        renderer->DrawQuad(props);
+    }
 
     renderer->EndScene();
 

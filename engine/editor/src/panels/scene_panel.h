@@ -7,15 +7,18 @@
 #include "function/render/backends/opengl/opengl_shader.h"
 #include "editor_camera.h"
 
+// debug
+#include "resource/editor_asset_manager.h"
+
 namespace Zafkiel
 {
 class ScenePanel : public Panel
 {
   public:
-    ScenePanel(Ref<GraphicsContext> context);
+    ScenePanel(Ref<GraphicsContext> context, AssetHandle handle, Ref<EditorAssetManager> editorAssetManager);
     void SetCurrentScene(Ref<Scene> currentScene) { scene = currentScene; }
     void Render() override;
-    void RenderScene();
+    void RenderScene(Ref<Scene> scene);
     void Update(float timestep);
     Ref<FrameBuffer> sceneFrameBuffer;
     Ref<GraphicsContext> context;
@@ -25,5 +28,7 @@ class ScenePanel : public Panel
     Ref<Shader> shader;
     Ref<Texture2D> texture;
     Ref<Scene> scene;
+
+    Ref<EditorAssetManager> editorAssetManager;
 };
 }

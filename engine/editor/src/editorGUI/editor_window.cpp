@@ -2,6 +2,8 @@
 
 #include "backends/imgui_impl_opengl3.h"
 #include "backends/imgui_impl_sdl3.h"
+#include "core/meta/serializer/deserialize.h"
+#include "core/meta/serializer/serialize.h"
 #include "panels/hierarchy_panel.h"
 #include "panels/scene_panel.h"
 #include "panels/properties_panel.h"
@@ -37,18 +39,30 @@ EditorWindow::EditorWindow(const std::string &title, size_t width, size_t height
     io.Fonts->AddFontFromFileTTF("assets/fonts/HarmonyOS_Sans_SC/HarmonyOS_Sans_SC_Regular.ttf");
 
     ImGui_ImplSDL3_InitForOpenGL(handle, graphicsContext->GetHandle());
-    ImGui_ImplOpenGL3_Init("#version 130");
+    ImGui_ImplOpenGL3_Init("#version 450");
 
-    assetManager = MakeRef<EditorAssetManager>(graphicsContext);
+    const std::string &configText = FileSystem::ReadText("config.yaml");
+    ProjectConfig config = Deserialize<ProjectConfig>(configText);
+    project = MakeRef<Project>(config, graphicsContext);
 
     currentScene = MakeRef<Scene>();
+    AssetHandle handle = project->GetAssetManager()->ImportAsset("textures/furina.png");
 
     World &world = currentScene->GetWorld();
-    world.SpawnEntity(TagComponent{"Object1", "Object"}, TransformComponent{vec3(1.0f), vec3(1.0f)});
-    world.SpawnEntity(TagComponent{"Object2", "Object"}, TransformComponent{vec3(1.0f), vec3(1.0f)});
-    world.SpawnEntity(TagComponent{"Object3", "Object"}, TransformComponent{vec3(1.0f), vec3(1.0f)});
+    world.SpawnEntity(
+        TagComponent{"Object1", "Object"},
+        TransformComponent{vec3(1.0f), vec3(0.0f), vec3(1.0f)},
+        SpriteRendererComponent{vec4(1.0f), handle});
+    world.SpawnEntity(
+        TagComponent{"Object2", "Object"},
+        TransformComponent{vec3(3.0f, 1.0f, 1.0f), vec3(0.0f), vec3(1.0f)},
+        SpriteRendererComponent{vec4(1.0f, 0.8f, 0.7f, 1.0f), handle});
+    world.SpawnEntity(
+        TagComponent{"Object3", "Object"},
+        TransformComponent{vec3(5.0f, 1.0f, 1.0f), vec3(0.0f), vec3(1.0f)},
+        SpriteRendererComponent{vec4(0.7f, 0.9f, 0.8f, 1.0f), handle});
 
-    auto scenePanel = MakeRef<ScenePanel>(graphicsContext);
+    auto scenePanel = MakeRef<ScenePanel>(graphicsContext, handle, project->GetAssetManager());
     scenePanel->SetCurrentScene(currentScene);
     panels.push_back(scenePanel);
 

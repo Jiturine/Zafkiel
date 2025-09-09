@@ -24,6 +24,8 @@ class PropertiesPanel : public Panel
 
     void DrawTagComponent(TagComponent &tagComponent);
 
+    void DrawTransformComponent(TransformComponent &transformComponent);
+
     template <typename T>
     void DrawCommonComponent(T &component)
     {

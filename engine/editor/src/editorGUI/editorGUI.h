@@ -45,31 +45,40 @@ class EditorGUI
         char buffer[256];
         memset(buffer, 0, sizeof(buffer));
         strcpy(buffer, text.c_str());
-        if (ImGui::InputText(label.c_str(), buffer, sizeof(buffer)))
+        if (ImGui::InputText(std::format("{}##{}", label, reinterpret_cast<uintptr_t>(&buffer)).c_str(), buffer, sizeof(buffer)))
         {
             text = std::string(buffer);
         }
         sameLine = true;
         return *this;
     }
-    EditorGUI DragVec2(const std::string &label, vec2 &data, float speed = 0.5f)
+    EditorGUI DragVec2(const std::string &label, vec2 &data, std::function<void(void)> onValueChanged = nullptr, float speed = 0.5f)
     {
         if (sameLine) ImGui::SameLine();
-        ImGui::DragFloat2(label.c_str(), (float *)&data, speed);
+        if (ImGui::DragFloat2(std::format("{}##{}", label, reinterpret_cast<uintptr_t>(&data)).c_str(), (float *)&data, speed))
+        {
+            if (onValueChanged) onValueChanged();
+        }
         sameLine = true;
         return *this;
     }
-    EditorGUI DragVec3(const std::string &label, vec3 &data, float speed = 0.5f)
+    EditorGUI DragVec3(const std::string &label, vec3 &data, std::function<void(void)> onValueChanged = nullptr, float speed = 0.5f)
     {
         if (sameLine) ImGui::SameLine();
-        ImGui::DragFloat3(label.c_str(), (float *)&data, speed);
+        if (ImGui::DragFloat3(std::format("{}##{}", label, reinterpret_cast<uintptr_t>(&data)).c_str(), (float *)&data, speed))
+        {
+            if (onValueChanged) onValueChanged();
+        }
         sameLine = true;
         return *this;
     }
-    EditorGUI DragVec4(const std::string &label, vec4 &data, float speed = 0.5f)
+    EditorGUI DragVec4(const std::string &label, vec4 &data, std::function<void(void)> onValueChanged = nullptr, float speed = 0.5f)
     {
         if (sameLine) ImGui::SameLine();
-        ImGui::DragFloat4(label.c_str(), (float *)&data, speed);
+        if (ImGui::DragFloat4(std::format("{}##{}", label, reinterpret_cast<uintptr_t>(&data)).c_str(), (float *)&data, speed))
+        {
+            if (onValueChanged) onValueChanged();
+        }
         sameLine = true;
         return *this;
     }

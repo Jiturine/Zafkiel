@@ -18,6 +18,18 @@ void PropertiesPanel::DrawTagComponent(TagComponent &tagComponent)
     EditorGUI().InputText("Name", tagComponent.name);
 }
 
+void PropertiesPanel::DrawTransformComponent(TransformComponent &transformComponent)
+{
+    EditorGUI().DragVec3("Position", transformComponent.position);
+
+    vec3 eulerAngles = Maths::EulerDegrees(transformComponent.rotation);
+    EditorGUI().DragVec3("Rotation", eulerAngles, [&]() {
+        transformComponent.rotation = Maths::EulerDrgreesToQuaternion(eulerAngles);
+    });
+
+    EditorGUI().DragVec3("Scale", transformComponent.scale);
+}
+
 void PropertiesPanel::DrawComponents(Entity entity)
 {
     if (entity.HasComponent<TagComponent>())
@@ -26,7 +38,7 @@ void PropertiesPanel::DrawComponents(Entity entity)
     }
     if (entity.HasComponent<TransformComponent>())
     {
-        DrawCommonComponent<TransformComponent>(entity.GetComponent<TransformComponent>());
+        DrawTransformComponent(entity.GetComponent<TransformComponent>());
     }
     if (entity.HasComponent<UUIDComponent>())
     {

@@ -18,6 +18,25 @@ mat4 LookAt(vec3 eye, vec3 center, vec3 up)
 {
     return glm::lookAt(eye, center, up);
 }
+vec3 EulerRadians(const quat &quaternion)
+{
+    return glm::eulerAngles(quaternion);
+}
+
+vec3 EulerDegrees(const quat &quaternion)
+{
+    return glm::degrees(glm::eulerAngles(quaternion));
+}
+
+quat EulerDrgreesToQuaternion(const vec3 &eulerAngles)
+{
+    return glm::quat(glm::vec3(glm::radians(eulerAngles.x), glm::radians(eulerAngles.y), glm::radians(eulerAngles.z)));
+}
+
+quat EulerRadiansToQuaternion(const vec3 &eulerAngles)
+{
+    return glm::quat(eulerAngles);
+}
 
 }
 }

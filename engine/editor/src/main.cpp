@@ -16,14 +16,18 @@ using namespace Zafkiel;
 int main()
 {
     ReflectionGenerate::RegisterReflectionInfo();
-    {
-        EditorWindow window("Zafkiel Editor", 1920, 1080);
+    Reflection::Register<ProjectConfig>("ProjectConfig")
+        .AddProperty(&ProjectConfig::name, "name")
+        .AddProperty(&ProjectConfig::startScene, "startScene")
+        .AddProperty(&ProjectConfig::assetDirectory, "assetDirectory");
 
-        float time = Time::Now();
-        bool value = false;
-        bool dockspace_open = true;
+    EditorWindow window("Zafkiel Editor", 1920, 1080);
 
-        // clang-format off
+    float time = Time::Now();
+    bool value = false;
+    bool dockspace_open = true;
+
+    // clang-format off
 const char* str = R"(
 testStruct:
   oneProp: 1
@@ -32,35 +36,34 @@ testStruct:
     - world
   foobar: Bar
 )";
-        // clang-format on
-        UUIDComponent uuid;
-        Log::CoreTrace("{}", Serialize(uuid));
+    // clang-format on
+    UUIDComponent uuid;
+    Log::CoreTrace("{}", Serialize(uuid));
 
-        while (!window.ShouldClose())
+    while (!window.ShouldClose())
+    {
+        float timestep = Time::Now() - time;
+        time = Time::Now();
+
+        if (auto scenePanel = window.GetActivePanel<ScenePanel>())
         {
-            float timestep = Time::Now() - time;
-            time = Time::Now();
+            scenePanel->RenderScene(window.currentScene);
+            scenePanel->Update(timestep);
+        }
 
-            if (auto scenePanel = window.GetActivePanel<ScenePanel>())
+        EditorGUI::StartFrame();
+        {
+            GUIDockSpace dockspace("Hello DockSpace!", dockspace_open);
             {
-                scenePanel->RenderScene();
-                scenePanel->Update(timestep);
-            }
-
-            EditorGUI::StartFrame();
-            {
-                GUIDockSpace dockspace("Hello DockSpace!", dockspace_open);
+                for (auto panel : window.panels)
                 {
-                    for (auto panel : window.panels)
-                    {
-                        panel->Render();
-                    }
+                    panel->Render();
                 }
             }
-            EditorGUI::EndFrame();
-
-            window.OnUpdate(timestep);
         }
+        EditorGUI::EndFrame();
+
+        window.OnUpdate(timestep);
     }
     return 0;
 }

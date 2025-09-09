@@ -6,6 +6,8 @@ namespace Zafkiel
 OpenGLTexture2D::OpenGLTexture2D(const TextureSpecification &spec, const Buffer &buffer)
     : width(spec.width), height(spec.height)
 {
+    internalFormat = 0;
+    dataFormat = 0;
     switch (spec.format)
     {
         using enum ImageFormat;
@@ -21,6 +23,20 @@ OpenGLTexture2D::OpenGLTexture2D(const TextureSpecification &spec, const Buffer 
         Log::CoreError("Unknown data format!");
         break;
     }
+
+    if (!internalFormat || !dataFormat)
+    {
+        Log::CoreError("Invalid texture format!");
+        return;
+    }
+
+    if (width == 0 || height == 0)
+    {
+        Log::CoreError("Invalid texture dimensions: {}x{}", width, height);
+        return;
+    }
+
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
     glCreateTextures(GL_TEXTURE_2D, 1, &rendererID);
     glTextureStorage2D(rendererID, 1, internalFormat, width, height);
@@ -62,6 +78,15 @@ OpenGLTexture2D::OpenGLTexture2D(const Path &path)
     if (!internalFormat || !dataFormat)
     {
         Log::CoreError("Format not supported!");
+        stbi_image_free(data);
+        return;
+    }
+
+    if (width == 0 || height == 0)
+    {
+        Log::CoreError("Invalid image dimensions: {}x{}", width, height);
+        stbi_image_free(data);
+        return;
     }
 
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -88,11 +113,26 @@ void OpenGLTexture2D::Bind(uint32_t slot) const
 }
 void OpenGLTexture2D::SetData(const Buffer &buffer)
 {
+    if (!internalFormat || !dataFormat)
+    {
+        Log::CoreError("Texture format not initialized!");
+        return;
+    }
+
+    if (width == 0 || height == 0)
+    {
+        Log::CoreError("Texture dimensions not initialized!");
+        return;
+    }
+
     int bytesPerPixel = dataFormat == GL_RGBA ? 4 : 3;
     if (buffer.size() != width * height * bytesPerPixel)
     {
-        Log::CoreError("Data must be entire texture!");
+        Log::CoreError("Data must be entire texture! Expected: {}, Got: {}", width * height * bytesPerPixel, buffer.size());
+        return;
     }
+
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     glTextureSubImage2D(rendererID, 0, 0, 0, width, height, dataFormat, GL_UNSIGNED_BYTE, buffer.data());
 }
 }

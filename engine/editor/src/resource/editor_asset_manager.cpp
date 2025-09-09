@@ -1,12 +1,10 @@
 #include "editor_asset_manager.h"
-#include "asset_importer.h"
+#include "stb_image.h"
 
 namespace Zafkiel
 {
 EditorAssetManager::EditorAssetManager(Ref<GraphicsContext> context)
-{
-    assetImporter = MakeRef<AssetImporter>(context);
-}
+    : context(context) {}
 
 bool EditorAssetManager::IsAssetValid(AssetHandle handle) const
 {
@@ -17,7 +15,7 @@ bool EditorAssetManager::IsAssetLoaded(AssetHandle handle) const
     return loadedAssets.contains(handle);
 }
 
-Ref<Asset> EditorAssetManager::GetAsset(AssetHandle handle) const
+Ref<Asset> EditorAssetManager::GetAsset(AssetHandle handle)
 {
     if (!IsAssetValid(handle)) return nullptr;
 
@@ -29,13 +27,82 @@ Ref<Asset> EditorAssetManager::GetAsset(AssetHandle handle) const
     else
     {
         const AssetMetadata &metadata = assetRegistry.at(handle);
-        asset = assetImporter->ImportAsset(metadata);
+        asset = LoadAsset(metadata);
         if (!asset)
         {
-            Log::CoreError("Asst import failed!");
+            Log::CoreError("Asset import failed!");
         }
+        loadedAssets[handle] = asset;
     }
     return asset;
+}
+
+void EditorAssetManager::SetAssetPath(const Path &path)
+{
+    assetDirectoryPath = path;
+}
+
+AssetHandle EditorAssetManager::ImportAsset(const Path &assetPath)
+{
+    AssetHandle handle;
+    if (assetPath.extension().string() == ".png")
+    {
+        assetRegistry[handle] = AssetMetadata{AssetType::Texture2D, assetDirectoryPath / assetPath};
+    }
+    else
+    {
+        Log::CoreError("Unknown asset type!");
+    }
+    return handle;
+}
+
+Ref<Asset> EditorAssetManager::LoadAsset(const AssetMetadata &metadata) const
+{
+    switch (metadata.type)
+    {
+        using enum AssetType;
+    case Texture2D:
+        return LoadTexture2D(metadata.filePath);
+
+    default:
+        Log::CoreError("Unknown data type!");
+        break;
+    }
+    return nullptr;
+}
+
+Ref<Asset> EditorAssetManager::LoadTexture2D(const Path &path) const
+{
+    int width, height, channels;
+    stbi_set_flip_vertically_on_load(1);
+    auto data = stbi_load(path.string().c_str(), &width, &height, &channels, 0);
+    if (!data)
+    {
+        Log::CoreError("Failed to load image! Path: {}", path.string());
+    }
+    TextureSpecification spec;
+    spec.width = width;
+    spec.height = height;
+
+    if (channels == 4)
+    {
+        spec.format = ImageFormat::RGBA8;
+    }
+    else if (channels == 3)
+    {
+        spec.format = ImageFormat::RGB8;
+    }
+    else
+    {
+        Log::CoreError("Format not supported!");
+    }
+
+    size_t size = width * height * channels;
+    Ref<Asset> texture = context->CreateTexture2D(spec, Buffer(data, size));
+
+    stbi_image_free(data);
+
+    return texture;
 }
 
 }

@@ -14,6 +14,7 @@ class Cursor
     std::vector<Cursor> GetChildren() const;
     CXSourceLocation GetLocation() const;
     std::string GetAnnotateAttr() const;
+    CX_CXXAccessSpecifier GetAccessSpecifier() const;
 
   private:
     CXCursor handle;

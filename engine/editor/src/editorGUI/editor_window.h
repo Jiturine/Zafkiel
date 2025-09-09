@@ -3,6 +3,7 @@
 #include "function/scene/scene.h"
 #include "function/window/window.h"
 #include "panels/panel.h"
+#include "project/project.h"
 #include "resource/editor_asset_manager.h"
 
 namespace Zafkiel
@@ -28,7 +29,7 @@ class EditorWindow : public Window
     }
 
     std::vector<Ref<Panel>> panels;
-    Ref<EditorAssetManager> assetManager;
+    Ref<Project> project;
     Ref<Scene> currentScene;
 };
 }

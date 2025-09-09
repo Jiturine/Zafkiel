@@ -69,3 +69,8 @@ std::vector<Cursor> Cursor::GetChildren() const
 
     return children;
 }
+
+CX_CXXAccessSpecifier Cursor::GetAccessSpecifier() const
+{
+    return clang_getCXXAccessSpecifier(handle);
+}

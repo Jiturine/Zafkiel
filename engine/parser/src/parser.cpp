@@ -119,6 +119,11 @@ void Parser::RecurseVisit(const Cursor &cursor, Node *parent)
     {
         if (parent->type == Node::Type::Class)
         {
+            auto access_specifier = cursor.GetAccessSpecifier();
+            if (access_specifier == CX_CXXPrivate)
+            {
+                return;
+            }
             auto attr = ParseAttributes(cursor);
             attr = TransformAttributesByParent(attr, parent->attr);
             if (attr.need_reflect)

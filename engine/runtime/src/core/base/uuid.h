@@ -5,10 +5,15 @@
 
 namespace Zafkiel
 {
+
+class UUIDSerializer;
+
 class [[refl]] UUID
 {
   private:
-    uint64_t [[norefl]] uuid;
+    uint64_t uuid;
+    friend class UUIDSerializer;
+
   public:
     UUID();
     UUID(uint64_t uuid);
@@ -18,6 +23,11 @@ class [[refl]] UUID
     {
         return uuid;
     }
+};
+
+class UUIDSerializer
+{
+  public:
     static void Serialize(const Any &instance, const Type *typeInfo, YAML::Emitter &out)
     {
         auto uuidInstance = instance.As<UUID>();
@@ -29,8 +39,7 @@ class [[refl]] UUID
         uuidInstance = UUID(data.as<uint64_t>());
     }
 };
-
-static CustomSerialize<UUID> customSerializeUUID({UUID::Serialize, UUID::Deserialize});
+static CustomSerialize<UUID> customSerializeUUID({UUIDSerializer::Serialize, UUIDSerializer::Deserialize});
 
 }
 

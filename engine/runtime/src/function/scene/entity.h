@@ -14,13 +14,7 @@ class Entity
     Entity(EntityID handle, entt::registry &registry)
         : registry(&registry), handle(handle) {}
 
-    Entity &operator=(const Entity &other)
-    {
-        registry = other.registry;
-        handle = other.handle;
-        return *this;
-    }
-
+    Entity &operator=(const Entity &other) = default;
     Entity(const Entity &other) = default;
 
     Entity(Entity &&other) noexcept
@@ -80,6 +74,11 @@ class Entity
     {
         registry->destroy(handle);
     }
+
+    bool HasParent() const;
+
+    Entity GetParent() const;
+
     EntityID GetHandle() const { return handle; }
 
   private:

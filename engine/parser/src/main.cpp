@@ -59,29 +59,27 @@ int main(int argc, char **argv)
         Parser parser(extraArgs);
         try
         {
+            Node *root = parser.ParseFile(file);
+            if (root->children.empty())
             {
-                Node *root = parser.ParseFile(file);
-                if (root->children.empty())
-                {
-                    delete root;
-                    continue;
-                }
-                std::cout << "Parsing file: " << file << std::endl;
-                fs::path relative_path = fs::relative(file, base_dir);
-                std::string filename = relative_path.string();
-                Utils::Replace(filename, "../", "");
-                auto func_name = Utils::SubStrBefore(filename, '.');
-                Utils::Replace(func_name, '\\', '/');
-                Utils::Replace(func_name, "./", "");
-                Utils::Replace(func_name, '/', '_');
-                const auto &code = GenerateCode(filename, func_name, root);
-                const auto &final_filename = func_name + ".h";
-                std::cout << final_filename << std::endl;
-                format.refl_header_files.push_back(final_filename);
-                format.func_calls.push_back(std::format("Register_{}_ReflInfo", func_name));
-                save_file(output_dir, final_filename, code);
                 delete root;
+                continue;
             }
+            std::cout << "Parsing file: " << file << std::endl;
+            fs::path relative_path = fs::relative(file, base_dir);
+            std::string filename = relative_path.string();
+            Utils::Replace(filename, "../", "");
+            auto func_name = Utils::SubStrBefore(filename, '.');
+            Utils::Replace(func_name, '\\', '/');
+            Utils::Replace(func_name, "./", "");
+            Utils::Replace(func_name, '/', '_');
+            const auto &code = GenerateCode(filename, func_name, root);
+            const auto &final_filename = func_name + ".h";
+            std::cout << final_filename << std::endl;
+            format.refl_header_files.push_back(final_filename);
+            format.func_calls.push_back(std::format("Register_{}_ReflInfo", func_name));
+            save_file(output_dir, final_filename, code);
+            delete root;
         }
         catch (const std::exception &e)
         {
