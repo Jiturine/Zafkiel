@@ -1,52 +1,63 @@
-add_subdirectory(parser)
-
-add_subdirectory(runtime)
-
-add_subdirectory(script_core)
-
-add_subdirectory(editor)
+# 查找所有源文件
+file(GLOB_RECURSE HEADER_FILES src/*.h src/*.hpp src/*.tpp)
+file(GLOB_RECURSE SOURCE_FILES src/*.cpp src/*.c )
 
 # 查找需要解析反射的文件
 file(GLOB_RECURSE reflection_files 
-${CMAKE_CURRENT_SOURCE_DIR}/runtime/src/*.h
-${CMAKE_CURRENT_SOURCE_DIR}/runtime/src/*.hpp
+${CMAKE_CURRENT_SOURCE_DIR}/src/*.h
+${CMAKE_CURRENT_SOURCE_DIR}/src/*.hpp
 )
 
 # 将reflection_files的内容写入txt，方便parser读取
 configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/runtime/precompile/refl_files.txt.in 
-    ${CMAKE_CURRENT_SOURCE_DIR}/runtime/precompile/refl_files.txt)
-    
-# 调用Parser解析反射文件
-add_custom_command(
-    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/reflection_generated.done  # 标记文件
-    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/bin/Parser
-    COMMAND $<TARGET_FILE:Parser>
-        ${CMAKE_CURRENT_SOURCE_DIR}/runtime/precompile/refl_files.txt # 第一个参数：记录了所有需要解析的文件路径的txt文件路径
-        ${CMAKE_CURRENT_SOURCE_DIR}/runtime/generated    # 第二个参数：输出目录
-        ${CMAKE_CURRENT_SOURCE_DIR}/runtime/src/core/meta/reflection/refl.h # 第三个参数：反射宏文件所在路径
-    COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_BINARY_DIR}/reflection_generated.done  # 生成标记文件
-    DEPENDS Parser ${reflection_files}  # 依赖 Parser 可执行文件和输入文件
-    COMMENT "Generating reflection code..."
+    ${CMAKE_CURRENT_SOURCE_DIR}/precompile/refl_files.txt.in 
+    ${CMAKE_CURRENT_SOURCE_DIR}/precompile/refl_files.txt
 )
 
-add_custom_target( refl_parse
-    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/bin/Parser
-    COMMAND $<TARGET_FILE:Parser>
-        ${CMAKE_CURRENT_SOURCE_DIR}/runtime/precompile/refl_files.txt 
-        ${CMAKE_CURRENT_SOURCE_DIR}/runtime/generated    
-        ${CMAKE_CURRENT_SOURCE_DIR}/runtime/src/core/meta/reflection/refl.h 
-    COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_BINARY_DIR}/reflection_generated.done  
-    DEPENDS Parser ${reflection_files}  
-    COMMENT "Generating reflection code..."
+include(${CMAKE_SOURCE_DIR}/parser/parse.cmake)
+parse_module(
+    Engine 
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/core/meta/reflection/refl.h
 )
-    
+
+# generated文件为parser自动生成
+set_source_files_properties(
+    ${CMAKE_CURRENT_SOURCE_DIR}/generated/engine_refl_generate.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/generated/engine_refl_generate.cpp
+    PROPERTIES GENERATED TRUE
+)
+
+add_library(engine STATIC 
+    ${HEADER_FILES}
+    ${SOURCE_FILES} 
+    ${CMAKE_CURRENT_SOURCE_DIR}/generated/engine_refl_generate.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/generated/engine_refl_generate.cpp
+)
+
+set_target_properties(engine PROPERTIES 
+    ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/engine
+)
+
+# 添加预编译头文件
+target_precompile_headers(engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/precompile/pch.h )
+
+target_include_directories(engine PUBLIC 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src 
+    ${CMAKE_CURRENT_SOURCE_DIR}/generated)
+
+# 链接第三方库
+target_link_libraries(engine PUBLIC spdlog mono EnTT SDL3::SDL3 glad glm yaml-cpp stb_image)
+if(WIN32)
+    target_link_libraries(engine PUBLIC opengl32)
+elseif(UNIX)
+    target_link_libraries(engine PUBLIC GL)
+endif()
+
 add_custom_target(
-    refl_code_generate
-    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/reflection_generated.done  # 依赖标记文件
+    engine_refl_dependency
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/generated/engine_refl_generate.cpp
 )
 
-# 让 Zafkiel 依赖 refl_code_generate
-add_dependencies(Zafkiel refl_code_generate)
-
-add_dependencies(Zafkiel ScriptCore)
+# 让engine目标依赖反射代码生成
+add_dependencies(engine engine_refl_dependency)

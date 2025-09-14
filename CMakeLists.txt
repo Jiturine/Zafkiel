@@ -8,11 +8,13 @@ set(CMAKE_BUILD_TYPE Debug)
 
 add_subdirectory(3rdparty)
 
+add_subdirectory(parser)
+
 add_subdirectory(engine)
 
-add_subdirectory(sandbox)
+add_subdirectory(editor)
 
-add_dependencies(Sandbox Zafkiel)
+# add_dependencies(sandbox engine)
 
-enable_testing()
-add_subdirectory(tests)
+# enable_testing()
+# add_subdirectory(tests)

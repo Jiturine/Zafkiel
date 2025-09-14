@@ -1,0 +1,12 @@
+{{#refl_header_files}}
+#include "{{refl_header_file}}"
+{{/refl_header_files}}
+
+namespace Zafkiel::Reflection 
+{
+void Register{{module_name}}() {
+    {{#func_calls}}
+    {{func_call}}();
+    {{/func_calls}}
+}
+}
