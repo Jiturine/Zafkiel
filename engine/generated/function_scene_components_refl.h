@@ -24,6 +24,7 @@ inline void Register_function_scene_components()
     .AddProperty(&::Zafkiel::SpriteRendererComponent::texture, "texture")
     ;
     ::Zafkiel::Reflection::Register<::Zafkiel::ScriptComponent>("ScriptComponent")
+    .AddProperty(&::Zafkiel::ScriptComponent::entityUUID, "entityUUID")
     .AddProperty(&::Zafkiel::ScriptComponent::scripts, "scripts")
     ;
 }

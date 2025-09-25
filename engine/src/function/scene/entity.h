@@ -53,7 +53,7 @@ class Entity
     template <typename T>
     T &AddComponent(T &&component)
     {
-        return registry->emplace<T>(handle, std::forward<T>(component));
+        return registry->emplace<std::decay_t<T>>(handle, std::forward<T>(component));
     }
 
     template <typename T>
@@ -90,6 +90,8 @@ class Entity
     UUID GetUUID() const;
 
     EntityID GetHandle() const { return handle; }
+
+    const entt::registry *GetRegistry() const { return registry; }
 
   private:
     entt::registry *registry;

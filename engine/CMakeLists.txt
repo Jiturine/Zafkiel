@@ -47,7 +47,7 @@ target_include_directories(engine PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/generated)
 
 # 链接第三方库
-target_link_libraries(engine PUBLIC spdlog mono EnTT SDL3::SDL3 glad glm yaml-cpp stb_image)
+target_link_libraries(engine PUBLIC spdlog mono z EnTT SDL3::SDL3 glad glm yaml-cpp stb_image)
 if(WIN32)
     target_link_libraries(engine PUBLIC opengl32)
 elseif(UNIX)
@@ -61,3 +61,7 @@ add_custom_target(
 
 # 让engine目标依赖反射代码生成
 add_dependencies(engine engine_refl_dependency)
+
+add_subdirectory(script_core)
+
+add_dependencies(engine script_core)

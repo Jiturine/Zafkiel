@@ -47,5 +47,15 @@ void EditorCamera::Update(float timestep)
         position -= moveSpeed * timestep * lookAt;
         RecalculateView();
     }
+    if (Input::IsKeyPressed(Scancode::R))
+    {
+        lookAt = Maths::Rotate(vec4(lookAt, 1.0f), 10.0f * timestep, up);
+        RecalculateView();
+    }
+    if (Input::IsKeyPressed(Scancode::F))
+    {
+        lookAt = Maths::Rotate(vec4(lookAt, 1.0f), -10.0f * timestep, up);
+        RecalculateView();
+    }
 }
 }

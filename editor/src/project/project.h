@@ -10,6 +10,7 @@ struct [[refl]] ProjectConfig
     std::string name;
     Path startScene;
     Path assetDirectory;
+    Path libraryDirectory;
 };
 
 class Project : public RefCounted
@@ -23,9 +24,10 @@ class Project : public RefCounted
 
     Ref<EditorAssetManager> GetAssetManager() const { return assetManager; }
 
-    ProjectConfig &GetConfig() { return config; }
-
-    friend class ProjectSerializer;
+    std::string GetName() const { return config.name; }
+    Path GetAssetDirectory() const { return config.assetDirectory; }
+    Path GetLibraryDirectory() const { return config.libraryDirectory; }
+    Path GetStartSceneDirectory() const { return config.startScene; }
 
   private:
     ProjectConfig config;

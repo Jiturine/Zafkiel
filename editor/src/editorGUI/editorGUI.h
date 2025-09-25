@@ -1,7 +1,8 @@
 #pragma once
+#include <imgui.h>
+#include "ImGuizmo.h"
 #include "backends/imgui_impl_opengl3.h"
 #include "backends/imgui_impl_sdl3.h"
-#include <imgui.h>
 #include "function/window/window.h"
 
 namespace Zafkiel
@@ -57,6 +58,26 @@ class EditorGUI
         sameLine = true;
         return *this;
     }
+    EditorGUI DragInt(const std::string &label, int &data, std::function<void(void)> onValueChanged = nullptr, float speed = 0.5f)
+    {
+        if (sameLine) ImGui::SameLine();
+        if (ImGui::DragInt(std::format("{}##{}", label, reinterpret_cast<uintptr_t>(&data)).c_str(), &data, speed))
+        {
+            if (onValueChanged) onValueChanged();
+        }
+        sameLine = true;
+        return *this;
+    }
+    EditorGUI DragFloat(const std::string &label, float &data, std::function<void(void)> onValueChanged = nullptr, float speed = 0.5f)
+    {
+        if (sameLine) ImGui::SameLine();
+        if (ImGui::DragFloat(std::format("{}##{}", label, reinterpret_cast<uintptr_t>(&data)).c_str(), &data, speed))
+        {
+            if (onValueChanged) onValueChanged();
+        }
+        sameLine = true;
+        return *this;
+    }
     EditorGUI DragVec2(const std::string &label, vec2 &data, std::function<void(void)> onValueChanged = nullptr, float speed = 0.5f)
     {
         if (sameLine) ImGui::SameLine();
@@ -101,6 +122,7 @@ class EditorGUI
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplSDL3_NewFrame();
         ImGui::NewFrame();
+        ImGuizmo::BeginFrame();
     }
     static void EndFrame()
     {
@@ -128,15 +150,22 @@ class GUIWindow
     GUIWindow(const std::string &name) : name(name)
     {
         ImGui::Begin(name.c_str());
+        hovered = ImGui::IsWindowHovered();
     }
     ~GUIWindow()
     {
         ImGui::End();
     }
-    vec2 GetPosition()
+    vec2 GetWindowPosition()
     {
         ImVec2 pos = ImGui::GetWindowPos();
         return vec2(pos.x, pos.y);
+    }
+    vec2 GetContentPosition()
+    {
+        ImVec2 region = ImGui::GetWindowContentRegionMin();
+        ImVec2 windowPos = ImGui::GetWindowPos();
+        return vec2(windowPos.x + region.x, windowPos.y + region.y);
     }
     vec2 GetWindowSize()
     {
@@ -163,6 +192,7 @@ class GUIWindow
             onClickEmpty();
         }
     }
+    bool hovered;
   private:
     std::string name;
 };

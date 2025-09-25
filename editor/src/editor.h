@@ -3,6 +3,7 @@
 #include "platform/filesystem/filesystem.h"
 #include "project/project.h"
 #include "core/meta/reflection/refl.h"
+#include "function/engine.h"
 
 namespace Zafkiel
 {
@@ -14,6 +15,12 @@ struct [[refl]] EditorConfig
 
 class EditorWindow;
 
+class EditorScriptEngine;
+
+class Scene;
+
+class Entity;
+
 class Editor
 {
   public:
@@ -23,7 +30,33 @@ class Editor
 
     static Ref<Project> GetProject() { return project; }
 
+    static Ref<EditorScriptEngine> CreateScriptEngine();
+
+    static Ref<EditorScriptEngine> GetScriptEngine();
+
+    static void SetEditorScene(const Ref<Scene> &scene);
+
+    static Ref<Scene> GetEditorScene();
+
+    static void SetRuntimeScene(const Ref<Scene> &scene);
+
+    static Ref<Scene> GetRuntimeScene();
+
+    static Entity GetSelectedEntity();
+
+    static void SetSelectedEntity(Entity entity);
+
   private:
-    inline static Ref<Project> project;
+    static Ref<EditorWindow> editorWindow;
+
+    static Ref<Project> project;
+
+    static Ref<EditorScriptEngine> scriptEngine;
+
+    static Ref<Scene> editorScene;
+
+    static Ref<Scene> runtimeScene;
+
+    static Entity selectedEntity;
 };
 }

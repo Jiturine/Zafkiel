@@ -1,4 +1,5 @@
 #include "filesystem.h"
+#include "core/base/buffer.h"
 #include <cassert>
 #include <fstream>
 #include <iosfwd>
@@ -6,7 +7,7 @@
 namespace Zafkiel
 {
 
-std::byte *FileSystem::ReadBytes(const Path &filePath)
+Buffer FileSystem::ReadBytes(const Path &filePath)
 {
     std::ifstream stream(filePath, std::ios::binary);
     assert(stream);
@@ -15,12 +16,12 @@ std::byte *FileSystem::ReadBytes(const Path &filePath)
     size_t size = end - stream.tellg();
     if (size == 0)
     {
-        return nullptr;
+        return Buffer();
     }
     std::byte *buffer = new std::byte[size];
     stream.read((char *)buffer, size);
     stream.close();
-    return buffer;
+    return Buffer(buffer, size);
 }
 
 std::string FileSystem::ReadText(const Path &filePath)
@@ -33,4 +34,16 @@ std::string FileSystem::ReadText(const Path &filePath)
     return std::string(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>());
 }
 
+std::vector<Path> FileSystem::GetFiles(const Path &directory, const Path &extension)
+{
+    std::vector<Path> files;
+    for (const auto &entry : std::filesystem::recursive_directory_iterator(directory))
+    {
+        if (entry.is_regular_file() && entry.path().extension() == extension)
+        {
+            files.push_back(entry.path());
+        }
+    }
+    return files;
+}
 }

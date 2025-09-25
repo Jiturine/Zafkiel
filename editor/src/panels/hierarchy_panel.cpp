@@ -1,19 +1,29 @@
 #include "hierarchy_panel.h"
 #include "editorGUI/editorGUI.h"
 #include "function/scene/components.h"
+#include "function/engine.h"
+#include "editor.h"
 
 namespace Zafkiel
 {
 
 void HierarchyPanel::DrawEntityNode(Entity entity)
 {
-    bool selected = entity == scene->selectedEntity;
+    Ref<Scene> scene = Engine::GetActiveScene();
+    bool selected = entity == Editor::GetSelectedEntity();
 
     ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow;
     if (!entity.HasChildren()) flags |= ImGuiTreeNodeFlags_Leaf;
     if (selected) flags |= ImGuiTreeNodeFlags_Selected;
 
-    GUITreeNode node((uint32_t)entity.GetHandle(), flags, entity.GetComponent<TagComponent>().name);
+    std::string label = entity.HasComponent<TagComponent>() ? entity.GetComponent<TagComponent>().name : entity.GetUUID().ToString();
+
+    GUITreeNode node((uint32_t)entity.GetHandle(), flags, label);
+    node.Popup([&]() {
+        EditorGUI().MenuItem("Destroy", [&]() {
+            scene->GetWorld().DestroyEntity(entity);
+        });
+    });
     if (entity.HasChildren())
     {
         node.Expand([&]() {
@@ -21,24 +31,29 @@ void HierarchyPanel::DrawEntityNode(Entity entity)
                 DrawEntityNode(child);
         });
     }
-    node.Popup([&]() {
-        EditorGUI().MenuItem("Destroy", [&]() {
-            scene->GetWorld().DestroyEntity(entity);
-        });
-    });
+
     if (node.leftClicked)
     {
-        scene->selectedEntity = entity;
+        Editor::SetSelectedEntity(entity);
     }
 }
 
 void HierarchyPanel::Render()
 {
     GUIWindow hierarchyPanel("Hierarchy");
+
+    Ref<Scene> scene = Engine::GetActiveScene();
+    std::vector<Entity> rootEntities;
     for (auto entity : scene->GetWorld().AllEntities())
     {
-        if (!entity.HasParent())
-            DrawEntityNode(entity);
+        if (!entity.HasParent()) rootEntities.push_back(entity);
+    }
+
+    std::sort(rootEntities.begin(), rootEntities.end(), [](Entity a, Entity b) { return a.GetUUID() < b.GetUUID(); });
+
+    for (auto entity : rootEntities)
+    {
+        DrawEntityNode(entity);
     }
 
     hierarchyPanel.Popup([&]() {
@@ -47,7 +62,7 @@ void HierarchyPanel::Render()
         });
     });
     hierarchyPanel.OnClickEmpty([&]() {
-        scene->selectedEntity = Entity();
+        Editor::SetSelectedEntity(Entity());
     });
 }
 }

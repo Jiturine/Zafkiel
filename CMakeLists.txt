@@ -14,7 +14,5 @@ add_subdirectory(engine)
 
 add_subdirectory(editor)
 
-# add_dependencies(sandbox engine)
-
 # enable_testing()
 # add_subdirectory(tests)

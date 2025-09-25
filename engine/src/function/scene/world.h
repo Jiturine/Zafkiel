@@ -31,15 +31,28 @@ class [[refl]] World
         return entity;
     }
     template <typename... Components>
-    std::vector<Entity> Query()
+    std::vector<Entity> Query() const
     {
         std::vector<Entity> entities;
         for (auto entity : registry.view<Components...>())
         {
-            entities.push_back(Entity(entity, registry));
+            entities.push_back(Entity(entity, registry, EntityIDToUUID.at(entity)));
         }
         return entities;
     }
+    bool HasEntity(EntityID id) const
+    {
+        return registry.valid(id);
+    }
+    bool HasEntity(UUID uuid) const
+    {
+        return UUIDToEntityID.contains(uuid);
+    }
+    bool HasEntity(Entity entity) const
+    {
+        return registry.valid(entity.GetHandle()) && &registry == entity.GetRegistry();
+    }
+
     Entity GetEntityByID(EntityID id) const
     {
         return Entity(id, registry, EntityIDToUUID.at(id));
@@ -57,8 +70,19 @@ class [[refl]] World
         }
         return entities;
     }
+    std::vector<UUID> AllEntityUUIDs() const
+    {
+        std::vector<UUID> uuids;
+        for (auto &[uuid, _] : UUIDToEntityID)
+        {
+            uuids.push_back(uuid);
+        }
+        return uuids;
+    }
     void DestroyEntity(Entity entity)
     {
+        EntityIDToUUID.erase(entity.GetHandle());
+        UUIDToEntityID.erase(entity.GetUUID());
         registry.destroy(entity.GetHandle());
     }
 

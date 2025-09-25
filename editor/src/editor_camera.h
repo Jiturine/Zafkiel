@@ -7,7 +7,7 @@ class EditorCamera : public Camera
 {
   public:
     EditorCamera();
-    mat4 GetViewMatrix() { return viewMatrix; }
+    const mat4 &GetViewMatrix() const { return viewMatrix; }
     void SetPosition(const vec3 &position)
     {
         this->position = position;

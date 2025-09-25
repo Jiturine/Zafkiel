@@ -35,6 +35,7 @@ class FileSystem
 {
   public:
     static std::string ReadText(const Path &filePath);
-    static std::byte *ReadBytes(const Path &filePath);
+    static Buffer ReadBytes(const Path &filePath);
+    static std::vector<Path> GetFiles(const Path &directory, const Path &extension);
 };
 }

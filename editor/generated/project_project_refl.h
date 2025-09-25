@@ -12,6 +12,7 @@ inline void Register_project_project()
     .AddProperty(&::Zafkiel::ProjectConfig::name, "name")
     .AddProperty(&::Zafkiel::ProjectConfig::startScene, "startScene")
     .AddProperty(&::Zafkiel::ProjectConfig::assetDirectory, "assetDirectory")
+    .AddProperty(&::Zafkiel::ProjectConfig::libraryDirectory, "libraryDirectory")
     ;
 }
 }

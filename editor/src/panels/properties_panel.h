@@ -4,6 +4,7 @@
 #include "function/scene/scene.h"
 #include "editorGUI/editorGUI.h"
 #include "panels/panel.h"
+#include "editor.h"
 
 namespace Zafkiel
 {
@@ -15,8 +16,6 @@ class PropertiesPanel : public Panel
   public:
     PropertiesPanel() {}
 
-    void SetCurrentScene(Ref<Scene> currentScene) { scene = currentScene; }
-
     virtual void Render() override;
 
   private:
@@ -26,11 +25,18 @@ class PropertiesPanel : public Panel
 
     void DrawTransformComponent(TransformComponent &transformComponent);
 
+    void DrawScriptComponent(ScriptComponent &scriptComponent);
+
     template <typename T>
     void DrawCommonComponent(T &component)
     {
         const Class *typeInfo = GetType<T>()->template As<Class>();
         GUITreeNode node((void *)typeInfo, ImGuiTreeNodeFlags_OpenOnArrow, typeInfo->GetName());
+        node.Popup([&]() {
+            EditorGUI().MenuItem("Remove", [&]() {
+                Editor::GetSelectedEntity().RemoveComponent<T>();
+            });
+        });
         node.Expand([&]() {
             Any instance = component;
             for (const auto &prop : typeInfo->GetProperties())
@@ -38,6 +44,18 @@ class PropertiesPanel : public Panel
                 Any subInstance = prop->Call(instance);
                 switch (prop->GetTypeInfo()->GetCategory())
                 {
+                case TypeCategory::Fundamental: {
+                    auto typeInfo = prop->GetTypeInfo()->As<Fundamental>();
+                    if (typeInfo->GetKind() == FundamentalKind::Float)
+                    {
+                        EditorGUI().DragFloat(prop->GetName(), subInstance.As<float>());
+                    }
+                    else if (typeInfo->GetKind() == FundamentalKind::Int32)
+                    {
+                        EditorGUI().DragInt(prop->GetName(), subInstance.As<int>());
+                    }
+                    break;
+                }
                 case TypeCategory::Class:
                     if (prop->GetTypeInfo() == GetType<vec2>())
                     {
@@ -61,6 +79,5 @@ class PropertiesPanel : public Panel
             }
         });
     }
-    Ref<Scene> scene;
 };
 }

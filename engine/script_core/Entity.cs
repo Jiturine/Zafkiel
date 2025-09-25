@@ -5,15 +5,15 @@ namespace Zafkiel
     public class Entity
     {
         public Entity() { }
-        public Entity(uint id)
+        public Entity(ulong uuid)
         {
-            ID = id;
+            _uuid = uuid;
         }
-        public readonly uint ID;
+        private readonly ulong _uuid;
         public bool HasComponent<T>() where T : Component, new()
         {
             Type componentType = typeof(T);
-            return InternalCalls.Entity_HasComponent(ID, componentType);
+            return InternalCalls.Entity_HasComponent(_uuid, componentType);
         }
         public T GetComponent<T>() where T : Component, new()
         {
@@ -22,6 +22,21 @@ namespace Zafkiel
 
             T component = new T() { Entity = this };
             return component;
+        }
+
+        public bool HasScript<T>() where T : Entity
+        {
+            Type scriptType = typeof(T);
+            return InternalCalls.Entity_HasScript(_uuid, scriptType);
+        }
+
+        public T GetScript<T>() where T : Entity
+        {
+            if(!HasScript<T>())
+                return null;
+
+            Type scriptType = typeof(T);
+            return (T)InternalCalls.Entity_GetScript(_uuid, scriptType);
         }
     }
 }

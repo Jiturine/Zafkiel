@@ -5,3 +5,9 @@ build
 /engine/runtime/generated
 engine/runtime/src/precompile/refl_files.txt
 CLAUDE.md
+/.idea
+/sandbox/library
+/engine/script_core/.idea
+/engine/script_core/obj
+/sandbox/assets/scripts/obj
+/sandbox/assets/scripts/.idea

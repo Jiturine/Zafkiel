@@ -13,6 +13,7 @@ class [[refl]] UUID
     UUID(uint64_t);
     UUID(const UUID &) = default;
     operator uint64_t() const;
+    std::string ToString() { return std::to_string(uuid); }
 
   private:
     uint64_t uuid;

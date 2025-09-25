@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>net472</TargetFramework>
+    </PropertyGroup>
+    <ItemGroup>
+      <Reference Include="ScriptCore">
+        <HintPath>..\..\..\build\bin\ScriptCore.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+</Project>

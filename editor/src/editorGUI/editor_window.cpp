@@ -7,6 +7,7 @@
 #include "panels/hierarchy_panel.h"
 #include "panels/scene_panel.h"
 #include "panels/content_browser_panel.h"
+#include "panels/toolbar_panel.h"
 #include "panels/properties_panel.h"
 #include "function/scene/components.h"
 #include "editor.h"
@@ -16,6 +17,36 @@ namespace Zafkiel
 {
 EditorWindow::EditorWindow(const std::string &title, size_t width, size_t height)
     : Window(title, width, height)
+{
+    auto graphicsContext = Engine::CreateGraphicsContext(handle);
+    SetContext(graphicsContext);
+
+    InitImGui();
+
+    auto scenePanel = MakeRef<ScenePanel>();
+    panels.push_back(scenePanel);
+
+    auto hierarchyPanel = MakeRef<HierarchyPanel>();
+    panels.push_back(hierarchyPanel);
+
+    auto propertiesPanel = MakeRef<PropertiesPanel>();
+    panels.push_back(propertiesPanel);
+
+    auto contentBroswerPanel = MakeRef<ContentBrowserPanel>();
+    panels.push_back(contentBroswerPanel);
+
+    auto toolbarPanel = MakeRef<ToolbarPanel>();
+    panels.push_back(toolbarPanel);
+}
+
+EditorWindow::~EditorWindow()
+{
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplSDL3_Shutdown();
+    ImGui::DestroyContext();
+}
+
+void EditorWindow::InitImGui()
 {
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -40,51 +71,8 @@ EditorWindow::EditorWindow(const std::string &title, size_t width, size_t height
         style.Colors[ImGuiCol_WindowBg].w = 1.0f;
     }
     io.Fonts->AddFontFromFileTTF("assets/fonts/HarmonyOS_Sans_SC/HarmonyOS_Sans_SC_Regular.ttf");
-
-    SetContext(Engine::CreateGraphicsContext(handle));
-
     ImGui_ImplSDL3_InitForOpenGL(handle, graphicsContext->GetHandle());
     ImGui_ImplOpenGL3_Init("#version 450");
-
-    const std::string &editorConfigText = FileSystem::ReadText("editor_config.yaml");
-    EditorConfig editorConfig = Deserialize<EditorConfig>(editorConfigText);
-
-    const std::string &projectConfigText = FileSystem::ReadText(editorConfig.startProjectPath);
-    ProjectConfig projectConfig = Deserialize<ProjectConfig>(projectConfigText);
-    project = Editor::CreateProject(projectConfig);
-
-    currentScene = Engine::CreateScene();
-    Engine::SetCurrentScene(currentScene);
-    project->GetAssetManager()->DeserializeAssetRegistry();
-    project->GetAssetManager()->SerializeAssetRegistry();
-
-    World &world = currentScene->GetWorld();
-
-    const std::string &worldStr = FileSystem::ReadText(projectConfig.startScene);
-    world = Deserialize<World>(worldStr);
-
-    auto scenePanel = MakeRef<ScenePanel>(graphicsContext, project->GetAssetManager());
-    scenePanel->SetCurrentScene(currentScene);
-    panels.push_back(scenePanel);
-
-    auto hierarchyPanel = MakeRef<HierarchyPanel>();
-    hierarchyPanel->SetCurrentScene(currentScene);
-    panels.push_back(hierarchyPanel);
-
-    auto propertiesPanel = MakeRef<PropertiesPanel>();
-    propertiesPanel->SetCurrentScene(currentScene);
-    panels.push_back(propertiesPanel);
-
-    auto contentBroswerPanel = MakeRef<ContentBrowserPanel>();
-    contentBroswerPanel->SetCurrentDirectory(project->GetAssetManager()->GetAssetDirectory());
-    panels.push_back(contentBroswerPanel);
-}
-
-EditorWindow::~EditorWindow()
-{
-    ImGui_ImplOpenGL3_Shutdown();
-    ImGui_ImplSDL3_Shutdown();
-    ImGui::DestroyContext();
 }
 
 void EditorWindow::OnEvent(Event &event)

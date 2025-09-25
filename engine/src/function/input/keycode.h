@@ -221,14 +221,14 @@ enum class Scancode
     // KP_DECIMAL = 220,
     // KP_HEXADECIMAL = 221,
 
-    // LCTRL = 224,
-    // LSHIFT = 225,
-    // LALT = 226,
-    // LGUI = 227,
-    // RCTRL = 228,
-    // RSHIFT = 229,
-    // RALT = 230,
-    // RGUI = 231,
+    LCTRL = 224,
+    LSHIFT = 225,
+    LALT = 226,
+    LGUI = 227,
+    RCTRL = 228,
+    RSHIFT = 229,
+    RALT = 230,
+    RGUI = 231,
 
     // MODE = 257,
 

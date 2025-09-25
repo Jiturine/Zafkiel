@@ -12,6 +12,7 @@ inline void Register_editor()
     .AddProperty(&::Zafkiel::ProjectConfig::name, "name")
     .AddProperty(&::Zafkiel::ProjectConfig::startScene, "startScene")
     .AddProperty(&::Zafkiel::ProjectConfig::assetDirectory, "assetDirectory")
+    .AddProperty(&::Zafkiel::ProjectConfig::libraryDirectory, "libraryDirectory")
     ;
     ::Zafkiel::Reflection::Register<::Zafkiel::EditorConfig>("EditorConfig")
     .AddProperty(&::Zafkiel::EditorConfig::startProjectPath, "startProjectPath")

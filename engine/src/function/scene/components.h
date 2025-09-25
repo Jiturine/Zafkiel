@@ -21,6 +21,7 @@ struct [[refl]] TransformComponent
         : position(pos), rotation(rot), scale(scale) {}
 
     const mat4 &GetWorldMatrix() const;
+    mat4 &GetWorldMatrix();
 
     void SetPosition(const vec3 &newPosition);
     void SetRotation(const quat &newRotation);
@@ -57,7 +58,16 @@ struct [[refl]] SpriteRendererComponent
 
 struct [[refl]] ScriptComponent
 {
+    UUID entityUUID;
     std::vector<std::string> scripts;
+};
+
+template <>
+struct Serialization<ScriptComponent>
+{
+    static constexpr bool has_serialize = true;
+    static void Serialize(const Any &instance, const Type *typeInfo, YAML::Emitter &out);
+    static void Deserialize(Any &instance, const Type *typeInfo, const YAML::Node &data);
 };
 
 using ComponentList = std::tuple<TransformComponent, TagComponent, SpriteRendererComponent, ScriptComponent>;

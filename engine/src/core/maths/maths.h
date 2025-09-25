@@ -121,6 +121,7 @@ struct [[refl]] mat4 : public glm::mat4
     using glm::mat4::mat4;
     mat4(glm::mat4 raw) : glm::mat4(raw) {}
     const float *value() const { return glm::value_ptr(*static_cast<const glm::mat4 *>(this)); }
+    float *value() { return glm::value_ptr(*static_cast<glm::mat4 *>(this)); }
 };
 
 namespace Maths
@@ -138,6 +139,13 @@ vec3 EulerDegrees(const quat &quaternion);
 quat EulerDrgreesToQuaternion(const vec3 &eulerAngles);
 
 quat EulerRadiansToQuaternion(const vec3 &eulerAngles);
+
+vec4 Rotate(const vec4 &vec, float degree, vec3 axis);
+
+bool DecomposeTransform(const mat4 &transform,
+    vec3 &out_translation,
+    quat &out_rotation,
+    vec3 &out_scale);
 
 }
 

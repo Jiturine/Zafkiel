@@ -19,3 +19,6 @@
 [submodule "3rdparty/yaml-cpp"]
 	path = 3rdparty/yaml-cpp
 	url = https://github.com/jbeder/yaml-cpp
+[submodule "3rdparty/imguizmo"]
+	path = 3rdparty/imguizmo
+	url = https://github.com/CedricGuillemet/ImGuizmo.git

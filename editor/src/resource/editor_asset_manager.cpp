@@ -80,7 +80,7 @@ Ref<Asset> EditorAssetManager::LoadAsset(const AssetMetadata &metadata) const
     {
         using enum AssetType;
     case Texture2D:
-        return LoadTexture2D(metadata.filePath);
+        return LoadTexture2D(assetDirectory / metadata.filePath);
 
     default:
         Log::CoreError("Unknown data type!");

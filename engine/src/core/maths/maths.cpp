@@ -38,5 +38,38 @@ quat EulerRadiansToQuaternion(const vec3 &eulerAngles)
     return glm::quat(eulerAngles);
 }
 
+vec4 Rotate(const vec4 &vec, float degree, vec3 axis)
+{
+    return glm::rotate(glm::mat4(1.0f), glm::radians(degree), axis) * vec;
+}
+
+bool DecomposeTransform(const mat4 &transform,
+    vec3 &out_translation,
+    quat &out_rotation,
+    vec3 &out_scale)
+{
+    // 提取平移
+    out_translation = vec3(transform[3]);
+
+    // 提取缩放（通过列向量的长度）
+    out_scale.x = glm::length(glm::vec3(transform[0]));
+    out_scale.y = glm::length(glm::vec3(transform[1]));
+    out_scale.z = glm::length(glm::vec3(transform[2]));
+
+    // 去除缩放，得到纯旋转矩阵
+    mat3 rotMatrix;
+    rotMatrix[0] = vec3(transform[0]) / out_scale.x;
+    rotMatrix[1] = vec3(transform[1]) / out_scale.y;
+    rotMatrix[2] = vec3(transform[2]) / out_scale.z;
+
+    // 将旋转矩阵转换为四元数
+    out_rotation = quat_cast(rotMatrix);
+
+    // 确保四元数归一化（避免数值误差）
+    out_rotation = normalize(out_rotation);
+
+    return true;
+}
+
 }
 }

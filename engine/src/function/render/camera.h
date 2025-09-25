@@ -66,7 +66,7 @@ class Camera
         orthographicFar = farClip;
         RecalculateProjection();
     }
-    mat4 GetProjectionMatrix() const { return projectionMatrix; }
+    const mat4 &GetProjectionMatrix() const { return projectionMatrix; }
 
   private:
     void RecalculateProjection();

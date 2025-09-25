@@ -28,7 +28,20 @@ if (NOT TARGET imgui)
         SDL/include
         imgui
     )
+endif()
 
+if (NOT TARGET imguizmo)
+    add_library(imguizmo STATIC
+        imguizmo/ImGuizmo.cpp
+        imguizmo/GraphEditor.cpp
+        imguizmo/ImCurveEdit.cpp
+        imguizmo/ImGradient.cpp
+        imguizmo/ImSequencer.cpp
+    )
+    target_include_directories(imguizmo PUBLIC
+        imguizmo
+    )
+    target_link_libraries(imguizmo PUBLIC imgui)
 endif()
 
 if (NOT TARGET SDL3::SDL3)
@@ -50,4 +63,8 @@ endif()
 
 if (NOT stb_image)
     add_subdirectory(stb_image)
+endif()
+
+if (NOT filewatch)
+    add_subdirectory(filewatch)
 endif()

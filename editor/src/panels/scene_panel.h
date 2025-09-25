@@ -15,20 +15,19 @@ namespace Zafkiel
 class ScenePanel : public Panel
 {
   public:
-    ScenePanel(Ref<GraphicsContext> context, Ref<EditorAssetManager> editorAssetManager);
-    void SetCurrentScene(Ref<Scene> currentScene) { scene = currentScene; }
+    ScenePanel();
     void Render() override;
     void RenderScene(Ref<Scene> scene);
     void Update(float timestep);
     Ref<FrameBuffer> sceneFrameBuffer;
-    Ref<GraphicsContext> context;
     Ref<Renderer2D> renderer;
     std::unique_ptr<EditorCamera> editorCamera;
     Ref<VertexArray> vertexArray;
     Ref<Shader> shader;
     Ref<Texture2D> texture;
-    Ref<Scene> scene;
-
-    Ref<EditorAssetManager> editorAssetManager;
+  private:
+    void DrawGizmo(vec2 contentPosition, vec2 contextSize);
+    int gizmoType = -1;
+    bool hovered = false;
 };
 }

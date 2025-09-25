@@ -6,16 +6,17 @@ namespace Zafkiel
 
 bool Entity::HasParent() const
 {
-    return registry->get<TransformComponent>(handle).parent;
+    return registry->all_of<TransformComponent>(handle) && registry->get<TransformComponent>(handle).parent;
 }
 
 Entity Entity::GetParent() const
 {
     return registry->get<TransformComponent>(handle).parent;
 }
+
 bool Entity::HasChildren() const
 {
-    return !registry->get<TransformComponent>(handle).children.empty();
+    return registry->all_of<TransformComponent>(handle) && !registry->get<TransformComponent>(handle).children.empty();
 }
 
 std::vector<Entity> Entity::GetChildren() const

@@ -42,6 +42,13 @@ namespace Zafkiel
         internal extern static void Log_Critical(string message);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        internal extern static bool Entity_HasComponent(uint ID, Type componentType);
+        internal extern static bool Entity_HasComponent(ulong uuid, Type componentType);
+        
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static bool Entity_HasScript(ulong uuid, Type scriptType);
+        
+        
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal extern static Object Entity_GetScript(ulong uuid, Type scriptType);
     }
 }

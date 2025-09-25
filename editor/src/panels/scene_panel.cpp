@@ -1,12 +1,15 @@
 #include "scene_panel.h"
+#include <imgui.h>
+#include "ImGuizmo.h"
 #include "editorGUI/editorGUI.h"
 #include "function/scene/components.h"
+#include "function/input/input.h"
+#include "editor.h"
 
 namespace Zafkiel
 {
 
-ScenePanel::ScenePanel(Ref<GraphicsContext> context, Ref<EditorAssetManager> editorAssetManager)
-    : context(context), editorAssetManager(editorAssetManager)
+ScenePanel::ScenePanel()
 {
     editorCamera = std::make_unique<EditorCamera>();
     editorCamera->SetPerspective(45, 0.001f, 1000.0f);
@@ -18,26 +21,75 @@ ScenePanel::ScenePanel(Ref<GraphicsContext> context, Ref<EditorAssetManager> edi
     spec.attachments = {FrameBufferTextureFormat::RGBA8, FrameBufferTextureFormat::Depth};
     spec.width = 1280;
     spec.height = 720;
-    sceneFrameBuffer = context->CreateFrameBuffer(spec);
+    sceneFrameBuffer = Engine::GetGraphicsContext()->CreateFrameBuffer(spec);
 
-    renderer = MakeRef<Renderer2D>(context);
+    renderer = MakeRef<Renderer2D>(Engine::GetGraphicsContext());
 }
 
 void ScenePanel::Render()
 {
     GUIWindow scenePanel("Scene");
     size = scenePanel.GetContentSize();
+    hovered = scenePanel.hovered;
 
     auto textureID = sceneFrameBuffer->GetColorAttachmentRendererID();
 
     EditorGUI().Image(textureID, size, vec2(0.0f, 1.0f), vec2(1.0f, 0.0f));
+
+    DrawGizmo(scenePanel.GetContentPosition(), size);
+}
+
+void ScenePanel::DrawGizmo(vec2 contentPosition, vec2 contextSize)
+{
+    gizmoType = ImGuizmo::OPERATION::TRANSLATE;
+    Entity selectedEntity = Editor::GetSelectedEntity();
+    if (selectedEntity && gizmoType != -1)
+    {
+        ImGuizmo::SetOrthographic(false);
+        ImGuizmo::SetDrawlist();
+
+        ImGuizmo::SetRect(contentPosition.x, contentPosition.y, contextSize.x, contextSize.y);
+
+        // Editor camera
+        const mat4 &cameraProjection = editorCamera->GetProjectionMatrix();
+        const mat4 &cameraView = editorCamera->GetViewMatrix();
+
+        // Entity transform
+        auto &transformComponent = selectedEntity.GetComponent<TransformComponent>();
+        mat4 &transformMatrix = transformComponent.GetWorldMatrix();
+
+        // Snapping
+        bool snap = Input::IsKeyPressed(Scancode::LCTRL);
+        float snapValue = 0.5f; // Snap to 0.5m for translation/scale
+        if (gizmoType == ImGuizmo::OPERATION::ROTATE)
+            snapValue = 45.0f; // Snap to 45 degrees for rotation
+
+        float snapValues[3] = {snapValue, snapValue, snapValue};
+
+        ImGuizmo::Manipulate(cameraView.value(), cameraProjection.value(),
+            (ImGuizmo::OPERATION)gizmoType, ImGuizmo::LOCAL, transformMatrix.value(),
+            nullptr, snap ? snapValues : nullptr);
+
+        if (ImGuizmo::IsUsing())
+        {
+            vec3 position;
+            quat rotation;
+            vec3 scale;
+
+            Maths::DecomposeTransform(transformMatrix, position, rotation, scale);
+
+            transformComponent.SetPosition(position);
+            transformComponent.SetRotation(rotation);
+            transformComponent.SetScale(scale);
+        }
+    }
 }
 
 void ScenePanel::RenderScene(Ref<Scene> scene)
 {
     sceneFrameBuffer->Bind();
 
-    context->Clear(vec4(0.3f, 0.5f, 0.8f, 1.0f));
+    Engine::GetGraphicsContext()->Clear(vec4(0.3f, 0.5f, 0.8f, 1.0f));
 
     renderer->BeginScene(editorCamera->GetProjectionMatrix() * editorCamera->GetViewMatrix());
 
@@ -49,7 +101,7 @@ void ScenePanel::RenderScene(Ref<Scene> scene)
         props.position = transform.position;
         props.size = transform.scale;
         props.color = spriteRenderer.color;
-        props.texture = editorAssetManager->GetAsset(spriteRenderer.texture).As<Texture2D>();
+        props.texture = Editor::GetProject()->GetAssetManager()->GetAsset(spriteRenderer.texture).As<Texture2D>();
         renderer->DrawQuad(props);
     }
 
@@ -60,7 +112,10 @@ void ScenePanel::RenderScene(Ref<Scene> scene)
 
 void ScenePanel::Update(float timestep)
 {
-    editorCamera->Update(timestep);
+    if (hovered)
+    {
+        editorCamera->Update(timestep);
+    }
     auto spec = sceneFrameBuffer->GetSpecification();
     if (spec.height != size.y || spec.width != size.x)
     {

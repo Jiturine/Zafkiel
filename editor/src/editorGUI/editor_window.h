@@ -29,7 +29,7 @@ class EditorWindow : public Window
     }
 
     std::vector<Ref<Panel>> panels;
-    Ref<Project> project;
-    Ref<Scene> currentScene;
+  private:
+    void InitImGui();
 };
 }

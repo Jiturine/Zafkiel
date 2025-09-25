@@ -2,19 +2,22 @@
 #include "function/scene/components.h"
 #include "function/scene/entity.h"
 #include <entt/entity/fwd.hpp>
+#include "mono/utils/mono-publib.h"
 #include "script_engine.h"
 #include <mono/metadata/loader.h>
 #include <mono/metadata/metadata.h>
 #include <mono/metadata/object.h>
 #include <mono/metadata/reflection.h>
 #include "core/meta/reflection/refl.h"
+#include "function/engine.h"
+#include "function/scene/scene.h"
 
 #define ADD_INTERNAL_CALL(name) mono_add_internal_call("Zafkiel.InternalCalls::" #name, (const void *)name)
 
 namespace Zafkiel
 {
 
-static std::unordered_map<MonoType *, std::function<bool(Entity)>> entityHasComponentFuncs;
+static std::unordered_map<std::string, std::function<bool(Entity)>> entityHasComponentFuncs;
 
 static std::string MonoStringToCppString(MonoString *string)
 {
@@ -76,14 +79,28 @@ static void Log_Critical(MonoString *string)
     Log::Critical("{}", MonoStringToCppString(string));
 }
 
-static bool Entity_HasComponent(EntityID ID, MonoReflectionType *componentType)
+static bool Entity_HasComponent(uint64_t uuid, MonoReflectionType *componentType)
 {
     MonoType *type = mono_reflection_type_get_type(componentType);
-    assert(entityHasComponentFuncs.contains(type));
-    Entity entity = ScriptEngine::GetWorldContext()->GetEntityByID(ID);
-    return entityHasComponentFuncs[type](entity);
+    std::string typeName = mono_type_get_name(type);
+    assert(entityHasComponentFuncs.contains(typeName));
+    Entity entity = Engine::GetActiveScene()->GetWorld().GetEntityByUUID(uuid);
+    return entityHasComponentFuncs[typeName](entity);
 }
 
+static bool Entity_HasScript(uint64_t uuid, MonoReflectionType *scriptType)
+{
+    MonoType *type = mono_reflection_type_get_type(scriptType);
+    std::string typeName = mono_type_get_name(type);
+    return Engine::GetScriptEngine()->HasEntityScriptInstance(uuid, typeName);
+}
+
+static MonoObject *Entity_GetScript(uint64_t uuid, MonoReflectionType *scriptType)
+{
+    MonoType *type = mono_reflection_type_get_type(scriptType);
+    std::string typeName = mono_type_get_name(type);
+    return Engine::GetScriptEngine()->GetEntityScriptInstance(uuid, typeName)->GetHandle();
+}
 // end internal_calls
 
 template <typename T>
@@ -92,8 +109,7 @@ static void RegisterComponent()
     std::string typeName = Reflection::GetType<T>()->GetName();
     std::string managedName = std::format("Zafkiel.{}", typeName);
     string_replace(managedName, "Component", "");
-    MonoType *type = mono_reflection_type_from_name(managedName.data(), ScriptEngine::GetCoreAssemblyImage());
-    entityHasComponentFuncs[type] = [](Entity entity) { return entity.HasComponent<T>(); };
+    entityHasComponentFuncs[managedName] = [](Entity entity) { return entity.HasComponent<T>(); };
 }
 
 void ScriptGlue::RegisterComponents()
@@ -104,6 +120,8 @@ void ScriptGlue::RegisterComponents()
 void ScriptGlue::AddInternalCalls()
 {
     ADD_INTERNAL_CALL(Entity_HasComponent);
+    ADD_INTERNAL_CALL(Entity_GetScript);
+    ADD_INTERNAL_CALL(Entity_HasScript);
     ADD_INTERNAL_CALL(Log_CoreTrace);
     ADD_INTERNAL_CALL(Log_CoreDebug);
     ADD_INTERNAL_CALL(Log_CoreInfo);

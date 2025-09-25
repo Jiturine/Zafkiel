@@ -1,203 +1,301 @@
 #include "script_engine.h"
 #include "function/scene/components.h"
+#include "mono/metadata/appdomain.h"
+#include "mono/metadata/attrdefs.h"
+#include "mono/metadata/class.h"
+#include "mono/metadata/mono-gc.h"
 #include "script_glue.h"
 #include <cstring>
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/loader.h>
 #include <mono/metadata/object.h>
 #include "platform/filesystem/filesystem.h"
+#include "function/engine.h"
+#include "function/scene/scene.h"
 
 namespace Zafkiel
 {
+static std::unordered_map<std::string, ScriptFieldType> stringToScriptFieldType = {
+    {"System.Boolean", ScriptFieldType::Bool},
+    {"System.Char", ScriptFieldType::Char},
+    {"System.Single", ScriptFieldType::Float},
+    {"System.Double", ScriptFieldType::Double},
+    {"System.Int16", ScriptFieldType::Int16},
+    {"System.Int32", ScriptFieldType::Int32},
+    {"System.Int64", ScriptFieldType::Int64},
+    {"System.Byte", ScriptFieldType::UInt8},
+    {"System.UInt16", ScriptFieldType::UInt16},
+    {"System.UInt32", ScriptFieldType::UInt32},
+    {"System.UInt64", ScriptFieldType::UInt64},
+    {"Zafkiel.Vector2", ScriptFieldType::Vector2},
+    {"Zafkiel.Vector3", ScriptFieldType::Vector3},
+    {"Zafkiel.Vector4", ScriptFieldType::Vector4},
+    {"Zafkiel.Entity", ScriptFieldType::Entity}};
 
-void ScriptEngine::Init()
+static std::string MonoStringToCppString(MonoString *string)
 {
-    rootDomain = mono_jit_init("ZafkielJITRuntime");
-    assert(rootDomain);
-    LoadCoreAssembly("ScriptCore.dll");
-    LoadAppAssembly("AppAssembly.dll");
-    LoadAssemblyClasses();
-    ScriptGlue::AddInternalCalls();
-    ScriptGlue::RegisterComponents();
-    entityClass = ScriptClass("Zafkiel", "Entity", true);
+    char *cStr = mono_string_to_utf8(string);
+    std::string res(cStr);
+    mono_free(cStr);
+    return res;
 }
 
-void ScriptEngine::Shutdown()
+Ref<ScriptInstance> ScriptDomain::InstantiateScriptClass(const Ref<ScriptClass> &scriptClass, UUID uuid)
 {
-    mono_domain_set(mono_get_root_domain(), false); // 必须先将domain设回rootDomain，再unload Appdomain，否则会崩溃
-
-    mono_domain_unload(appDomain);
-    appDomain = nullptr;
-    mono_jit_cleanup(rootDomain);
-    rootDomain = nullptr;
-}
-
-void ScriptEngine::PrintCoreAssemblyTypes()
-{
-    const MonoTableInfo *typeDefinitionsTable = mono_image_get_table_info(coreAssemblyImage, MONO_TABLE_TYPEDEF);
-    size_t numTypes = mono_table_info_get_rows(typeDefinitionsTable);
-    for (size_t i = 0; i < numTypes; i++)
+    auto rawInstance = mono_object_new(handle, scriptClass->monoClass);
+    if (!rawInstance)
     {
-        uint32_t cols[MONO_TYPEDEF_SIZE];
-        mono_metadata_decode_row(typeDefinitionsTable, i, cols, MONO_TYPEDEF_SIZE);
-
-        const char *namespaceStr = mono_metadata_string_heap(coreAssemblyImage, cols[MONO_TYPEDEF_NAMESPACE]);
-        const char *nameStr = mono_metadata_string_heap(coreAssemblyImage, cols[MONO_TYPEDEF_NAME]);
-
-        Log::CoreDebug("[[CORE ASSEMBLY]]: {}.{}", namespaceStr, nameStr);
+        Log::CoreError("Failed to Instantiate Class: {}.{}", scriptClass->classNamespace, scriptClass->className);
+        return nullptr;
     }
-}
-
-void ScriptEngine::PrintAppAssemblyTypes()
-{
-    const MonoTableInfo *typeDefinitionsTable = mono_image_get_table_info(appAssemblyImage, MONO_TABLE_TYPEDEF);
-    size_t numTypes = mono_table_info_get_rows(typeDefinitionsTable);
-    for (size_t i = 0; i < numTypes; i++)
-    {
-        uint32_t cols[MONO_TYPEDEF_SIZE];
-        mono_metadata_decode_row(typeDefinitionsTable, i, cols, MONO_TYPEDEF_SIZE);
-
-        const char *namespaceStr = mono_metadata_string_heap(appAssemblyImage, cols[MONO_TYPEDEF_NAMESPACE]);
-        const char *nameStr = mono_metadata_string_heap(appAssemblyImage, cols[MONO_TYPEDEF_NAME]);
-
-        Log::CoreDebug("[[APP ASSEMBLY]]: {}.{}", namespaceStr, nameStr);
-    }
-}
-
-void ScriptEngine::LoadAssemblyClasses()
-{
-    entityClasses.clear();
-    const MonoTableInfo *typeDefinitionsTable = mono_image_get_table_info(appAssemblyImage, MONO_TABLE_TYPEDEF);
-    size_t numTypes = mono_table_info_get_rows(typeDefinitionsTable);
-    MonoClass *rawEntityClass = mono_class_from_name(coreAssemblyImage, "Zafkiel", "Entity");
-    for (size_t i = 0; i < numTypes; i++)
-    {
-        uint32_t cols[MONO_TYPEDEF_SIZE];
-        mono_metadata_decode_row(typeDefinitionsTable, i, cols, MONO_TYPEDEF_SIZE);
-
-        const char *namespaceStr = mono_metadata_string_heap(appAssemblyImage, cols[MONO_TYPEDEF_NAMESPACE]);
-        const char *nameStr = mono_metadata_string_heap(appAssemblyImage, cols[MONO_TYPEDEF_NAME]);
-        std::string fullName = (strlen(namespaceStr) != 0) ? std::format("{}.{}", namespaceStr, nameStr) : nameStr;
-
-        MonoClass *monoClass = mono_class_from_name(appAssemblyImage, namespaceStr, nameStr);
-
-        bool isEntity = mono_class_is_subclass_of(monoClass, rawEntityClass, false);
-
-        if (isEntity && monoClass != rawEntityClass)
-        {
-            entityClasses[fullName] = std::make_shared<ScriptClass>(namespaceStr, nameStr, false);
-        }
-    }
-}
-
-void ScriptEngine::LoadCoreAssembly(const Path &assemblyPath)
-{
-    appDomain = mono_domain_create_appdomain((char *)"ZafkielScriptRuntime", nullptr);
-    assert(appDomain);
-    mono_domain_set(appDomain, true);
-
-    coreAssembly = mono_domain_assembly_open(appDomain, assemblyPath.string().c_str());
-    assert(coreAssembly);
-    coreAssemblyImage = mono_assembly_get_image(coreAssembly);
-    assert(coreAssemblyImage);
-
-    // DEBUG
-    PrintCoreAssemblyTypes();
-}
-
-void ScriptEngine::LoadAppAssembly(const Path &assemblyPath)
-{
-    appAssembly = mono_domain_assembly_open(appDomain, assemblyPath.string().c_str());
-    assert(coreAssembly);
-    appAssemblyImage = mono_assembly_get_image(appAssembly);
-    assert(coreAssemblyImage);
-
-    // DEBUG
-    PrintAppAssemblyTypes();
-}
-
-void ScriptEngine::OnRuntimeStart(World &world)
-{
-    worldContext = &world;
-    for (auto entity : world.Query<ScriptComponent>())
-    {
-        const auto &scriptComponent = entity.GetComponent<ScriptComponent>();
-        for (const auto &scriptName : scriptComponent.scripts)
-        {
-            if (entityClasses.contains(scriptName))
-            {
-                auto instance = std::make_shared<ScriptInstance>(entityClasses[scriptName], entity.GetHandle());
-                entityInstances[entity.GetHandle()][scriptName] = instance;
-                instance->InvokeOnCreate();
-            }
-        }
-    }
-}
-
-void ScriptEngine::OnRuntimeStop()
-{
-    entityInstances.clear();
-}
-
-MonoObject *ScriptEngine::InstantiateClass(MonoClass *monoClass)
-{
-    MonoObject *instance = mono_object_new(appDomain, monoClass);
-    assert(instance);
-    mono_runtime_object_init(instance);
+    mono_runtime_object_init(rawInstance);
+    auto constructor = entityClass->GetMethod(".ctor");
+    auto instance = MakeRef<ScriptInstance>(rawInstance, scriptClass);
+    void *params = &uuid;
+    instance->InvokeMethod(constructor, &params);
     return instance;
 }
 
-ScriptClass::ScriptClass(const std::string &classNamespace, const std::string &className, bool isCore)
-    : classNamespace(classNamespace), className(className)
+ScriptDomain::ScriptDomain(const std::string &name)
+    : name(name)
 {
-    monoClass = mono_class_from_name(isCore ? ScriptEngine::GetCoreAssemblyImage() : ScriptEngine::GetAppAssemblyImage(), classNamespace.c_str(), className.c_str());
+    handle = mono_domain_create_appdomain((char *)"Editor Domain", nullptr);
+    if (!handle)
+    {
+        Log::CoreError("Failed to Create Domain!");
+        return;
+    }
+    mono_domain_set(handle, false);
 }
 
-MonoObject *ScriptClass::Instantiate()
+ScriptDomain::~ScriptDomain()
 {
-    return ScriptEngine::InstantiateClass(monoClass);
+    scriptClasses.clear();
+    entityInstances.clear();
+    coreAssembly = nullptr;
+    coreAssemblyImage = nullptr;
+    appAssembly = nullptr;
+    appAssemblyImage = nullptr;
+    entityClass = nullptr;
+#ifndef NDEBUG
+    // mono_domain_unload(handle);
+#endif
+    // mono_gc_collect(mono_gc_max_generation());
+    handle = nullptr;
 }
 
-MonoMethod *ScriptClass::GetMethod(const std::string &name, int paramCount)
+void ScriptDomain::SetCurrent()
 {
-    return mono_class_get_method_from_name(monoClass, name.c_str(), paramCount);
+    mono_domain_set(handle, false);
+}
+void ScriptDomain::LoadCoreAssembly(const Path &path)
+{
+    mono_domain_set(handle, false);
+    coreAssembly = mono_domain_assembly_open(handle, path.string().c_str());
+    if (!coreAssembly)
+    {
+        Log::CoreError("Failed to Load Core Assembly: {}", path.string());
+    }
+    coreAssemblyImage = mono_assembly_get_image(coreAssembly);
+    if (!coreAssemblyImage)
+    {
+        Log::CoreError("Failed to Load Core Assembly Image: {}", path.string());
+    }
+
+    entityClass = RegisterCoreClass("Zafkiel", "Entity");
+
+    ScriptGlue::AddInternalCalls();
 }
 
-MonoObject *ScriptClass::InvokeMethod(MonoObject *instance, MonoMethod *method, void **params)
+void ScriptDomain::LoadAppAssembly(const Path &path)
 {
-    return mono_runtime_invoke(method, instance, params, nullptr);
+    if (!coreAssembly)
+    {
+        Log::CoreError("Need to Load Core Assembly first!");
+        return;
+    }
+    mono_domain_set(handle, false);
+    appAssembly = mono_domain_assembly_open(handle, path.string().c_str());
+    if (!appAssembly)
+    {
+        Log::CoreError("Failed to App Assembly: {}", path.string());
+    }
+    appAssemblyImage = mono_assembly_get_image(appAssembly);
+    if (!appAssemblyImage)
+    {
+        Log::CoreError("Failed to App Assembly Image: {}", path.string());
+    }
+
+    scriptClasses.clear();
+    const MonoTableInfo *typeDefinitionsTable = mono_image_get_table_info(appAssemblyImage, MONO_TABLE_TYPEDEF);
+    size_t numTypes = mono_table_info_get_rows(typeDefinitionsTable);
+
+    for (size_t i = 0; i < numTypes; i++)
+    {
+        uint32_t cols[MONO_TYPEDEF_SIZE];
+        mono_metadata_decode_row(typeDefinitionsTable, i, cols, MONO_TYPEDEF_SIZE);
+
+        std::string namespaceStr = mono_metadata_string_heap(appAssemblyImage, cols[MONO_TYPEDEF_NAMESPACE]);
+        std::string nameStr = mono_metadata_string_heap(appAssemblyImage, cols[MONO_TYPEDEF_NAME]);
+
+        RegisterAppClass(namespaceStr, nameStr);
+    }
 }
 
-ScriptInstance::ScriptInstance(const std::shared_ptr<ScriptClass> &scriptClass, EntityID id)
-    : scriptClass(scriptClass)
+Ref<ScriptClass> ScriptDomain::RegisterCoreClass(const std::string &namespaceStr, const std::string &nameStr)
 {
-    instance = scriptClass->Instantiate();
-    constrcutor = ScriptEngine::GetEntityClass().GetMethod(".ctor", 1);
-    onCreateMethod = scriptClass->GetMethod("OnCreate", 0);
-    onUpdateMethod = scriptClass->GetMethod("OnUpdate", 1);
-
-    void *param = &id;
-    scriptClass->InvokeMethod(instance, constrcutor, &param);
-}
-void ScriptInstance::InvokeOnCreate()
-{
-    scriptClass->InvokeMethod(instance, onCreateMethod, nullptr);
+    auto monoClass = mono_class_from_name(coreAssemblyImage, namespaceStr.c_str(), nameStr.c_str());
+    return MakeRef<ScriptClass>(monoClass, namespaceStr, nameStr);
 }
 
-void ScriptInstance::InvokeOnUpdate(float timestep)
+void ScriptDomain::RegisterAppClass(const std::string &namespaceStr, const std::string &nameStr)
 {
-    void *param = &timestep;
-    scriptClass->InvokeMethod(instance, onUpdateMethod, &param);
+    auto monoClass = mono_class_from_name(appAssemblyImage, namespaceStr.c_str(), nameStr.c_str());
+    bool isEntity = mono_class_is_subclass_of(monoClass, entityClass->GetHandle(), false);
+    if (isEntity)
+    {
+        std::string fullName = !namespaceStr.empty() ? std::format("{}.{}", namespaceStr, nameStr) : nameStr;
+        scriptClasses[fullName] = MakeRef<ScriptClass>(monoClass, namespaceStr, nameStr);
+    }
 }
 
-MonoDomain *ScriptEngine::rootDomain = nullptr;
-MonoDomain *ScriptEngine::appDomain = nullptr;
-MonoAssembly *ScriptEngine::coreAssembly = nullptr;
-MonoImage *ScriptEngine::coreAssemblyImage = nullptr;
-MonoAssembly *ScriptEngine::appAssembly = nullptr;
-MonoImage *ScriptEngine::appAssemblyImage = nullptr;
-ScriptClass ScriptEngine::entityClass;
-World *ScriptEngine::worldContext;
-std::unordered_map<std::string, std::shared_ptr<ScriptClass>> ScriptEngine::entityClasses;
-std::unordered_map<EntityID, std::unordered_map<std::string, std::shared_ptr<ScriptInstance>>> ScriptEngine::entityInstances;
+MonoObject *ScriptClass::InvokeStaticMethod(const std::string &name, void **params) const
+{
+    auto it = methods.find(name);
+    if (it == methods.end())
+    {
+        Log::CoreError("Cannot Find Method: {}", name);
+        return nullptr;
+    }
+    ScriptMethod method = it->second;
+    if (!method.isStatic)
+    {
+        Log::CoreError("Method {} isn't Static!", name);
+        return nullptr;
+    }
+    MonoObject *exc = nullptr;
+    MonoObject *ret = mono_runtime_invoke(method.handle, nullptr, params, &exc);
+    if (exc)
+    {
+        MonoString *excMonoStr = mono_object_to_string(exc, nullptr);
+        std::string excStr = MonoStringToCppString(excMonoStr);
+        Log::CoreError("Invoke Static Method Exception: {}", excStr);
+        return nullptr;
+    }
+    return ret;
+}
+
+ScriptClass::ScriptClass(MonoClass *monoClass, const std::string &classNamespace, const std::string &className)
+    : monoClass(monoClass), classNamespace(classNamespace), className(className)
+{
+    void *iterator = nullptr;
+    while (auto field = mono_class_get_fields(monoClass, &iterator))
+    {
+        std::string fieldName = mono_field_get_name(field);
+        auto fieldType = mono_field_get_type(field);
+        std::string typeName = mono_type_get_name(fieldType);
+        ScriptFieldType type = stringToScriptFieldType.contains(typeName) ? stringToScriptFieldType[typeName] : ScriptFieldType::Unknown;
+        fields[fieldName] = ScriptField{type, field};
+    }
+    iterator = nullptr;
+    while (auto method = mono_class_get_methods(monoClass, &iterator))
+    {
+        std::string methodName = mono_method_get_name(method);
+        uint32_t flags;
+        mono_method_get_flags(method, &flags);
+        bool isStatic = flags & MONO_METHOD_ATTR_STATIC;
+        methods[methodName] = ScriptMethod{method, isStatic};
+    }
+}
+
+ScriptMethod ScriptClass::GetMethod(const std::string &name) const
+{
+    auto it = methods.find(name);
+    if (it == methods.end())
+    {
+        Log::CoreError("Cannot Find Script Method: {}", name);
+        return ScriptMethod{};
+    }
+    return it->second;
+}
+
+ScriptField ScriptClass::GetField(const std::string &name) const
+{
+    auto it = fields.find(name);
+    if (it == fields.end())
+    {
+        Log::CoreError("Cannot Find Script Field: {}", name);
+        return ScriptField{};
+    }
+    return it->second;
+}
+
+MonoObject *ScriptInstance::InvokeMethod(const std::string &name, void **params)
+{
+    auto it = scriptClass->methods.find(name);
+    if (it == scriptClass->methods.end())
+    {
+        Log::CoreError("Cannot Find Method: {}", name);
+        return nullptr;
+    }
+    ScriptMethod method = it->second;
+    if (method.isStatic)
+    {
+        Log::CoreError("Method {} is Static!", name);
+        return nullptr;
+    }
+    MonoObject *exc = nullptr;
+    MonoObject *ret = mono_runtime_invoke(method.handle, instance, params, &exc);
+    if (exc)
+    {
+        MonoString *excMonoStr = mono_object_to_string(exc, nullptr);
+        std::string excStr = MonoStringToCppString(excMonoStr);
+        Log::CoreError("Invoke Method Exception: {}", excStr);
+        return nullptr;
+    }
+    return ret;
+}
+
+MonoObject *ScriptInstance::InvokeMethod(ScriptMethod method, void **params)
+{
+    if (method.isStatic)
+    {
+        Log::CoreError("Method is Static!");
+        return nullptr;
+    }
+    MonoObject *exc = nullptr;
+    MonoObject *ret = mono_runtime_invoke(method.handle, instance, params, &exc);
+    if (exc)
+    {
+        MonoString *excMonoStr = mono_object_to_string(exc, nullptr);
+        std::string excStr = MonoStringToCppString(excMonoStr);
+        Log::CoreError("Invoke Method Exception: {}", excStr);
+        return nullptr;
+    }
+    return ret;
+}
+
+void ScriptInstance::TryInvokeOnCreate()
+{
+    if (scriptClass->methods.contains("OnCreate"))
+        InvokeMethod("OnCreate", nullptr);
+}
+
+void ScriptInstance::TryInvokeOnUpdate(float timestep)
+{
+    if (scriptClass->methods.contains("OnUpdate"))
+    {
+        void *param = &timestep;
+        InvokeMethod("OnUpdate", &param);
+    }
+}
+
+void ScriptInstance::TryInvokeOnDestroy()
+{
+    if (scriptClass->methods.contains("OnDestroy"))
+        InvokeMethod("OnDestroy", nullptr);
+}
+
+ScriptInstance::ScriptInstance(MonoObject *instance, const Ref<ScriptClass> &scriptClass)
+    : instance(instance), scriptClass(scriptClass) {}
 }
