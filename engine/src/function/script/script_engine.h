@@ -15,19 +15,23 @@ class ScriptClass;
 class ScriptInstance;
 class ScriptField;
 
+using ScriptInstanceMap = std::unordered_map<std::string, Ref<ScriptInstance>>;
+using EntityMap = std::unordered_map<UUID, ScriptInstanceMap>;
+using ScriptClassMap = std::unordered_map<std::string, Ref<ScriptClass>>;
+
 class ScriptEngine : public RefCounted
 {
   public:
     ScriptEngine() = default;
     ~ScriptEngine() = default;
-    virtual bool HasEntityScriptInstance(UUID uuid, const std::string &scriptName) const = 0;
-    virtual Ref<ScriptInstance> GetEntityScriptInstance(UUID uuid, const std::string &scriptName) const = 0;
-    virtual Ref<ScriptInstance> AddEntityScriptInstance(UUID uuid, const std::string &scriptName) = 0;
-    virtual void RemoveEntityScriptInstance(UUID uuid, const std::string &scriptName) = 0;
-};
+    virtual bool HasScriptInstance(UUID uuid, const std::string &scriptName) const = 0;
+    virtual Ref<ScriptInstance> GetScriptInstance(UUID uuid, const std::string &scriptName) const = 0;
+    virtual Ref<ScriptInstance> AddScriptInstance(UUID uuid, const std::string &scriptName) = 0;
+    virtual void RemoveScriptInstance(UUID uuid, const std::string &scriptName) = 0;
 
-using EntityInstanceMap = std::unordered_map<UUID, std::unordered_map<std::string, Ref<ScriptInstance>>>;
-using ScriptClassMap = std::unordered_map<std::string, Ref<ScriptClass>>;
+    virtual const ScriptInstanceMap &GetScriptInstances(UUID uuid) const = 0;
+    virtual ScriptInstanceMap &GetScriptInstances(UUID uuid) = 0;
+};
 
 class ScriptDomain : public RefCounted
 {
@@ -44,7 +48,7 @@ class ScriptDomain : public RefCounted
     MonoAssembly *GetAppAssembly() const { return appAssembly; }
     MonoImage *GetAppAssemblyImage() const { return appAssemblyImage; }
     ScriptClassMap &GetScriptClasses() { return scriptClasses; }
-    EntityInstanceMap &GetEntityInstances() { return entityInstances; }
+    EntityMap &GetEntities() { return entities; }
   private:
     Ref<ScriptClass> RegisterCoreClass(const std::string &namespaceStr, const std::string &nameStr);
     void RegisterAppClass(const std::string &namespaceStr, const std::string &nameStr);
@@ -56,7 +60,7 @@ class ScriptDomain : public RefCounted
     MonoImage *appAssemblyImage;
     Ref<ScriptClass> entityClass;
     ScriptClassMap scriptClasses;
-    EntityInstanceMap entityInstances;
+    EntityMap entities;
 };
 
 enum class ScriptFieldType

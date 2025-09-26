@@ -201,7 +201,7 @@ void EditorScriptEngine::OnRuntimeInit()
 }
 void EditorScriptEngine::OnRuntimeStart()
 {
-    for (auto &[uuid, entity] : runtimeDomain->GetEntityInstances())
+    for (auto &[uuid, entity] : runtimeDomain->GetEntities())
     {
         for (auto &[scriptName, instance] : entity)
         {
@@ -212,7 +212,7 @@ void EditorScriptEngine::OnRuntimeStart()
 
 void EditorScriptEngine::OnRuntimeUpdate(float timestep)
 {
-    for (auto &[uuid, entity] : runtimeDomain->GetEntityInstances())
+    for (auto &[uuid, entity] : runtimeDomain->GetEntities())
     {
         for (auto &[scriptName, instance] : entity)
         {
@@ -223,7 +223,7 @@ void EditorScriptEngine::OnRuntimeUpdate(float timestep)
 
 void EditorScriptEngine::OnRuntimeStop()
 {
-    for (auto &[uuid, entity] : runtimeDomain->GetEntityInstances())
+    for (auto &[uuid, entity] : runtimeDomain->GetEntities())
     {
         for (auto &[scriptName, instance] : entity)
         {

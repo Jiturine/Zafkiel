@@ -7,9 +7,9 @@ namespace Zafkiel
 {
 using namespace Reflection;
 
-static void SerializeAny(const Any &instance, const Type *typeInfo, YAML::Emitter &out);
+static void SerializeAny(const Any instance, const Type *typeInfo, YAML::Emitter &out, Any context = nullptr);
 
-static void SerializeFundamental(const Any &instance, const Fundamental *typeInfo, YAML::Emitter &out)
+static void SerializeFundamental(const Any instance, const Fundamental *typeInfo, YAML::Emitter &out)
 {
     switch (typeInfo->GetKind())
     {
@@ -30,17 +30,17 @@ static void SerializeFundamental(const Any &instance, const Fundamental *typeInf
     }
 }
 
-static void SerializeString(const Any &instance, const String *typeInfo, YAML::Emitter &out)
+static void SerializeString(const Any instance, const String *typeInfo, YAML::Emitter &out)
 {
     out << instance.As<std::string>();
 }
 
-static void SerializeEnum(const Any &instance, const Enum *typeInfo, YAML::Emitter &out)
+static void SerializeEnum(const Any instance, const Enum *typeInfo, YAML::Emitter &out)
 {
     out << typeInfo->GetValueName(instance);
 }
 
-static void SerializeList(const Any &instance, const List *typeInfo, YAML::Emitter &out)
+static void SerializeList(const Any instance, const List *typeInfo, YAML::Emitter &out)
 {
     out << YAML::BeginSeq;
     for (size_t i = 0; i < typeInfo->GetSize(instance); i++)
@@ -51,7 +51,7 @@ static void SerializeList(const Any &instance, const List *typeInfo, YAML::Emitt
     out << YAML::EndSeq;
 }
 
-static void SerializeDict(const Any &instance, const Dict *typeInfo, YAML::Emitter &out)
+static void SerializeDict(const Any instance, const Dict *typeInfo, YAML::Emitter &out)
 {
     out << YAML::BeginMap;
     for (const auto &[key, val] : typeInfo->GetKeyValPairs(instance))
@@ -64,14 +64,14 @@ static void SerializeDict(const Any &instance, const Dict *typeInfo, YAML::Emitt
     out << YAML::EndMap;
 }
 
-static void SerializeProperty(const Any &instance, const std::shared_ptr<Property> prop, YAML::Emitter &out)
+static void SerializeProperty(const Any instance, const std::shared_ptr<Property> prop, YAML::Emitter &out)
 {
     auto propTypeInfo = prop->GetTypeInfo();
     out << YAML::Key << prop->GetName() << YAML::Value;
     SerializeAny(prop->Call(instance), propTypeInfo, out);
 }
 
-static void SerializeClass(const Any &instance, const Class *typeInfo, YAML::Emitter &out)
+static void SerializeClass(const Any instance, const Class *typeInfo, YAML::Emitter &out)
 {
     out << YAML::BeginMap;
     for (auto prop : typeInfo->GetProperties())
@@ -81,11 +81,11 @@ static void SerializeClass(const Any &instance, const Class *typeInfo, YAML::Emi
     out << YAML::EndMap;
 }
 
-static void SerializeAny(const Any &instance, const Type *typeInfo, YAML::Emitter &out)
+static void SerializeAny(const Any instance, const Type *typeInfo, YAML::Emitter &out, Any context)
 {
     if (auto it = customSerializeOps.find(typeInfo); it != customSerializeOps.end())
     {
-        it->second.serializeFunc(instance, typeInfo, out);
+        it->second.serializeFunc(instance, context, out);
         return;
     }
     switch (typeInfo->GetCategory())

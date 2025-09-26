@@ -23,13 +23,26 @@ struct [[refl]] TransformComponent
     const mat4 &GetWorldMatrix() const;
     mat4 &GetWorldMatrix();
 
+    void SetWorldMatrix(const mat4 &matrix);
+
+    vec3 GetWorldPosition() const;
+    quat GetWorldRotation() const;
+    vec3 GetWorldScale() const;
+
     void SetPosition(const vec3 &newPosition);
     void SetRotation(const quat &newRotation);
     void SetScale(const vec3 &newScale);
 
+    void SetParent();
+    void AddChild();
+    void RemoveChild();
+
+    friend class Entity;
   private:
     mutable mat4 worldMatrix = mat4(1.0f);
     mutable bool worldMatrixDirty = true;
+
+    void MarkDirty();
 
     void CalculateWorldMatrix() const;
 
@@ -40,8 +53,8 @@ template <>
 struct Serialization<TransformComponent>
 {
     static constexpr bool has_serialize = true;
-    static void Serialize(const Any &instance, const Type *typeInfo, YAML::Emitter &out);
-    static void Deserialize(Any &instance, const Type *typeInfo, const YAML::Node &data);
+    static void Serialize(const Any instance, Any context, YAML::Emitter &out);
+    static void Deserialize(Any instance, Any context, const YAML::Node &data);
 };
 
 struct [[refl]] TagComponent
@@ -66,8 +79,8 @@ template <>
 struct Serialization<ScriptComponent>
 {
     static constexpr bool has_serialize = true;
-    static void Serialize(const Any &instance, const Type *typeInfo, YAML::Emitter &out);
-    static void Deserialize(Any &instance, const Type *typeInfo, const YAML::Node &data);
+    static void Serialize(const Any instance, Any context, YAML::Emitter &out);
+    static void Deserialize(Any instance, Any context, const YAML::Node &data);
 };
 
 using ComponentList = std::tuple<TransformComponent, TagComponent, SpriteRendererComponent, ScriptComponent>;

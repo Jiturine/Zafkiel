@@ -9,8 +9,8 @@ using namespace Reflection;
 
 struct SerializeOperations
 {
-    std::function<void(const Any &, const Type *, YAML::Emitter &)> serializeFunc;
-    std::function<void(Any &, const Type *, const YAML::Node &)> deserializeFunc;
+    std::function<void(const Any, Any, YAML::Emitter &)> serializeFunc;
+    std::function<void(Any, Any, const YAML::Node &)> deserializeFunc;
 };
 
 template <typename T>

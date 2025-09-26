@@ -26,23 +26,74 @@ mat4 &TransformComponent::GetWorldMatrix()
     return worldMatrix;
 }
 
+void TransformComponent::SetWorldMatrix(const mat4 &matrix)
+{
+    mat4 localMatrix;
+    if (parent)
+    {
+        const mat4 &parentWorldMatrix = parent.GetComponent<TransformComponent>().worldMatrix;
+        localMatrix = glm::inverse(parentWorldMatrix) * matrix;
+    }
+    else
+    {
+        localMatrix = matrix;
+    }
+    Maths::DecomposeTransform(localMatrix, position, rotation, scale);
+    MarkDirty();
+}
+
+vec3 TransformComponent::GetWorldPosition() const
+{
+    vec3 worldPosition;
+    quat worldRotation;
+    vec3 worldScale;
+    Maths::DecomposeTransform(GetWorldMatrix(), worldPosition, worldRotation, worldScale);
+    return worldPosition;
+}
+quat TransformComponent::GetWorldRotation() const
+{
+    vec3 worldPosition;
+    quat worldRotation;
+    vec3 worldScale;
+    Maths::DecomposeTransform(GetWorldMatrix(), worldPosition, worldRotation, worldScale);
+    return worldRotation;
+}
+vec3 TransformComponent::GetWorldScale() const
+{
+    vec3 worldPosition;
+    quat worldRotation;
+    vec3 worldScale;
+    Maths::DecomposeTransform(GetWorldMatrix(), worldPosition, worldRotation, worldScale);
+    return worldScale;
+}
+
 void TransformComponent::SetPosition(const vec3 &newPosition)
 {
     position = newPosition;
-    worldMatrixDirty = true;
+    MarkDirty();
 }
 
 void TransformComponent::SetRotation(const quat &newRotation)
 {
     rotation = newRotation;
-    worldMatrixDirty = true;
+    MarkDirty();
 }
 
 void TransformComponent::SetScale(const vec3 &newScale)
 {
     scale = newScale;
-    worldMatrixDirty = true;
+    MarkDirty();
 }
+
+void TransformComponent::MarkDirty()
+{
+    worldMatrixDirty = true;
+    for (auto child : children)
+    {
+        child.GetComponent<TransformComponent>().MarkDirty();
+    }
+}
+
 void TransformComponent::CalculateWorldMatrix() const
 {
     if (parent)
@@ -62,7 +113,7 @@ glm::mat4 TransformComponent::GetLocalMatrix() const
         glm::scale(glm::mat4(1.0f), scale);
 }
 
-void Serialization<TransformComponent>::Serialize(const Any &instance, const Type *typeInfo, YAML::Emitter &out)
+void Serialization<TransformComponent>::Serialize(const Any instance, Any context, YAML::Emitter &out)
 {
     auto &transform = instance.As<TransformComponent>();
     out << YAML::BeginMap;
@@ -83,7 +134,7 @@ void Serialization<TransformComponent>::Serialize(const Any &instance, const Typ
         out << YAML::Key << "children" << YAML::Value << YAML::BeginSeq;
         for (auto child : transform.children)
         {
-            auto uuid = transform.parent.GetUUID();
+            auto uuid = child.GetUUID();
             SerializeAny(uuid, GetType<UUID>(), out);
         }
         out << YAML::EndSeq;
@@ -91,8 +142,9 @@ void Serialization<TransformComponent>::Serialize(const Any &instance, const Typ
     out << YAML::EndMap;
 }
 
-void Serialization<TransformComponent>::Deserialize(Any &instance, const Type *typeInfo, const YAML::Node &data)
+void Serialization<TransformComponent>::Deserialize(Any instance, Any context, const YAML::Node &data)
 {
+    World &world = context.As<World>();
     auto &transform = instance.As<TransformComponent>();
     Any posInstance = transform.position;
     DeserializeAny(posInstance, GetType<vec3>(), data["position"]);
@@ -102,29 +154,28 @@ void Serialization<TransformComponent>::Deserialize(Any &instance, const Type *t
     DeserializeAny(scaleInstance, GetType<vec3>(), data["scale"]);
     if (data["parent"])
     {
-        transform.parent = Engine::GetActiveScene()->GetWorld().GetEntityByUUID(data["parent"].as<uint64_t>());
+        transform.parent = world.GetEntityByUUID(data["parent"].as<uint64_t>());
     }
     if (data["children"])
     {
         for (auto child : data["children"])
         {
-            transform.children.push_back(Engine::GetActiveScene()->GetWorld().GetEntityByUUID(child.as<uint64_t>()));
+            transform.children.push_back(world.GetEntityByUUID(child.as<uint64_t>()));
         }
     }
 }
 
-void Serialization<ScriptComponent>::Serialize(const Any &instance, const Type *typeInfo, YAML::Emitter &out)
+void Serialization<ScriptComponent>::Serialize(const Any instance, Any context, YAML::Emitter &out)
 {
     auto &scriptComponent = instance.As<ScriptComponent>();
     auto &scripts = scriptComponent.scripts;
-    UUID entityUUID = scriptComponent.entityUUID;
+    ScriptInstanceMap &scriptInstances = context.As<ScriptInstanceMap>();
     out << YAML::BeginMap;
-    out << YAML::Key << "UUID" << YAML::Value << entityUUID;
     for (auto &scriptName : scripts)
     {
         out << YAML::Key << scriptName << YAML::Value;
         out << YAML::BeginMap;
-        auto scriptInstance = Engine::GetScriptEngine()->GetEntityScriptInstance(entityUUID, scriptName);
+        auto scriptInstance = scriptInstances[scriptName];
         if (!scriptInstance)
         {
             out << YAML::Key << "Error" << YAML::Value << "Script instance not found";
@@ -173,18 +224,17 @@ void Serialization<ScriptComponent>::Serialize(const Any &instance, const Type *
     out << YAML::EndMap;
 }
 
-void Serialization<ScriptComponent>::Deserialize(Any &instance, const Type *typeInfo, const YAML::Node &data)
+void Serialization<ScriptComponent>::Deserialize(Any instance, Any context, const YAML::Node &data)
 {
     auto &scriptComponent = instance.As<ScriptComponent>();
-    UUID entityUUID = data["UUID"].as<uint64_t>();
-    scriptComponent.entityUUID = entityUUID;
+    auto [scriptEngine, entity] = context.As<std::pair<Ref<ScriptEngine>, Entity>>();
+    scriptComponent.entityUUID = entity.GetUUID();
     for (auto it : data)
     {
         const auto &scriptName = it.first.as<std::string>();
-        if (scriptName == "UUID") continue;
         const auto &scriptInstanceNode = it.second;
         scriptComponent.scripts.push_back(scriptName);
-        auto scriptInstance = Engine::GetScriptEngine()->AddEntityScriptInstance(entityUUID, scriptName);
+        auto scriptInstance = scriptEngine->AddScriptInstance(entity.GetUUID(), scriptName);
         for (const auto &[fieldName, field] : scriptInstance->GetScriptClass()->GetFields())
         {
             if (!scriptInstanceNode[fieldName].IsDefined()) continue;

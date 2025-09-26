@@ -8,9 +8,9 @@ namespace Zafkiel
 {
 using namespace Reflection;
 
-static void DeserializeAny(Any &instance, const Type *typeInfo, const YAML::Node &data);
+static void DeserializeAny(Any instance, const Type *typeInfo, const YAML::Node &data, Any context = nullptr);
 
-static void DeserializeFundamental(Any &instance, const Fundamental *typeInfo, const YAML::Node &data)
+static void DeserializeFundamental(Any instance, const Fundamental *typeInfo, const YAML::Node &data)
 {
     switch (typeInfo->GetKind())
     {
@@ -31,18 +31,18 @@ static void DeserializeFundamental(Any &instance, const Fundamental *typeInfo, c
     }
 }
 
-static void DeserializeString(Any &instance, const String *typeInfo, const YAML::Node &data)
+static void DeserializeString(Any instance, const String *typeInfo, const YAML::Node &data)
 {
     const auto &str = data.as<std::string>();
     instance.As<std::string>() = str;
 }
 
-static void DeserializeEnum(Any &instance, const Enum *typeInfo, const YAML::Node &data)
+static void DeserializeEnum(Any instance, const Enum *typeInfo, const YAML::Node &data)
 {
     typeInfo->SetValueName(instance, data.as<std::string>());
 }
 
-static void DeserializeList(Any &instance, const List *typeInfo, const YAML::Node &data)
+static void DeserializeList(Any instance, const List *typeInfo, const YAML::Node &data)
 {
     const auto *elemTypeInfo = typeInfo->GetElemType();
     typeInfo->Resize(data.size(), instance); // 重要
@@ -53,7 +53,7 @@ static void DeserializeList(Any &instance, const List *typeInfo, const YAML::Nod
     }
 }
 
-static void DeserializeDict(Any &instance, const Dict *typeInfo, const YAML::Node &data)
+static void DeserializeDict(Any instance, const Dict *typeInfo, const YAML::Node &data)
 {
     const auto *keyTypeInfo = typeInfo->GetKeyType();
     const auto *valTypeInfo = typeInfo->GetValType();
@@ -68,13 +68,13 @@ static void DeserializeDict(Any &instance, const Dict *typeInfo, const YAML::Nod
     }
 }
 
-static void DeserializeProperty(Any &instance, const std::shared_ptr<Property> &prop, const YAML::Node &data)
+static void DeserializeProperty(Any instance, const std::shared_ptr<Property> &prop, const YAML::Node &data)
 {
     Any subInstance = prop->Call(instance);
     DeserializeAny(subInstance, prop->GetTypeInfo(), data);
 }
 
-static void DeserializeClass(Any &instance, const Class *typeInfo, const YAML::Node &data)
+static void DeserializeClass(Any instance, const Class *typeInfo, const YAML::Node &data)
 {
     const auto &props = typeInfo->GetProperties();
     for (const auto &prop : props)
@@ -83,11 +83,11 @@ static void DeserializeClass(Any &instance, const Class *typeInfo, const YAML::N
     }
 }
 
-static void DeserializeAny(Any &instance, const Type *typeInfo, const YAML::Node &data)
+static void DeserializeAny(Any instance, const Type *typeInfo, const YAML::Node &data, Any context)
 {
     if (auto it = customSerializeOps.find(typeInfo); it != customSerializeOps.end())
     {
-        it->second.deserializeFunc(instance, typeInfo, data);
+        it->second.deserializeFunc(instance, context, data);
         return;
     }
     switch (typeInfo->GetCategory())
@@ -118,4 +118,16 @@ T Deserialize(const std::string &str)
     return obj;
 }
 
+template <typename T>
+void Deserialize(const std::string &str, T &emptyObj)
+{
+    const YAML::Node data = YAML::Load(str);
+    const Type *typeInfo = GetType<T>();
+    if (!typeInfo)
+    {
+        Log::CoreError("No reflection data!");
+    }
+    Any instance = emptyObj;
+    DeserializeAny(instance, typeInfo, data);
+}
 }

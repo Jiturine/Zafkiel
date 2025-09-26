@@ -19,12 +19,12 @@ template <>
 struct Serialization<vec2>
 {
     static constexpr bool has_serialize = true;
-    static void Serialize(const Any &instance, const Type *typeInfo, YAML::Emitter &out)
+    static void Serialize(const Any instance, Any context, YAML::Emitter &out)
     {
         const vec2 obj = instance.As<vec2>();
         out << YAML::Flow << YAML::BeginSeq << obj.x << obj.y << YAML::EndSeq;
     }
-    static void Deserialize(Any &instance, const Type *typeInfo, const YAML::Node &data)
+    static void Deserialize(Any instance, Any context, const YAML::Node &data)
     {
         vec2 &obj = instance.As<vec2>();
         obj.x = data[0].as<float>();
@@ -46,12 +46,12 @@ template <>
 struct Serialization<vec3>
 {
     static constexpr bool has_serialize = true;
-    static void Serialize(const Any &instance, const Type *typeInfo, YAML::Emitter &out)
+    static void Serialize(const Any instance, Any context, YAML::Emitter &out)
     {
         const vec3 obj = instance.As<vec3>();
         out << YAML::Flow << YAML::BeginSeq << obj.x << obj.y << obj.z << YAML::EndSeq;
     }
-    static void Deserialize(Any &instance, const Type *typeInfo, const YAML::Node &data)
+    static void Deserialize(Any instance, Any context, const YAML::Node &data)
     {
         vec3 &obj = instance.As<vec3>();
         obj.x = data[0].as<float>();
@@ -70,12 +70,12 @@ template <>
 struct Serialization<vec4>
 {
     static constexpr bool has_serialize = true;
-    static void Serialize(const Any &instance, const Type *typeInfo, YAML::Emitter &out)
+    static void Serialize(const Any instance, Any context, YAML::Emitter &out)
     {
         const vec4 obj = instance.As<vec4>();
         out << YAML::Flow << YAML::BeginSeq << obj.x << obj.y << obj.z << obj.w << YAML::EndSeq;
     }
-    static void Deserialize(Any &instance, const Type *typeInfo, const YAML::Node &data)
+    static void Deserialize(Any instance, Any context, const YAML::Node &data)
     {
         vec4 &obj = instance.As<vec4>();
         obj.x = data[0].as<float>();
@@ -95,12 +95,12 @@ template <>
 struct Serialization<quat>
 {
     static constexpr bool has_serialize = true;
-    static void Serialize(const Any &instance, const Type *typeInfo, YAML::Emitter &out)
+    static void Serialize(const Any instance, Any context, YAML::Emitter &out)
     {
         const quat obj = instance.As<quat>();
         out << YAML::Flow << YAML::BeginSeq << obj.x << obj.y << obj.z << obj.w << YAML::EndSeq;
     }
-    static void Deserialize(Any &instance, const Type *typeInfo, const YAML::Node &data)
+    static void Deserialize(Any instance, Any context, const YAML::Node &data)
     {
         quat &obj = instance.As<quat>();
         obj.x = data[0].as<float>();

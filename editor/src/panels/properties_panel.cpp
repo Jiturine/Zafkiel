@@ -52,7 +52,7 @@ void PropertiesPanel::Render()
                     else
                     {
                         scripts.push_back(scriptName);
-                        scriptEngine->AddEntityScriptInstance(entity.GetUUID(), scriptName);
+                        scriptEngine->AddScriptInstance(entity.GetUUID(), scriptName);
                         Log::CoreInfo("Instantiate script instance: {}", scriptName);
                     }
                 }
@@ -105,13 +105,13 @@ void PropertiesPanel::DrawScriptComponent(ScriptComponent &scriptComponent)
     std::vector<std::string>::iterator toBeRemove = scriptComponent.scripts.end();
     for (auto scriptName : scriptComponent.scripts)
     {
-        auto scriptInstance = Engine::GetScriptEngine()->GetEntityScriptInstance(Editor::GetSelectedEntity().GetUUID(), scriptName);
+        auto scriptInstance = Engine::GetScriptEngine()->GetScriptInstance(Editor::GetSelectedEntity().GetUUID(), scriptName);
         if (scriptInstance)
         {
             GUITreeNode node(scriptName.data(), ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_DefaultOpen, scriptName);
             node.Popup([&]() {
                 EditorGUI().MenuItem("Remove", [&]() {
-                    Engine::GetScriptEngine()->RemoveEntityScriptInstance(Editor::GetSelectedEntity().GetUUID(), scriptName);
+                    Engine::GetScriptEngine()->RemoveScriptInstance(Editor::GetSelectedEntity().GetUUID(), scriptName);
                     toBeRemove = std::find(scriptComponent.scripts.begin(), scriptComponent.scripts.end(), scriptName);
                 });
             });

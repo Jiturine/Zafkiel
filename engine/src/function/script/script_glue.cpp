@@ -92,15 +92,89 @@ static bool Entity_HasScript(uint64_t uuid, MonoReflectionType *scriptType)
 {
     MonoType *type = mono_reflection_type_get_type(scriptType);
     std::string typeName = mono_type_get_name(type);
-    return Engine::GetScriptEngine()->HasEntityScriptInstance(uuid, typeName);
+    return Engine::GetScriptEngine()->HasScriptInstance(uuid, typeName);
 }
 
 static MonoObject *Entity_GetScript(uint64_t uuid, MonoReflectionType *scriptType)
 {
     MonoType *type = mono_reflection_type_get_type(scriptType);
     std::string typeName = mono_type_get_name(type);
-    return Engine::GetScriptEngine()->GetEntityScriptInstance(uuid, typeName)->GetHandle();
+    return Engine::GetScriptEngine()->GetScriptInstance(uuid, typeName)->GetHandle();
 }
+
+static void Entity_GetPosition(uint64_t uuid, vec3 *outPosition)
+{
+    Entity entity = Engine::GetActiveScene()->GetWorld().GetEntityByUUID(uuid);
+    *outPosition = entity.GetComponent<TransformComponent>().position;
+}
+
+static void Entity_SetPosition(uint64_t uuid, vec3 *position)
+{
+    Entity entity = Engine::GetActiveScene()->GetWorld().GetEntityByUUID(uuid);
+    entity.GetComponent<TransformComponent>().SetPosition(*position);
+}
+
+static void Entity_GetRotation(uint64_t uuid, quat *outRotation)
+{
+    Entity entity = Engine::GetActiveScene()->GetWorld().GetEntityByUUID(uuid);
+    *outRotation = entity.GetComponent<TransformComponent>().rotation;
+}
+
+static void Entity_SetRotation(uint64_t uuid, quat *rotation)
+{
+    Entity entity = Engine::GetActiveScene()->GetWorld().GetEntityByUUID(uuid);
+    entity.GetComponent<TransformComponent>().SetRotation(*rotation);
+}
+
+static void Entity_GetScale(uint64_t uuid, vec3 *outScale)
+{
+    Entity entity = Engine::GetActiveScene()->GetWorld().GetEntityByUUID(uuid);
+    *outScale = entity.GetComponent<TransformComponent>().scale;
+}
+
+static void Entity_SetScale(uint64_t uuid, vec3 *scale)
+{
+    Entity entity = Engine::GetActiveScene()->GetWorld().GetEntityByUUID(uuid);
+    entity.GetComponent<TransformComponent>().SetScale(*scale);
+}
+
+static void Transform_GetPosition(uint64_t uuid, vec3 *outPosition)
+{
+    Entity entity = Engine::GetActiveScene()->GetWorld().GetEntityByUUID(uuid);
+    *outPosition = entity.GetComponent<TransformComponent>().position;
+}
+
+static void Transform_SetPosition(uint64_t uuid, vec3 *position)
+{
+    Entity entity = Engine::GetActiveScene()->GetWorld().GetEntityByUUID(uuid);
+    entity.GetComponent<TransformComponent>().SetPosition(*position);
+}
+
+static void Transform_GetRotation(uint64_t uuid, quat *outRotation)
+{
+    Entity entity = Engine::GetActiveScene()->GetWorld().GetEntityByUUID(uuid);
+    *outRotation = entity.GetComponent<TransformComponent>().rotation;
+}
+
+static void Transform_SetRotation(uint64_t uuid, quat *rotation)
+{
+    Entity entity = Engine::GetActiveScene()->GetWorld().GetEntityByUUID(uuid);
+
+    entity.GetComponent<TransformComponent>().SetRotation(*rotation);
+}
+
+static void Transform_GetScale(uint64_t uuid, vec3 *outScale)
+{
+    Entity entity = Engine::GetActiveScene()->GetWorld().GetEntityByUUID(uuid);
+    *outScale = entity.GetComponent<TransformComponent>().scale;
+}
+
+static void Transform_SetScale(uint64_t uuid, vec3 *scale)
+{
+    Entity entity = Engine::GetActiveScene()->GetWorld().GetEntityByUUID(uuid);
+    entity.GetComponent<TransformComponent>().SetScale(*scale);
+}
+
 // end internal_calls
 
 template <typename T>
@@ -122,6 +196,18 @@ void ScriptGlue::AddInternalCalls()
     ADD_INTERNAL_CALL(Entity_HasComponent);
     ADD_INTERNAL_CALL(Entity_GetScript);
     ADD_INTERNAL_CALL(Entity_HasScript);
+    ADD_INTERNAL_CALL(Entity_GetPosition);
+    ADD_INTERNAL_CALL(Entity_SetPosition);
+    ADD_INTERNAL_CALL(Entity_GetRotation);
+    ADD_INTERNAL_CALL(Entity_SetRotation);
+    ADD_INTERNAL_CALL(Entity_GetScale);
+    ADD_INTERNAL_CALL(Entity_SetScale);
+    ADD_INTERNAL_CALL(Transform_GetPosition);
+    ADD_INTERNAL_CALL(Transform_SetPosition);
+    ADD_INTERNAL_CALL(Transform_GetRotation);
+    ADD_INTERNAL_CALL(Transform_SetRotation);
+    ADD_INTERNAL_CALL(Transform_GetScale);
+    ADD_INTERNAL_CALL(Transform_SetScale);
     ADD_INTERNAL_CALL(Log_CoreTrace);
     ADD_INTERNAL_CALL(Log_CoreDebug);
     ADD_INTERNAL_CALL(Log_CoreInfo);

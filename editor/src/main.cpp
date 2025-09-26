@@ -60,7 +60,7 @@ int main()
 
     World &world = scene->GetWorld();
     const std::string &worldStr = FileSystem::ReadText(project->GetStartSceneDirectory());
-    world = Deserialize<World>(worldStr);
+    Deserialize<World>(worldStr, world);
 
     float time = Time::Now();
 

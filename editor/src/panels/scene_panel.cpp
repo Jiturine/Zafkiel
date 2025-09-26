@@ -56,7 +56,7 @@ void ScenePanel::DrawGizmo(vec2 contentPosition, vec2 contextSize)
 
         // Entity transform
         auto &transformComponent = selectedEntity.GetComponent<TransformComponent>();
-        mat4 &transformMatrix = transformComponent.GetWorldMatrix();
+        mat4 &worldMatrix = transformComponent.GetWorldMatrix();
 
         // Snapping
         bool snap = Input::IsKeyPressed(Scancode::LCTRL);
@@ -67,20 +67,12 @@ void ScenePanel::DrawGizmo(vec2 contentPosition, vec2 contextSize)
         float snapValues[3] = {snapValue, snapValue, snapValue};
 
         ImGuizmo::Manipulate(cameraView.value(), cameraProjection.value(),
-            (ImGuizmo::OPERATION)gizmoType, ImGuizmo::LOCAL, transformMatrix.value(),
+            (ImGuizmo::OPERATION)gizmoType, ImGuizmo::LOCAL, worldMatrix.value(),
             nullptr, snap ? snapValues : nullptr);
 
         if (ImGuizmo::IsUsing())
         {
-            vec3 position;
-            quat rotation;
-            vec3 scale;
-
-            Maths::DecomposeTransform(transformMatrix, position, rotation, scale);
-
-            transformComponent.SetPosition(position);
-            transformComponent.SetRotation(rotation);
-            transformComponent.SetScale(scale);
+            transformComponent.SetWorldMatrix(worldMatrix);
         }
     }
 }
@@ -98,8 +90,8 @@ void ScenePanel::RenderScene(Ref<Scene> scene)
         auto &transform = entity.GetComponent<TransformComponent>();
         auto &spriteRenderer = entity.GetComponent<SpriteRendererComponent>();
         Renderer2D::QuadProps props;
-        props.position = transform.position;
-        props.size = transform.scale;
+        props.position = transform.GetWorldPosition();
+        props.size = transform.GetWorldScale();
         props.color = spriteRenderer.color;
         props.texture = Editor::GetProject()->GetAssetManager()->GetAsset(spriteRenderer.texture).As<Texture2D>();
         renderer->DrawQuad(props);

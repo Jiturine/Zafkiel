@@ -33,7 +33,7 @@ void ToolbarPanel::Render()
             Engine::SetActiveScene(newScene);
             Editor::SetRuntimeScene(newScene);
             Editor::GetScriptEngine()->OnRuntimeInit();
-            newScene->GetWorld() = Deserialize<World>(worldData);
+            Deserialize<World>(worldData, newScene->GetWorld());
             Editor::GetScriptEngine()->OnRuntimeStart();
         }
         else

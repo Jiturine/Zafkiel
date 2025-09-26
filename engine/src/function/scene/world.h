@@ -59,7 +59,13 @@ class [[refl]] World
     }
     Entity GetEntityByUUID(UUID uuid) const
     {
-        return Entity(UUIDToEntityID.at(uuid), registry, uuid);
+        auto it = UUIDToEntityID.find(uuid);
+        if (it != UUIDToEntityID.end())
+        {
+            return Entity(it->second, registry, uuid);
+        }
+        Log::CoreError("Cannot Find Entity: {}", (uint64_t)uuid);
+        return Entity();
     }
     std::vector<Entity> AllEntities() const
     {
@@ -103,8 +109,8 @@ template <>
 struct Serialization<World>
 {
     static constexpr bool has_serialize = true;
-    static void Serialize(const Any &instance, const Type *typeInfo, YAML::Emitter &out);
-    static void Deserialize(Any &instance, const Type *typeInfo, const YAML::Node &data);
+    static void Serialize(const Any instance, Any context, YAML::Emitter &out);
+    static void Deserialize(Any instance, Any context, const YAML::Node &data);
 };
 
 }

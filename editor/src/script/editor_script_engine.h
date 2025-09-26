@@ -46,29 +46,29 @@ class EditorScriptEngine : public ScriptEngine
     ScriptClassMap &GetScriptClasses() { return GetActiveDomain()->GetScriptClasses(); }
     const ScriptClassMap &GetScriptClasses() const { return GetActiveDomain()->GetScriptClasses(); }
 
-    EntityInstanceMap &GetEntityInstances() { return GetActiveDomain()->GetEntityInstances(); }
-    const EntityInstanceMap &GetEntityInstances() const { return GetActiveDomain()->GetEntityInstances(); }
+    EntityMap &GetEntities() { return GetActiveDomain()->GetEntities(); }
+    const EntityMap &GetEntities() const { return GetActiveDomain()->GetEntities(); }
 
     static void OnScriptsChange(const std::filesystem::path &path, const filewatch::Event change_type);
 
-    virtual bool HasEntityScriptInstance(UUID uuid, const std::string &scriptName) const override
+    virtual bool HasScriptInstance(UUID uuid, const std::string &scriptName) const override
     {
-        auto &entityInstances = GetEntityInstances();
-        auto it = entityInstances.find(uuid);
-        return it != entityInstances.end() && it->second.contains(scriptName);
+        auto &entities = GetEntities();
+        auto it = entities.find(uuid);
+        return it != entities.end() && it->second.contains(scriptName);
     }
 
-    virtual Ref<ScriptInstance> GetEntityScriptInstance(UUID uuid, const std::string &scriptName) const override
+    virtual Ref<ScriptInstance> GetScriptInstance(UUID uuid, const std::string &scriptName) const override
     {
-        auto &entityInstances = GetEntityInstances();
-        if (auto entity = entityInstances.find(uuid); entity != entityInstances.end())
+        auto &entities = GetEntities();
+        if (auto entity = entities.find(uuid); entity != entities.end())
             if (auto it = entity->second.find(scriptName); it != entity->second.end())
                 return it->second;
         Log::CoreError("entity script doesn't exist: {} {}", (uint64_t)uuid, scriptName);
         return nullptr;
     }
 
-    virtual Ref<ScriptInstance> AddEntityScriptInstance(UUID uuid, const std::string &scriptName) override
+    virtual Ref<ScriptInstance> AddScriptInstance(UUID uuid, const std::string &scriptName) override
     {
         auto &scriptClasses = GetScriptClasses();
         auto it = scriptClasses.find(scriptName);
@@ -78,14 +78,14 @@ class EditorScriptEngine : public ScriptEngine
             return nullptr;
         }
         auto instance = GetActiveDomain()->InstantiateScriptClass(it->second, uuid);
-        GetEntityInstances()[uuid][scriptName] = instance;
+        GetEntities()[uuid][scriptName] = instance;
         return instance;
     }
 
-    virtual void RemoveEntityScriptInstance(UUID uuid, const std::string &scriptName) override
+    virtual void RemoveScriptInstance(UUID uuid, const std::string &scriptName) override
     {
-        auto entityInstances = GetEntityInstances();
-        if (auto entity = entityInstances.find(uuid); entity != entityInstances.end())
+        auto &entities = GetEntities();
+        if (auto entity = entities.find(uuid); entity != entities.end())
             entity->second.erase(scriptName);
         else
             Log::CoreError("Entity Instance {} - {} doesn't exist!", (uint64_t)uuid, scriptName);
@@ -97,6 +97,32 @@ class EditorScriptEngine : public ScriptEngine
     Ref<ScriptDomain> GetActiveDomain() const
     {
         return isRuntime ? runtimeDomain : editorDomain;
+    }
+
+    virtual const ScriptInstanceMap &GetScriptInstances(UUID uuid) const override
+    {
+        auto &entities = GetEntities();
+        if (auto it = entities.find(uuid); it != entities.end())
+            return it->second;
+        else
+        {
+            Log::CoreError("Cannot find Script Instances of Entity : {}", (uint64_t)uuid);
+            static const ScriptInstanceMap empty;
+            return empty;
+        }
+    }
+
+    virtual ScriptInstanceMap &GetScriptInstances(UUID uuid) override
+    {
+        auto &entities = GetEntities();
+        if (auto it = entities.find(uuid); it != entities.end())
+            return it->second;
+        else
+        {
+            Log::CoreError("Cannot find Script Instances of Entity : {}", (uint64_t)uuid);
+            static ScriptInstanceMap empty;
+            return empty;
+        }
     }
 
     friend class ScriptClass;

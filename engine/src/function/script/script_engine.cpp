@@ -71,7 +71,7 @@ ScriptDomain::ScriptDomain(const std::string &name)
 ScriptDomain::~ScriptDomain()
 {
     scriptClasses.clear();
-    entityInstances.clear();
+    entities.clear();
     coreAssembly = nullptr;
     coreAssemblyImage = nullptr;
     appAssembly = nullptr;

@@ -19,6 +19,21 @@ void HierarchyPanel::DrawEntityNode(Entity entity)
     std::string label = entity.HasComponent<TagComponent>() ? entity.GetComponent<TagComponent>().name : entity.GetUUID().ToString();
 
     GUITreeNode node((uint32_t)entity.GetHandle(), flags, label);
+    if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAllowNullID))
+    {
+        ImGui::SetDragDropPayload("Entity", &entity, sizeof(entity));
+        ImGui::EndDragDropSource();
+    }
+    if (ImGui::BeginDragDropTarget())
+    {
+        if (const ImGuiPayload *payload = ImGui::AcceptDragDropPayload("Entity"))
+        {
+            Entity otherEntity = *(Entity *)payload->Data;
+            otherEntity.SetParent(entity);
+        }
+        ImGui::EndDragDropTarget();
+    }
+
     node.Popup([&]() {
         EditorGUI().MenuItem("Destroy", [&]() {
             scene->GetWorld().DestroyEntity(entity);
@@ -31,7 +46,6 @@ void HierarchyPanel::DrawEntityNode(Entity entity)
                 DrawEntityNode(child);
         });
     }
-
     if (node.leftClicked)
     {
         Editor::SetSelectedEntity(entity);
@@ -64,5 +78,16 @@ void HierarchyPanel::Render()
     hierarchyPanel.OnClickEmpty([&]() {
         Editor::SetSelectedEntity(Entity());
     });
+
+    EditorGUI().InvisibleButton("empty drop", hierarchyPanel.GetContentSize());
+    if (ImGui::BeginDragDropTarget())
+    {
+        if (const ImGuiPayload *payload = ImGui::AcceptDragDropPayload("Entity"))
+        {
+            Entity entity = *(Entity *)payload->Data;
+            entity.SetParent(Entity::null);
+        }
+        ImGui::EndDragDropTarget();
+    }
 }
 }

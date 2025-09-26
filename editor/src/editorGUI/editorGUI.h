@@ -33,6 +33,13 @@ class EditorGUI
         sameLine = true;
         return *this;
     }
+    EditorGUI InvisibleButton(const std::string &label, vec2 size)
+    {
+        if (sameLine) ImGui::SameLine();
+        ImGui::InvisibleButton(label.c_str(), ImVec2(size.x, size.y));
+        sameLine = true;
+        return *this;
+    }
     EditorGUI Image(uint32_t id, vec2 size, vec2 uv0 = vec2(0.0f, 0.0f), vec2 uv1 = vec2(1.0f, 1.0f))
     {
         if (sameLine) ImGui::SameLine();
@@ -174,7 +181,10 @@ class GUIWindow
     }
     vec2 GetContentSize()
     {
-        ImVec2 size = ImGui::GetContentRegionAvail();
+        ImVec2 contentMin = ImGui::GetCursorScreenPos();
+        ImVec2 relativeContentMax = ImGui::GetWindowContentRegionMax();
+        vec2 contentMax = GetWindowPosition() + vec2(relativeContentMax.x, relativeContentMax.y);
+        ImVec2 size = ImVec2(contentMax.x - contentMin.x, contentMax.y - contentMin.y);
         return vec2(size.x, size.y);
     }
     void Popup(std::function<void(void)> onPopup)

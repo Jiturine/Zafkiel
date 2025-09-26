@@ -83,6 +83,8 @@ class Entity
 
     Entity GetParent() const;
 
+    void SetParent(Entity parent);
+
     bool HasChildren() const;
 
     std::vector<Entity> GetChildren() const;
@@ -93,7 +95,13 @@ class Entity
 
     const entt::registry *GetRegistry() const { return registry; }
 
+    static const Entity null;
+
   private:
+    void RemoveChild(Entity child);
+
+    void AddChild(Entity child);
+
     entt::registry *registry;
     EntityID handle;
     UUID uuid;

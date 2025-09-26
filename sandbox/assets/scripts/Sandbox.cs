@@ -15,6 +15,12 @@ namespace Sandbox
         void OnUpdate(float timestep)
         {
             value_1++;
+            var position = Position;
+            position.x += timestep * 0.1f;
+            Position = position;
+            var scale = GetComponent<Transform>().Scale;
+            scale.y += timestep * 0.5f;
+            Scale = scale;
         }
         public int value_1 = 1;
         public float value_2 = 1.5f;
