@@ -77,7 +77,7 @@ class Camera
     float aspectRatio = 1.0f;
 
     float perspectiveFOV = 45.0f;
-    float perspectiveNear = 0.01f, perspectiveFar = 1000.0f;
+    float perspectiveNear = 0.3f, perspectiveFar = 1000.0f;
 
     ProjectionType projectionType = ProjectionType::Orthographic;
 };

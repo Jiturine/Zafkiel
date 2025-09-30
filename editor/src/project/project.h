@@ -1,6 +1,6 @@
 #pragma once
 #include "platform/filesystem/filesystem.h"
-#include "resource/editor_asset_manager.h"
+#include "engine_extensions/resource/editor_asset_manager.h"
 
 namespace Zafkiel
 {

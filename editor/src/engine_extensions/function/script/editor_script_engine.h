@@ -13,7 +13,7 @@ class ScriptField;
 class EditorScriptEngine : public ScriptEngine
 {
   public:
-    EditorScriptEngine(const Path &coreAssemblyPath);
+    EditorScriptEngine();
     ~EditorScriptEngine();
 
     // debug
@@ -48,8 +48,6 @@ class EditorScriptEngine : public ScriptEngine
 
     EntityMap &GetEntities() { return GetActiveDomain()->GetEntities(); }
     const EntityMap &GetEntities() const { return GetActiveDomain()->GetEntities(); }
-
-    static void OnScriptsChange(const std::filesystem::path &path, const filewatch::Event change_type);
 
     virtual bool HasScriptInstance(UUID uuid, const std::string &scriptName) const override
     {

@@ -16,12 +16,13 @@ class OpenGLContext : public GraphicsContext
 
     virtual Ref<VertexArray> CreateVertexArray() const override;
     virtual Ref<VertexBuffer> CreateVertexBuffer(uint32_t size) const override;
-    virtual Ref<VertexBuffer> CreateVertexBuffer(float *vertices, uint32_t size) const override;
-    virtual Ref<IndexBuffer> CreateIndexBuffer(uint32_t *indices, uint32_t count) const override;
+    virtual Ref<VertexBuffer> CreateVertexBuffer(const float *vertices, uint32_t size) const override;
+    virtual Ref<IndexBuffer> CreateIndexBuffer(const uint32_t *indices, uint32_t count) const override;
     virtual Ref<FrameBuffer> CreateFrameBuffer(const FrameBufferSpecification &spec) const override;
     virtual Ref<Shader> CreateShader(const Path &path) const override;
     virtual Ref<Texture2D> CreateTexture2D(const Path &path) const override;
     virtual Ref<Texture2D> CreateTexture2D(const TextureSpecification &spec, const Buffer &buffer) const override;
+    virtual Ref<Mesh> CreateMesh(const std::vector<MeshVertex> &vertices, const std::vector<uint32_t> &indices) const override;
     virtual void SetCurrent() override;
 
     virtual void SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) override;

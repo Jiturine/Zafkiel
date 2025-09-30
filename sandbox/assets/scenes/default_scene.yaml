@@ -34,3 +34,13 @@
   SpriteRendererComponent:
     color: [0.7, 0.9, 0.8, 1]
     texture: 10908746314547785840
+1298312351235235235:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+  TagComponent:
+    name: Object3
+    tag: Object
+  MeshComponent:
+    mesh: 14729006050217159052

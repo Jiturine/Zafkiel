@@ -11,7 +11,7 @@
 #include "panels/properties_panel.h"
 #include "function/scene/components.h"
 #include "editor.h"
-#include "function/engine.h"
+#include "engine.h"
 
 namespace Zafkiel
 {

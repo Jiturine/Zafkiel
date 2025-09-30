@@ -2,6 +2,7 @@
 
 #include "entity.h"
 #include "core/meta/reflection/refl.h"
+#include "resource/asset.h"
 
 namespace Zafkiel
 {
@@ -91,6 +92,7 @@ class [[refl]] World
         UUIDToEntityID.erase(entity.GetUUID());
         registry.destroy(entity.GetHandle());
     }
+    Entity InstantiateModel(AssetHandle model);
 
   private:
     template <typename T, typename... Remains>

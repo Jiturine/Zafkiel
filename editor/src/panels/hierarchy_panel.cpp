@@ -1,7 +1,7 @@
 #include "hierarchy_panel.h"
 #include "editorGUI/editorGUI.h"
 #include "function/scene/components.h"
-#include "function/engine.h"
+#include "engine.h"
 #include "editor.h"
 
 namespace Zafkiel

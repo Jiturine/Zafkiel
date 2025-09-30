@@ -24,7 +24,7 @@ static std::string MonoStringToCppString(MonoString *string)
     return res;
 }
 
-EditorScriptEngine::EditorScriptEngine(const Path &coreAssemblyPath)
+EditorScriptEngine::EditorScriptEngine()
 {
     std::vector<const char *> argv = {
         "--debugger-agent=transport=dt_socket,address=localhost:55555,server=y,suspend=n,loglevel=3,logfile=MonoDebugger.log",
@@ -118,7 +118,6 @@ void EditorScriptEngine::LoadRuntimeCoreAssembly()
     {
         Buffer pdbFileData = FileSystem::ReadBytes(pdbPath);
         mono_debug_open_image_from_memory(runtimeDomain->GetCoreAssemblyImage(), pdbFileData.data(), pdbFileData.size());
-        pdbFileData.clear();
     }
 }
 
@@ -140,7 +139,6 @@ void EditorScriptEngine::LoadRuntimeAppAssembly()
     {
         Buffer pdbFileData = FileSystem::ReadBytes(pdbPath);
         mono_debug_open_image_from_memory(runtimeDomain->GetAppAssemblyImage(), pdbFileData.data(), pdbFileData.size());
-        pdbFileData.clear();
     }
 }
 
@@ -232,10 +230,6 @@ void EditorScriptEngine::OnRuntimeStop()
     }
     UnloadRuntimeDomain();
     SwitchToEditor();
-}
-
-void EditorScriptEngine::OnScriptsChange(const std::filesystem::path &path, const filewatch::Event change_type)
-{
 }
 
 }

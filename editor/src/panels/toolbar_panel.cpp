@@ -1,12 +1,12 @@
 #include "toolbar_panel.h"
 #include "core/meta/serializer/deserialize.h"
 #include "editorGUI/editorGUI.h"
-#include "function/engine.h"
+#include "engine.h"
 #include "editor.h"
 #include "function/scene/components.h"
 #include "function/script/script_engine.h"
 #include "function/scene/scene.h"
-#include "script/editor_script_engine.h"
+#include "engine_extensions/function/script/editor_script_engine.h"
 
 namespace Zafkiel
 {

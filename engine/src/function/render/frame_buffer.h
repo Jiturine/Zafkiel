@@ -1,32 +1,13 @@
 #pragma once
+#include "texture.h"
 
 namespace Zafkiel
 {
-enum class FrameBufferTextureFormat
-{
-    None = 0,
-    RGBA8,
-    RGBA16F,
-    RGBA32F,
-    RED_INTEGER,
-    DEPTH24STENCIL8,
-    Depth = DEPTH24STENCIL8
-};
-struct FrameBufferTextureSpecification
-{
-    FrameBufferTextureSpecification() = default;
-    FrameBufferTextureSpecification(FrameBufferTextureFormat format)
-        : textureFormat(format) {}
-    FrameBufferTextureFormat textureFormat = FrameBufferTextureFormat::None;
-    // bool multisample = false;
-    // uint32_t samples = 1;
-};
+
 struct FrameBufferSpecification
 {
     uint32_t width, height;
-    std::vector<FrameBufferTextureSpecification> attachments;
-    uint32_t samples = 1;
-    bool swapChainTarget = false;
+    std::vector<TextureFormat> attachments;
 };
 
 class FrameBuffer : public RefCounted
@@ -38,10 +19,18 @@ class FrameBuffer : public RefCounted
     virtual void Unbind() const = 0;
 
     virtual void Resize(uint32_t width, uint32_t height) = 0;
-    virtual int ReadPixel(uint32_t attachmentIndex, int x, int y) = 0;
 
-    virtual void ClearAttachment(uint32_t attachmentIndex, int value) = 0;
+    template <typename T>
+    T ReadPixel(uint32_t attachmentIndex, int x, int y);
 
-    virtual uint32_t GetColorAttachmentRendererID(uint32_t index = 0) const = 0;
+    virtual void ClearColorAttachment(uint32_t index, const void *value) = 0;
+
+    virtual Ref<Texture2D> GetColorAttachment(uint32_t index = 0) const = 0;
+
+    virtual uint32_t GetRendererID() const = 0;
+
+  protected:
+    virtual uint32_t ReadPixelUInt(uint32_t attachmentIndex, int x, int y) = 0;
 };
+
 }

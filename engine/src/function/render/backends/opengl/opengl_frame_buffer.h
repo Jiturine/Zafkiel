@@ -8,21 +8,21 @@ class OpenGLFrameBuffer : public FrameBuffer
   public:
     OpenGLFrameBuffer(const FrameBufferSpecification &spec);
     ~OpenGLFrameBuffer();
-    void Invalidate();
-    virtual const FrameBufferSpecification &GetSpecification() const override { return specification; }
-    virtual uint32_t GetColorAttachmentRendererID(uint32_t index = 0) const override;
+    virtual const FrameBufferSpecification &GetSpecification() const override { return spec; }
+    virtual Ref<Texture2D> GetColorAttachment(uint32_t index = 0) const override;
     virtual void Bind() const override;
     virtual void Unbind() const override;
     virtual void Resize(uint32_t width, uint32_t height) override;
-    virtual int ReadPixel(uint32_t attachmentIndex, int x, int y) override;
-    virtual void ClearAttachment(uint32_t attachmentIndex, int value) override;
+    virtual uint32_t ReadPixelUInt(uint32_t attachmentIndex, int x, int y) override;
+    virtual void ClearColorAttachment(uint32_t index, const void *value) override;
+    virtual uint32_t GetRendererID() const override { return rendererID; }
 
   private:
+    void Invalidate();
+
     uint32_t rendererID = 0;
-    FrameBufferSpecification specification;
-    std::vector<FrameBufferTextureSpecification> colorAttachmentSpecifications;
-    FrameBufferTextureSpecification depthAttachmentSpecification = FrameBufferTextureFormat::None;
-    std::vector<uint32_t> colorAttachments;
-    uint32_t depthAttachment = 0;
+    FrameBufferSpecification spec;
+    std::vector<Ref<Texture2D>> colorAttachments;
+    Ref<Texture2D> depthAttachment;
 };
 }

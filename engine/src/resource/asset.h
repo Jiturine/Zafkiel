@@ -11,7 +11,9 @@ using AssetHandle = UUID;
 enum class [[refl]] AssetType
 {
     None = 0,
-    Texture2D
+    Texture2D,
+    Model,
+    Mesh
 };
 
 class Asset : public RefCounted

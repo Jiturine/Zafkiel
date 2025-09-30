@@ -1,3 +1,4 @@
+#include "function/render/model.h"
 #include "function/window/window.h"
 #include "core/time/time.h"
 #include "editorGUI/editorGUI.h"
@@ -14,8 +15,9 @@
 #include "editor_refl_generate.h"
 
 #include "editor.h"
-#include "function/engine.h"
-#include "script/editor_script_engine.h"
+#include "engine.h"
+#include "function/input/input.h"
+#include "engine_extensions/function/script/editor_script_engine.h"
 #include "function/script/script_glue.h"
 
 #include <filewatch.hpp>
@@ -40,6 +42,11 @@ int main()
     auto project = Editor::CreateProject(projectConfig);
     project->GetAssetManager()->DeserializeAssetRegistry();
 
+    Engine::SetAssetManager(project->GetAssetManager());
+
+    // project->GetAssetManager()->ImportAsset("models/african_head.obj");
+    // project->GetAssetManager()->SerializeAssetRegistry();
+
     window->GetActivePanel<ContentBrowserPanel>()->SetCurrentDirectory(project->GetAssetDirectory());
 
     // 设置脚本引擎
@@ -62,6 +69,8 @@ int main()
     const std::string &worldStr = FileSystem::ReadText(project->GetStartSceneDirectory());
     Deserialize<World>(worldStr, world);
 
+    world.InstantiateModel(2971917492089503043);
+
     float time = Time::Now();
 
     while (!window->ShouldClose())
@@ -69,16 +78,22 @@ int main()
         float timestep = Time::Now() - time;
         time = Time::Now();
 
+        Input::ClearState();
+        window->PollEvents();
+
+        // 逻辑更新
         Engine::ExecuteMainThreadQueue();
+        if (scriptEngine->isRuntime)
+        {
+            scriptEngine->OnRuntimeUpdate(timestep);
+        }
+
+        // 渲染更新
+        Engine::GetGraphicsContext()->Clear();
 
         if (auto scenePanel = window->GetActivePanel<ScenePanel>())
         {
             scenePanel->RenderScene(Engine::GetActiveScene());
-            scenePanel->Update(timestep);
-        }
-        if (scriptEngine->isRuntime)
-        {
-            scriptEngine->OnRuntimeUpdate(timestep);
         }
 
         EditorGUI::StartFrame();
@@ -102,7 +117,16 @@ int main()
         }
         EditorGUI::EndFrame();
 
-        window->OnUpdate(timestep);
+        // 渲染后更新，用到imgui的事件
+        if (auto scenePanel = window->GetActivePanel<ScenePanel>())
+        {
+            scenePanel->Update(timestep);
+        }
+
+        window->SwapBuffers();
     }
+
+    project->GetAssetManager()->SerializeAssetRegistry();
+
     return 0;
 }

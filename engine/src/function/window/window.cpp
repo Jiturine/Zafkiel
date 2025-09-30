@@ -1,6 +1,6 @@
 #include "window.h"
-#include "function/engine.h"
-
+#include "engine.h"
+#include "function/input/input.h"
 #include "function/render/backends/opengl/opengl_context.h"
 
 namespace Zafkiel
@@ -26,15 +26,14 @@ Window::~Window()
     SDL_DestroyWindow(handle);
 }
 
-void Window::OnUpdate(float timestep)
+void Window::PollEvents()
 {
-    SDL_Delay(16);
-
     SDL_Event sdl_event;
     while (SDL_PollEvent(&sdl_event))
     {
         Event event(sdl_event);
         OnEvent(event);
+        Input::ProcessEvent(sdl_event);
 
         switch (sdl_event.type)
         {
@@ -43,8 +42,11 @@ void Window::OnUpdate(float timestep)
             break;
         }
     }
+}
+
+void Window::SwapBuffers()
+{
     SDL_GL_SwapWindow(handle);
-    graphicsContext->Clear();
 }
 
 void Window::OnEvent(Event &event)

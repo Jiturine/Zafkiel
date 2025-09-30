@@ -4,6 +4,7 @@
 #include "opengl_frame_buffer.h"
 #include "opengl_shader.h"
 #include "opengl_texture.h"
+#include "opengl_mesh.h"
 
 namespace Zafkiel
 {
@@ -52,11 +53,11 @@ Ref<VertexBuffer> OpenGLContext::CreateVertexBuffer(uint32_t size) const
 {
     return MakeRef<OpenGLVertexBuffer>(size);
 }
-Ref<VertexBuffer> OpenGLContext::CreateVertexBuffer(float *vertices, uint32_t size) const
+Ref<VertexBuffer> OpenGLContext::CreateVertexBuffer(const float *vertices, uint32_t size) const
 {
     return MakeRef<OpenGLVertexBuffer>(vertices, size);
 }
-Ref<IndexBuffer> OpenGLContext::CreateIndexBuffer(uint32_t *indices, uint32_t count) const
+Ref<IndexBuffer> OpenGLContext::CreateIndexBuffer(const uint32_t *indices, uint32_t count) const
 {
     return MakeRef<OpenGLIndexBuffer>(indices, count);
 }
@@ -75,6 +76,10 @@ Ref<Texture2D> OpenGLContext::CreateTexture2D(const Path &path) const
 Ref<Texture2D> OpenGLContext::CreateTexture2D(const TextureSpecification &spec, const Buffer &buffer) const
 {
     return MakeRef<OpenGLTexture2D>(spec, buffer);
+}
+Ref<Mesh> OpenGLContext::CreateMesh(const std::vector<MeshVertex> &vertices, const std::vector<uint32_t> &indices) const
+{
+    return MakeRef<OpenGLMesh>(vertices, indices);
 }
 
 void OpenGLContext::Clear(vec4 color)

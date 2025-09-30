@@ -127,6 +127,10 @@ void OpenGLShader::Set(const std::string &name, int value) const
 {
     glUniform1i(glGetUniformLocation(rendererID, name.c_str()), value);
 }
+void OpenGLShader::Set(const std::string &name, uint32_t value) const
+{
+    glUniform1ui(glGetUniformLocation(rendererID, name.c_str()), value);
+}
 void OpenGLShader::Set(const std::string &name, int *value, uint32_t count) const
 {
     glUniform1iv(glGetUniformLocation(rendererID, name.c_str()), count, value);

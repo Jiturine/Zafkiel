@@ -48,6 +48,8 @@ target_include_directories(editor PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/generated
 )
 
+target_precompile_headers(engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../engine/precompile/pch.h )
+
 target_link_libraries(editor PUBLIC engine imgui imguizmo filewatch)
 
 add_custom_target(

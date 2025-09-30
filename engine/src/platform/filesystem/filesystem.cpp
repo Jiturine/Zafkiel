@@ -46,4 +46,14 @@ std::vector<Path> FileSystem::GetFiles(const Path &directory, const Path &extens
     }
     return files;
 }
+
+void FileSystem::SaveText(const Path &filePath, const std::string &text)
+{
+    std::ofstream file(filePath);
+    if (!file)
+    {
+        Log::CoreError("Failed to open file: {}", filePath.string());
+    }
+    file << text;
+}
 }

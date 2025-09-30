@@ -47,7 +47,7 @@ target_include_directories(engine PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/generated)
 
 # 链接第三方库
-target_link_libraries(engine PUBLIC spdlog mono z EnTT SDL3::SDL3 glad glm yaml-cpp stb_image)
+target_link_libraries(engine PUBLIC spdlog mono z EnTT SDL3::SDL3 glad glm yaml-cpp stb_image assimp)
 if(WIN32)
     target_link_libraries(engine PUBLIC opengl32)
 elseif(UNIX)

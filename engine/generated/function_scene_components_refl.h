@@ -23,6 +23,12 @@ inline void Register_function_scene_components()
     .AddProperty(&::Zafkiel::SpriteRendererComponent::color, "color")
     .AddProperty(&::Zafkiel::SpriteRendererComponent::texture, "texture")
     ;
+    ::Zafkiel::Reflection::Register<::Zafkiel::MeshComponent>("MeshComponent")
+    .AddProperty(&::Zafkiel::MeshComponent::mesh, "mesh")
+    ;
+    ::Zafkiel::Reflection::Register<::Zafkiel::MaterialComponent>("MaterialComponent")
+    .AddProperty(&::Zafkiel::MaterialComponent::material, "material")
+    ;
     ::Zafkiel::Reflection::Register<::Zafkiel::ScriptComponent>("ScriptComponent")
     .AddProperty(&::Zafkiel::ScriptComponent::entityUUID, "entityUUID")
     .AddProperty(&::Zafkiel::ScriptComponent::scripts, "scripts")

@@ -4,7 +4,7 @@
 #include "function/window/window.h"
 #include "panels/panel.h"
 #include "project/project.h"
-#include "resource/editor_asset_manager.h"
+#include "engine_extensions/resource/editor_asset_manager.h"
 
 namespace Zafkiel
 {

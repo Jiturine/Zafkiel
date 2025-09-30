@@ -1,6 +1,6 @@
 #include "editor.h"
 #include "editorGUI/editor_window.h"
-#include "script/editor_script_engine.h"
+#include "engine_extensions/function/script/editor_script_engine.h"
 
 namespace Zafkiel
 {
@@ -25,7 +25,7 @@ Ref<Project> Editor::CreateProject(ProjectConfig &config)
 
 Ref<EditorScriptEngine> Editor::CreateScriptEngine()
 {
-    scriptEngine = MakeRef<EditorScriptEngine>("ScriptCore.dll");
+    scriptEngine = MakeRef<EditorScriptEngine>();
     return scriptEngine;
 }
 

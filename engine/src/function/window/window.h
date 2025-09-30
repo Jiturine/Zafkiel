@@ -11,7 +11,8 @@ class Window : public RefCounted
     Window(const std::string &title, size_t width, size_t height);
     virtual ~Window();
     void SetContext(Ref<GraphicsContext> context);
-    void OnUpdate(float timestep);
+    void PollEvents();
+    void SwapBuffers();
     bool ShouldClose() { return shouldClose; }
     virtual void OnEvent(Event &event);
     SDL_Window *GetHandle() { return handle; }

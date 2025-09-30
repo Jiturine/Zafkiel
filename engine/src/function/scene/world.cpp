@@ -1,8 +1,10 @@
 #include "world.h"
 #include "components.h"
 #include "core/meta/serializer/custom_serialize.h"
-#include "function/engine.h"
+#include "engine.h"
+#include "function/render/model.h"
 #include "function/script/script_engine.h"
+#include "resource/asset_manager.h"
 
 namespace Zafkiel
 {
@@ -11,6 +13,19 @@ template <typename... T, typename Func>
 void for_each_type(std::tuple<T...>, Func &&f)
 {
     (f.template operator()<T>(), ...);
+}
+
+Entity World::InstantiateModel(AssetHandle model)
+{
+    Ref<Model> modelAsset = Engine::GetAssetManager()->GetAsset(model).As<Model>();
+    Entity modelEntity = SpawnEntity(TransformComponent{}, TagComponent{"Model", "Object"});
+    size_t index = 0;
+    for (auto mesh : modelAsset->GetMeshes())
+    {
+        Entity meshEntity = SpawnEntity(TransformComponent{}, TagComponent{std::format("Mesh_{}", index++), "Object"}, MeshComponent{mesh->handle});
+        meshEntity.SetParent(modelEntity);
+    }
+    return modelEntity;
 }
 
 void Serialization<World>::Serialize(const Any instance, Any context, YAML::Emitter &out)

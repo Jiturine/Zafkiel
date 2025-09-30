@@ -9,7 +9,7 @@
 #include <mono/metadata/object.h>
 #include <mono/metadata/reflection.h>
 #include "core/meta/reflection/refl.h"
-#include "function/engine.h"
+#include "engine.h"
 #include "function/scene/scene.h"
 
 #define ADD_INTERNAL_CALL(name) mono_add_internal_call("Zafkiel.InternalCalls::" #name, (const void *)name)

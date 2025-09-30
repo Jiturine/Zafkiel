@@ -4,19 +4,20 @@
 
 namespace Zafkiel
 {
-
-enum class ImageFormat
+enum class TextureFormat
 {
     None = 0,
+    RGBA8,
     RGB8,
-    RGBA8
+    R32UI,
+    DEPTH24STENCIL8
 };
 
 struct TextureSpecification
 {
     uint32_t width;
     uint32_t height;
-    ImageFormat format;
+    TextureFormat format;
 };
 
 class Texture : public Asset
@@ -27,6 +28,7 @@ class Texture : public Asset
     virtual uint32_t GetHeight() const = 0;
     virtual uint32_t GetRendererID() const = 0;
     virtual void SetData(const Buffer &buffer) = 0;
+    virtual void Clear(const void *value) = 0;
 
     virtual void Bind(uint32_t slot = 0) const = 0;
 };

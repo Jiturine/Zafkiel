@@ -18,6 +18,10 @@ static GLenum ShaderDataTypeToOpenGLBaseType(ShaderDataType type)
     case Int2: return GL_INT;
     case Int3: return GL_INT;
     case Int4: return GL_INT;
+    case UInt: return GL_UNSIGNED_INT;
+    case UInt2: return GL_UNSIGNED_INT;
+    case UInt3: return GL_UNSIGNED_INT;
+    case UInt4: return GL_UNSIGNED_INT;
     case Bool: return GL_BOOL;
     case None:
         Log::CoreError("Unknown ShaderDataType!");
@@ -32,7 +36,7 @@ OpenGLVertexBuffer::OpenGLVertexBuffer(uint32_t size)
     glBindBuffer(GL_ARRAY_BUFFER, rendererID);
     glBufferData(GL_ARRAY_BUFFER, size, nullptr, GL_DYNAMIC_DRAW);
 }
-OpenGLVertexBuffer::OpenGLVertexBuffer(float *vertices, uint32_t size)
+OpenGLVertexBuffer::OpenGLVertexBuffer(const float *vertices, uint32_t size)
 {
     glCreateBuffers(1, &rendererID);
     glBindBuffer(GL_ARRAY_BUFFER, rendererID);
@@ -56,7 +60,7 @@ void OpenGLVertexBuffer::SetData(const Buffer &buffer)
     glBufferSubData(GL_ARRAY_BUFFER, 0, buffer.size(), buffer.data());
 }
 
-OpenGLIndexBuffer::OpenGLIndexBuffer(uint32_t *vertices, uint32_t count)
+OpenGLIndexBuffer::OpenGLIndexBuffer(const uint32_t *vertices, uint32_t count)
     : count(count)
 {
     glCreateBuffers(1, &rendererID);
@@ -127,6 +131,10 @@ void OpenGLVertexArray::AddVertexBuffer(const Ref<VertexBuffer> &vertexBuffer)
         case Int2:
         case Int3:
         case Int4:
+        case UInt:
+        case UInt2:
+        case UInt3:
+        case UInt4:
         case Bool:
             glEnableVertexAttribArray(index);
             glVertexAttribIPointer(

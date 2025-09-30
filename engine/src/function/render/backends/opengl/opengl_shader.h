@@ -16,6 +16,7 @@ class OpenGLShader : public Shader
     virtual void Set(const std::string &name, const mat4 &matrix) const override;
     virtual void Set(const std::string &name, const vec4 &vector) const override;
     virtual void Set(const std::string &name, int value) const override;
+    virtual void Set(const std::string &name, uint32_t value) const override;
     virtual void Set(const std::string &name, int *value, uint32_t count) const override;
 
     virtual uint32_t GetRendererID() const override { return rendererID; }

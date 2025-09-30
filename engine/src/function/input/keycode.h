@@ -275,4 +275,11 @@ enum class Scancode
 
     // COUNT = 512
 };
+
+enum class MouseButton
+{
+    Left,
+    Right
+};
+
 }

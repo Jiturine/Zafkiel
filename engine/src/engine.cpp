@@ -4,12 +4,14 @@
 #include "function/render/backends/opengl/opengl_context.h"
 #include "function/scene/scene.h"
 #include "function/script/script_engine.h"
+#include "resource/asset_manager.h"
 
 namespace Zafkiel
 {
 Ref<GraphicsContext> Engine::graphicsContext;
 Ref<Scene> Engine::activeScene;
 Ref<ScriptEngine> Engine::scriptEngine;
+Ref<AssetManager> Engine::assetManager;
 
 Ref<GraphicsContext> Engine::CreateGraphicsContext(SDL_Window *window)
 {
@@ -17,6 +19,8 @@ Ref<GraphicsContext> Engine::CreateGraphicsContext(SDL_Window *window)
     return graphicsContext;
 }
 Ref<GraphicsContext> Engine::GetGraphicsContext() { return graphicsContext; }
+
+Ref<AssetManager> Engine::GetAssetManager() { return assetManager; }
 
 Ref<Scene> Engine::CreateScene()
 {
@@ -37,6 +41,11 @@ Ref<ScriptEngine> Engine::GetScriptEngine()
 void Engine::SetScriptEngine(const Ref<ScriptEngine> &engine)
 {
     scriptEngine = engine;
+}
+
+void Engine::SetAssetManager(const Ref<AssetManager> &manager)
+{
+    assetManager = manager;
 }
 
 void Engine::SubmitToMainThread(std::function<void(void)> func)

@@ -22,3 +22,6 @@
 [submodule "3rdparty/imguizmo"]
 	path = 3rdparty/imguizmo
 	url = https://github.com/CedricGuillemet/ImGuizmo.git
+[submodule "3rdparty/assimp"]
+	path = 3rdparty/assimp
+	url = https://github.com/assimp/assimp

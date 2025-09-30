@@ -18,6 +18,10 @@ uint32_t ShaderDataTypeSize(ShaderDataType type)
     case Int2: return 4 * 2;
     case Int3: return 4 * 3;
     case Int4: return 4 * 4;
+    case UInt: return 4;
+    case UInt2: return 4 * 2;
+    case UInt3: return 4 * 3;
+    case UInt4: return 4 * 4;
     case Bool: return 1;
     case None:
         Log::CoreError("Unknown ShaderDataType!");
@@ -44,6 +48,10 @@ uint32_t BufferLayout::BufferElement::GetElementCount() const
     case Int2: return 2;
     case Int3: return 3;
     case Int4: return 4;
+    case UInt: return 1;
+    case UInt2: return 2;
+    case UInt3: return 3;
+    case UInt4: return 4;
     case Bool: return 1;
     case None:
         Log::CoreError("Unknown ShaderDataType!");

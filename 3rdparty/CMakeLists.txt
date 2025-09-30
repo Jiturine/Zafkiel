@@ -61,10 +61,14 @@ if (NOT TARGET yaml-cpp)
     add_subdirectory(yaml-cpp)
 endif()
 
-if (NOT stb_image)
+if (NOT TARGET stb_image)
     add_subdirectory(stb_image)
 endif()
 
-if (NOT filewatch)
+if (NOT TARGET filewatch)
     add_subdirectory(filewatch)
+endif()
+
+if (NOT TARGET assimp)
+    add_subdirectory(assimp)
 endif()

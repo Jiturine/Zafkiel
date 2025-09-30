@@ -69,6 +69,16 @@ struct [[refl]] SpriteRendererComponent
     AssetHandle texture;
 };
 
+struct [[refl]] MeshComponent
+{
+    AssetHandle mesh;
+};
+
+struct [[refl]] MaterialComponent
+{
+    AssetHandle material;
+};
+
 struct [[refl]] ScriptComponent
 {
     UUID entityUUID;
@@ -83,6 +93,6 @@ struct Serialization<ScriptComponent>
     static void Deserialize(Any instance, Any context, const YAML::Node &data);
 };
 
-using ComponentList = std::tuple<TransformComponent, TagComponent, SpriteRendererComponent, ScriptComponent>;
+using ComponentList = std::tuple<TransformComponent, TagComponent, SpriteRendererComponent, MeshComponent, MaterialComponent, ScriptComponent>;
 
 }

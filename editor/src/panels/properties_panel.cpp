@@ -1,8 +1,8 @@
 #include "properties_panel.h"
 #include "function/scene/components.h"
-#include "function/engine.h"
+#include "engine.h"
 #include "function/script/script_engine.h"
-#include "script/editor_script_engine.h"
+#include "engine_extensions/function/script/editor_script_engine.h"
 #include "editor.h"
 
 namespace Zafkiel
@@ -171,6 +171,10 @@ void PropertiesPanel::DrawComponents(Entity entity)
     if (entity.HasComponent<ScriptComponent>())
     {
         DrawScriptComponent(entity.GetComponent<ScriptComponent>());
+    }
+    if (entity.HasComponent<MeshComponent>())
+    {
+        DrawCommonComponent(entity.GetComponent<MeshComponent>());
     }
 }
 }
