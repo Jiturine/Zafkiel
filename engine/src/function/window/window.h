@@ -5,21 +5,30 @@
 
 namespace Zafkiel
 {
-class Window : public RefCounted
+
+struct WindowSpecification
+{
+    GraphicsAPI graphicsAPI;
+    std::string title;
+    uint32_t width;
+    uint32_t height;
+};
+
+class Window
 {
   public:
-    Window(const std::string &title, size_t width, size_t height);
+    Window(const WindowSpecification &spec);
     virtual ~Window();
-    void SetContext(Ref<GraphicsContext> context);
     void PollEvents();
     void SwapBuffers();
     bool ShouldClose() { return shouldClose; }
-    virtual void OnEvent(Event &event);
-    SDL_Window *GetHandle() { return handle; }
+    virtual void OnEvent(SDL_Event &event);
+    SDL_Window *GetHandle() const { return handle; }
+    uint32_t GetWidth() const { return width; }
+    uint32_t GetHeight() const { return height; }
 
   protected:
     SDL_Window *handle;
-    Ref<GraphicsContext> graphicsContext;
     size_t width;
     size_t height;
     std::string title;

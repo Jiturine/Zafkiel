@@ -1,43 +1,85 @@
 #pragma once
 
 #include "resource/asset.h"
+#include "image.h"
 
 namespace Zafkiel
 {
-enum class TextureFormat
+
+enum class TextureWrap
 {
     None = 0,
-    RGBA8,
-    RGB8,
-    R32UI,
-    DEPTH24STENCIL8
+    Repeat,
+    Clamp
 };
 
-struct TextureSpecification
+enum class TextureFilter
+{
+    None = 0,
+    Nearest,
+    Linear
+};
+
+struct Texture2DSpecification
 {
     uint32_t width;
     uint32_t height;
-    TextureFormat format;
+    ImageFormat format;
+    std::vector<ImageUsage> usages;
+    ImageUpdateFrequency updateFrequency;
+    TextureWrap wrap = TextureWrap::Repeat;
+    TextureFilter filter = TextureFilter::Nearest;
+    uint32_t samples = 1;
 };
 
-class Texture : public Asset
+class Texture
 {
   public:
     virtual ~Texture() = default;
-    virtual uint32_t GetWidth() const = 0;
-    virtual uint32_t GetHeight() const = 0;
-    virtual uint32_t GetRendererID() const = 0;
-    virtual void SetData(const Buffer &buffer) = 0;
-    virtual void Clear(const void *value) = 0;
-
-    virtual void Bind(uint32_t slot = 0) const = 0;
 };
 
-class Texture2D : public Texture
+class Texture2DBackend
 {
   public:
-    virtual ~Texture2D() = default;
-    virtual AssetType GetType() const override { return AssetType::Texture2D; }
+    virtual ~Texture2DBackend() = default;
+};
+
+class Texture2D final : public Texture
+{
+  public:
+    Texture2D(const Texture2DSpecification &spec, Scope<Texture2DBackend> backend)
+        : backend(std::move(backend)) {}
+    uint32_t GetWidth() const { return image->GetWidth(); }
+    uint32_t GetHeight() const { return image->GetHeight(); }
+    const Observer<Image> GetImage() const { return image; }
+    Observer<Texture2DBackend> GetBackend() { return backend; }
+    const Observer<Texture2DBackend> GetBackend() const { return backend; }
+
+    void Resize(uint32_t width, uint32_t height) { image->Resize(width, height); }
+    
+    template<typename Derived>
+    friend class Texture2DFactory;
+
+  private:
+    Scope<Image> image;
+    Scope<Texture2DBackend> backend;
+};
+
+template<typename Derived>
+class Texture2DFactory
+{
+  protected:
+    static Scope<Image> &AccessImage(const Scope<Texture2D> &texture2D)
+    {
+        return texture2D->image;
+    }
+};
+
+class CubeMap : public Texture
+{
+  public:
+    virtual ~CubeMap() = default;
+    virtual uint32_t GetFaceSize() const = 0;
 };
 
 }

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "core/base/uuid.h"
-#include "core/meta/serializer/serialize.h"
+#include "core/meta/reflection/refl.h"
 
 namespace Zafkiel
 {
@@ -12,16 +12,71 @@ enum class [[refl]] AssetType
 {
     None = 0,
     Texture2D,
+    CubeMap,
     Model,
-    Mesh
+    Mesh,
+    Material,
+    Shader,
+    Scene
+};
+
+struct AssetMetadataBase
+{
+  public:
+    virtual ~AssetMetadataBase() = default;
+};
+
+struct AssetMetadata : public RefCounted
+{
+    AssetType type;
+    AssetHandle handle;
+    std::vector<AssetHandle> dependencies;
+
+    AssetMetadata(AssetHandle handle, AssetType type, const std::vector<AssetHandle> &dependencies);
+    AssetMetadata(AssetHandle handle, AssetType type);
+
+    Scope<AssetMetadataBase> detail; 
+};
+
+struct MeshMetadata final : public AssetMetadataBase
+{
+};
+
+struct ModelMetadata final : public AssetMetadataBase
+{
+};
+
+struct Texture2DMetadata final : public AssetMetadataBase
+{
+};
+
+struct CubeMapMetadata final : public AssetMetadataBase
+{
+};
+
+struct ShaderMetadata final : public AssetMetadataBase
+{
+    std::string name;
+};
+
+struct SceneMetadata final : public AssetMetadataBase
+{
+};
+
+struct MaterialMetadata final : public AssetMetadataBase
+{
+    std::string name;
 };
 
 class Asset : public RefCounted
 {
   public:
+    virtual ~Asset() = default;
+    
+    Asset(AssetHandle handle) : handle(handle) {}
     AssetHandle handle;
 
-    virtual AssetType GetType() const = 0;
+    virtual AssetType GetAssetType() const = 0;
 };
 
 }

@@ -1,0 +1,6 @@
+#parameters
+DiffuseTexture = uDiffuseTexture;
+
+#version 450
+
+layout(set = 2, binding = 0) uniform sampler2D uDiffuseTexture;

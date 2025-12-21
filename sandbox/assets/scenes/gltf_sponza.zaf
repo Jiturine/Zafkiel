@@ -1,0 +1,3734 @@
+3900931340145963589:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 15807231631109532091
+  TagComponent:
+    name: Mesh_137
+    tag: Object
+  MeshComponent:
+    mesh: 3113258502018814635
+  MaterialComponent:
+    material: 10826325120116743534
+15807231631109532091:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 9418173878537052026
+    children:
+      - 3900931340145963589
+  TagComponent:
+    name: ceiling_2ndfloor_window_frame_01_0
+    tag: Object
+1868001366502866747:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 3236073349115005700
+  TagComponent:
+    name: Mesh_136
+    tag: Object
+  MeshComponent:
+    mesh: 3547676260232876178
+  MaterialComponent:
+    material: 7168525992004393980
+3236073349115005700:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 9418173878537052026
+    children:
+      - 1868001366502866747
+  TagComponent:
+    name: ceiling_2ndfloor_stone_trims_01_0
+    tag: Object
+13914100255218752256:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 4688899645001228658
+  TagComponent:
+    name: Mesh_135
+    tag: Object
+  MeshComponent:
+    mesh: 15550209447218951753
+  MaterialComponent:
+    material: 17575489096460067945
+4688899645001228658:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 9418173878537052026
+    children:
+      - 13914100255218752256
+  TagComponent:
+    name: ceiling_2ndfloor_stone_trims_02_0
+    tag: Object
+6028857652088630567:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 13267309459749138622
+  TagComponent:
+    name: Mesh_134
+    tag: Object
+  MeshComponent:
+    mesh: 15642802181188009416
+  MaterialComponent:
+    material: 14471971121488751661
+13267309459749138622:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 9418173878537052026
+    children:
+      - 6028857652088630567
+  TagComponent:
+    name: ceiling_2ndfloor_ceiling_plaster_02_0
+    tag: Object
+16921682196388642401:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 3316814079038032300
+  TagComponent:
+    name: Mesh_133
+    tag: Object
+  MeshComponent:
+    mesh: 17699727434490026333
+  MaterialComponent:
+    material: 6679629478878199184
+3316814079038032300:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 9418173878537052026
+    children:
+      - 16921682196388642401
+  TagComponent:
+    name: ceiling_2ndfloor_ceiling_plaster_01_0
+    tag: Object
+664271688134942411:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 7629256462914769176
+  TagComponent:
+    name: Mesh_132
+    tag: Object
+  MeshComponent:
+    mesh: 14778991636681496814
+  MaterialComponent:
+    material: 16374697211561834394
+7629256462914769176:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 9418173878537052026
+    children:
+      - 664271688134942411
+  TagComponent:
+    name: ceiling_2ndfloor_stones_01_tile_0
+    tag: Object
+11279010849910011074:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 11010758568549442811
+  TagComponent:
+    name: Mesh_131
+    tag: Object
+  MeshComponent:
+    mesh: 12186037372890647128
+  MaterialComponent:
+    material: 3785244453793960196
+11010758568549442811:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 9418173878537052026
+    children:
+      - 11279010849910011074
+  TagComponent:
+    name: ceiling_2ndfloor_arch_stone_wall_01_0
+    tag: Object
+3812325361139602637:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 18211091167938495259
+  TagComponent:
+    name: Mesh_130
+    tag: Object
+  MeshComponent:
+    mesh: 9764895344513696518
+  MaterialComponent:
+    material: 16183088550991445475
+18211091167938495259:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 9418173878537052026
+    children:
+      - 3812325361139602637
+  TagComponent:
+    name: ceiling_2ndfloor_metal_door_0
+    tag: Object
+15241950660001710459:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 11851957827483874612
+  TagComponent:
+    name: Mesh_129
+    tag: Object
+  MeshComponent:
+    mesh: 16305838793300064467
+  MaterialComponent:
+    material: 12163383688074434228
+11851957827483874612:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 9418173878537052026
+    children:
+      - 15241950660001710459
+  TagComponent:
+    name: ceiling_2ndfloor_stones_2ndfloor_0
+    tag: Object
+9418173878537052026:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 9991214350303879212
+    children:
+      - 11851957827483874612
+      - 18211091167938495259
+      - 11010758568549442811
+      - 7629256462914769176
+      - 3316814079038032300
+      - 13267309459749138622
+      - 4688899645001228658
+      - 3236073349115005700
+      - 15807231631109532091
+  TagComponent:
+    name: ceiling_2ndfloor
+    tag: Object
+8433137284062460688:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 7408366827916694696
+  TagComponent:
+    name: Mesh_128
+    tag: Object
+  MeshComponent:
+    mesh: 17615278858458503016
+  MaterialComponent:
+    material: 4624132011273660773
+7408366827916694696:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 7707437311839597202
+    children:
+      - 8433137284062460688
+  TagComponent:
+    name: column_2ndfloor_19_column_head_1stfloor_0
+    tag: Object
+13391269084026663051:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 9151443872252159133
+  TagComponent:
+    name: Mesh_127
+    tag: Object
+  MeshComponent:
+    mesh: 3773668999533155398
+  MaterialComponent:
+    material: 14895417403441512024
+9151443872252159133:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 7707437311839597202
+    children:
+      - 13391269084026663051
+  TagComponent:
+    name: column_2ndfloor_19_column_1stfloor_0
+    tag: Object
+1663959894597094108:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 15143444364985631386
+  TagComponent:
+    name: Mesh_126
+    tag: Object
+  MeshComponent:
+    mesh: 18199264232482640460
+  MaterialComponent:
+    material: 7168525992004393980
+15143444364985631386:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 7707437311839597202
+    children:
+      - 1663959894597094108
+  TagComponent:
+    name: column_2ndfloor_19_stone_trims_01_0
+    tag: Object
+8437070720112975567:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 8662843610768024520
+  TagComponent:
+    name: Mesh_125
+    tag: Object
+  MeshComponent:
+    mesh: 16165892434254239134
+  MaterialComponent:
+    material: 17392910042253052136
+8662843610768024520:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 7707437311839597202
+    children:
+      - 8437070720112975567
+  TagComponent:
+    name: column_2ndfloor_19_column_head_2ndfloor_03_0
+    tag: Object
+3376130772996783738:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 7041973783452058172
+  TagComponent:
+    name: Mesh_124
+    tag: Object
+  MeshComponent:
+    mesh: 12647058935171477053
+  MaterialComponent:
+    material: 17392910042253052136
+7041973783452058172:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 7707437311839597202
+    children:
+      - 3376130772996783738
+  TagComponent:
+    name: column_2ndfloor_19_column_head_2ndfloor_03_0
+    tag: Object
+17018428581812999196:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 16645794929321368466
+  TagComponent:
+    name: Mesh_123
+    tag: Object
+  MeshComponent:
+    mesh: 14608462004689504375
+  MaterialComponent:
+    material: 17392910042253052136
+16645794929321368466:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 7707437311839597202
+    children:
+      - 17018428581812999196
+  TagComponent:
+    name: column_2ndfloor_19_column_head_2ndfloor_03_0
+    tag: Object
+6251504281431509985:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 10236807590350756136
+  TagComponent:
+    name: Mesh_122
+    tag: Object
+  MeshComponent:
+    mesh: 9002313930943618041
+  MaterialComponent:
+    material: 17392910042253052136
+10236807590350756136:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 7707437311839597202
+    children:
+      - 6251504281431509985
+  TagComponent:
+    name: column_2ndfloor_19_column_head_2ndfloor_03_0
+    tag: Object
+12920075993795161154:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 14323083347417357394
+  TagComponent:
+    name: Mesh_121
+    tag: Object
+  MeshComponent:
+    mesh: 11317282744652658283
+  MaterialComponent:
+    material: 6098938472559446645
+14323083347417357394:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 7707437311839597202
+    children:
+      - 12920075993795161154
+  TagComponent:
+    name: column_2ndfloor_19_column_brickwall_01_0
+    tag: Object
+1087141287811603985:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 9672270790275193533
+  TagComponent:
+    name: Mesh_120
+    tag: Object
+  MeshComponent:
+    mesh: 4615039574366021912
+  MaterialComponent:
+    material: 12178541067883932757
+9672270790275193533:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 7707437311839597202
+    children:
+      - 1087141287811603985
+  TagComponent:
+    name: column_2ndfloor_19_column_head_2ndfloor_02_0
+    tag: Object
+2268506716981062549:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 6773007494132294738
+  TagComponent:
+    name: Mesh_119
+    tag: Object
+  MeshComponent:
+    mesh: 4995309009323422866
+  MaterialComponent:
+    material: 12178541067883932757
+6773007494132294738:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 7707437311839597202
+    children:
+      - 2268506716981062549
+  TagComponent:
+    name: column_2ndfloor_19_column_head_2ndfloor_02_0
+    tag: Object
+10041410504159862876:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 243782783059606484
+  TagComponent:
+    name: Mesh_118
+    tag: Object
+  MeshComponent:
+    mesh: 2752150830342787344
+  MaterialComponent:
+    material: 12178541067883932757
+243782783059606484:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 7707437311839597202
+    children:
+      - 10041410504159862876
+  TagComponent:
+    name: column_2ndfloor_19_column_head_2ndfloor_02_0
+    tag: Object
+11196665478998944081:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 16684959355178777058
+  TagComponent:
+    name: Mesh_117
+    tag: Object
+  MeshComponent:
+    mesh: 17260665398239473410
+  MaterialComponent:
+    material: 12178541067883932757
+16684959355178777058:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 7707437311839597202
+    children:
+      - 11196665478998944081
+  TagComponent:
+    name: column_2ndfloor_19_column_head_2ndfloor_02_0
+    tag: Object
+8346879138510073601:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 76081947284891529
+  TagComponent:
+    name: Mesh_116
+    tag: Object
+  MeshComponent:
+    mesh: 3896591530052442564
+  MaterialComponent:
+    material: 12178541067883932757
+76081947284891529:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 7707437311839597202
+    children:
+      - 8346879138510073601
+  TagComponent:
+    name: column_2ndfloor_19_column_head_2ndfloor_02_0
+    tag: Object
+17797354167796796429:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 7462742561103621241
+  TagComponent:
+    name: Mesh_115
+    tag: Object
+  MeshComponent:
+    mesh: 16099434476619131014
+  MaterialComponent:
+    material: 16374697211561834394
+7462742561103621241:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 7707437311839597202
+    children:
+      - 17797354167796796429
+  TagComponent:
+    name: column_2ndfloor_19_stones_01_tile_0
+    tag: Object
+7707437311839597202:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 9991214350303879212
+    children:
+      - 7462742561103621241
+      - 76081947284891529
+      - 16684959355178777058
+      - 243782783059606484
+      - 6773007494132294738
+      - 9672270790275193533
+      - 14323083347417357394
+      - 10236807590350756136
+      - 16645794929321368466
+      - 7041973783452058172
+      - 8662843610768024520
+      - 15143444364985631386
+      - 9151443872252159133
+      - 7408366827916694696
+  TagComponent:
+    name: column_2ndfloor_19
+    tag: Object
+16348693467164891582:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 16083553648855964780
+  TagComponent:
+    name: Mesh_114
+    tag: Object
+  MeshComponent:
+    mesh: 1754466325133243575
+  MaterialComponent:
+    material: 17964571956919595418
+16083553648855964780:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 6558565748796233468
+    children:
+      - 16348693467164891582
+  TagComponent:
+    name: Materials_wood_01_0
+    tag: Object
+2525504198229272251:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 6674578467177710494
+  TagComponent:
+    name: Mesh_113
+    tag: Object
+  MeshComponent:
+    mesh: 7672799243044257689
+  MaterialComponent:
+    material: 7765786769844938561
+6674578467177710494:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 6558565748796233468
+    children:
+      - 2525504198229272251
+  TagComponent:
+    name: Materials_wood_door_01_0
+    tag: Object
+884321830782278988:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 13041725326398062579
+  TagComponent:
+    name: Mesh_112
+    tag: Object
+  MeshComponent:
+    mesh: 3607006284628613602
+  MaterialComponent:
+    material: 14471971121488751661
+13041725326398062579:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 6558565748796233468
+    children:
+      - 884321830782278988
+  TagComponent:
+    name: Materials_ceiling_plaster_02_0
+    tag: Object
+7009238666664372692:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 3959853923247148773
+  TagComponent:
+    name: Mesh_111
+    tag: Object
+  MeshComponent:
+    mesh: 6381148431305310978
+  MaterialComponent:
+    material: 14947077605485281964
+3959853923247148773:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 6558565748796233468
+    children:
+      - 7009238666664372692
+  TagComponent:
+    name: Materials_light_bulb_0
+    tag: Object
+10628345337184248202:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 8938913230067043281
+  TagComponent:
+    name: Mesh_110
+    tag: Object
+  MeshComponent:
+    mesh: 14407325108766477211
+  MaterialComponent:
+    material: 4624132011273660773
+8938913230067043281:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 6558565748796233468
+    children:
+      - 10628345337184248202
+  TagComponent:
+    name: Materials_column_head_1stfloor_0
+    tag: Object
+791857627829985425:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 17310240364822898896
+  TagComponent:
+    name: Mesh_109
+    tag: Object
+  MeshComponent:
+    mesh: 9332652093666121719
+  MaterialComponent:
+    material: 10826325120116743534
+17310240364822898896:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 6558565748796233468
+    children:
+      - 791857627829985425
+  TagComponent:
+    name: Materials_window_frame_01_0
+    tag: Object
+12617612571294933917:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 3149567369422714915
+  TagComponent:
+    name: Mesh_108
+    tag: Object
+  MeshComponent:
+    mesh: 8264885879204729996
+  MaterialComponent:
+    material: 7168525992004393980
+3149567369422714915:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 6558565748796233468
+    children:
+      - 12617612571294933917
+  TagComponent:
+    name: Materials_stone_trims_01_0
+    tag: Object
+4572358234505837622:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 12999550114958664801
+  TagComponent:
+    name: Mesh_107
+    tag: Object
+  MeshComponent:
+    mesh: 10997191013075634946
+  MaterialComponent:
+    material: 16374697211561834394
+12999550114958664801:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 6558565748796233468
+    children:
+      - 4572358234505837622
+  TagComponent:
+    name: Materials_stones_01_tile_0
+    tag: Object
+8744728044214796649:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 7866218170105956445
+  TagComponent:
+    name: Mesh_106
+    tag: Object
+  MeshComponent:
+    mesh: 7384431034859295204
+  MaterialComponent:
+    material: 10731730283897452324
+7866218170105956445:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 6558565748796233468
+    children:
+      - 8744728044214796649
+  TagComponent:
+    name: Materials_floor_01_0
+    tag: Object
+7747121831939285162:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 4091659877739087890
+  TagComponent:
+    name: Mesh_105
+    tag: Object
+  MeshComponent:
+    mesh: 6835095065987790022
+  MaterialComponent:
+    material: 12163383688074434228
+4091659877739087890:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 6558565748796233468
+    children:
+      - 7747121831939285162
+  TagComponent:
+    name: Materials_stones_2ndfloor_0
+    tag: Object
+2106099686354577710:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 6132120217106009726
+  TagComponent:
+    name: Mesh_104
+    tag: Object
+  MeshComponent:
+    mesh: 800704545195544238
+  MaterialComponent:
+    material: 6592805830664410153
+6132120217106009726:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 6558565748796233468
+    children:
+      - 2106099686354577710
+  TagComponent:
+    name: Materials_door_stoneframe_01_0
+    tag: Object
+4598566664605620152:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 16127241338662551132
+  TagComponent:
+    name: Mesh_103
+    tag: Object
+  MeshComponent:
+    mesh: 6148078758415604708
+  MaterialComponent:
+    material: 17850460598892977384
+16127241338662551132:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 6558565748796233468
+    children:
+      - 4598566664605620152
+  TagComponent:
+    name: Materials_door_stoneframe_02_0
+    tag: Object
+2871739427494133011:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 10782161229908384658
+  TagComponent:
+    name: Mesh_102
+    tag: Object
+  MeshComponent:
+    mesh: 15780500427001216096
+  MaterialComponent:
+    material: 16183088550991445475
+10782161229908384658:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 6558565748796233468
+    children:
+      - 2871739427494133011
+  TagComponent:
+    name: Materials_metal_door_0
+    tag: Object
+12337506982253899294:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 5734528636716302921
+  TagComponent:
+    name: Mesh_101
+    tag: Object
+  MeshComponent:
+    mesh: 9340481428894480493
+  MaterialComponent:
+    material: 15283354955162974029
+5734528636716302921:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 6558565748796233468
+    children:
+      - 12337506982253899294
+  TagComponent:
+    name: Materials_glass_0
+    tag: Object
+7747773970589377254:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 12745053855584858132
+  TagComponent:
+    name: Mesh_100
+    tag: Object
+  MeshComponent:
+    mesh: 8011163634536109757
+  MaterialComponent:
+    material: 15012323888944053811
+12745053855584858132:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 6558565748796233468
+    children:
+      - 7747773970589377254
+  TagComponent:
+    name: Materials_lamp_glass_01_0
+    tag: Object
+15475133056448023254:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 13409208516755801797
+  TagComponent:
+    name: Mesh_99
+    tag: Object
+  MeshComponent:
+    mesh: 3902311283165081942
+  MaterialComponent:
+    material: 9452636202733707318
+13409208516755801797:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 6558565748796233468
+    children:
+      - 15475133056448023254
+  TagComponent:
+    name: Materials_brickwall_01_0
+    tag: Object
+9635904910031737277:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 8403663362341513943
+  TagComponent:
+    name: Mesh_98
+    tag: Object
+  MeshComponent:
+    mesh: 2507877272237111304
+  MaterialComponent:
+    material: 4073237043467660291
+8403663362341513943:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 6558565748796233468
+    children:
+      - 9635904910031737277
+  TagComponent:
+    name: Materials_brickwall_02_0
+    tag: Object
+11149228598324504534:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 16963457732015633280
+  TagComponent:
+    name: Mesh_97
+    tag: Object
+  MeshComponent:
+    mesh: 12665140078650225002
+  MaterialComponent:
+    material: 12178541067883932757
+16963457732015633280:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 6558565748796233468
+    children:
+      - 11149228598324504534
+  TagComponent:
+    name: Materials_column_head_2ndfloor_02_0
+    tag: Object
+16715770717930179922:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 18287393614079733492
+  TagComponent:
+    name: Mesh_96
+    tag: Object
+  MeshComponent:
+    mesh: 2271942964361991906
+  MaterialComponent:
+    material: 6098938472559446645
+18287393614079733492:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 6558565748796233468
+    children:
+      - 16715770717930179922
+  TagComponent:
+    name: Materials_column_brickwall_01_0
+    tag: Object
+5366952845866344296:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 15090758034291436444
+  TagComponent:
+    name: Mesh_95
+    tag: Object
+  MeshComponent:
+    mesh: 16791453630335563994
+  MaterialComponent:
+    material: 17575489096460067945
+15090758034291436444:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 6558565748796233468
+    children:
+      - 5366952845866344296
+  TagComponent:
+    name: Materials_stone_trims_02_0
+    tag: Object
+13573178703938659779:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 13553016900113784848
+  TagComponent:
+    name: Mesh_94
+    tag: Object
+  MeshComponent:
+    mesh: 4440409858803469062
+  MaterialComponent:
+    material: 627266156236302698
+13553016900113784848:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 6558565748796233468
+    children:
+      - 13573178703938659779
+  TagComponent:
+    name: Materials_roof_tiles_01_0
+    tag: Object
+15021705619849432947:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 18063619020800629452
+  TagComponent:
+    name: Mesh_93
+    tag: Object
+  MeshComponent:
+    mesh: 17739661156389177722
+  MaterialComponent:
+    material: 7112511140859922783
+18063619020800629452:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 6558565748796233468
+    children:
+      - 15021705619849432947
+  TagComponent:
+    name: Materials_ornament_01_0
+    tag: Object
+160129569816245317:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 1089430595717611572
+  TagComponent:
+    name: Mesh_92
+    tag: Object
+  MeshComponent:
+    mesh: 8602580997770245165
+  MaterialComponent:
+    material: 17392910042253052136
+1089430595717611572:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 6558565748796233468
+    children:
+      - 160129569816245317
+  TagComponent:
+    name: Materials_column_head_2ndfloor_03_0
+    tag: Object
+8572822926591993963:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 8641595832931301619
+  TagComponent:
+    name: Mesh_91
+    tag: Object
+  MeshComponent:
+    mesh: 15560087890687686249
+  MaterialComponent:
+    material: 3785244453793960196
+8641595832931301619:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 6558565748796233468
+    children:
+      - 8572822926591993963
+  TagComponent:
+    name: Materials_arch_stone_wall_01_0
+    tag: Object
+3333595021101985018:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 7531240856595142876
+  TagComponent:
+    name: Mesh_90
+    tag: Object
+  MeshComponent:
+    mesh: 14731502165929192110
+  MaterialComponent:
+    material: 6679629478878199184
+7531240856595142876:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 6558565748796233468
+    children:
+      - 3333595021101985018
+  TagComponent:
+    name: Materials_ceiling_plaster_01_0
+    tag: Object
+14729633069865047790:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 6106818765607202950
+  TagComponent:
+    name: Mesh_89
+    tag: Object
+  MeshComponent:
+    mesh: 16579197756358307842
+  MaterialComponent:
+    material: 9264591886107071255
+6106818765607202950:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 6558565748796233468
+    children:
+      - 14729633069865047790
+  TagComponent:
+    name: Materials_dirt_decal_0
+    tag: Object
+5764216556036265231:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 7537783792006832916
+  TagComponent:
+    name: Mesh_88
+    tag: Object
+  MeshComponent:
+    mesh: 11896411688126201369
+  MaterialComponent:
+    material: 7897777860043837682
+7537783792006832916:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 6558565748796233468
+    children:
+      - 5764216556036265231
+  TagComponent:
+    name: Materials_ornament_lion_0
+    tag: Object
+8120765557900539801:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 10714928300836309027
+  TagComponent:
+    name: Mesh_87
+    tag: Object
+  MeshComponent:
+    mesh: 5650127417615005801
+  MaterialComponent:
+    material: 14895417403441512024
+10714928300836309027:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 6558565748796233468
+    children:
+      - 8120765557900539801
+  TagComponent:
+    name: Materials_column_1stfloor_0
+    tag: Object
+6558565748796233468:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 9991214350303879212
+    children:
+      - 10714928300836309027
+      - 7537783792006832916
+      - 6106818765607202950
+      - 7531240856595142876
+      - 8641595832931301619
+      - 1089430595717611572
+      - 18063619020800629452
+      - 13553016900113784848
+      - 15090758034291436444
+      - 18287393614079733492
+      - 16963457732015633280
+      - 8403663362341513943
+      - 13409208516755801797
+      - 12745053855584858132
+      - 5734528636716302921
+      - 10782161229908384658
+      - 16127241338662551132
+      - 6132120217106009726
+      - 4091659877739087890
+      - 7866218170105956445
+      - 12999550114958664801
+      - 3149567369422714915
+      - 17310240364822898896
+      - 8938913230067043281
+      - 3959853923247148773
+      - 13041725326398062579
+      - 6674578467177710494
+      - 16083553648855964780
+  TagComponent:
+    name: Materials
+    tag: Object
+8362417141168187740:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 2742772895947033976
+  TagComponent:
+    name: Mesh_86
+    tag: Object
+  MeshComponent:
+    mesh: 17662704038869298575
+  MaterialComponent:
+    material: 9264591886107071255
+2742772895947033976:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 10444447389865421367
+    children:
+      - 8362417141168187740
+  TagComponent:
+    name: decals_1st_floor1_dirt_decal_0
+    tag: Object
+10444447389865421367:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 9991214350303879212
+    children:
+      - 2742772895947033976
+  TagComponent:
+    name: decals_1st_floor1
+    tag: Object
+18263969112728514049:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 4234787398079228007
+  TagComponent:
+    name: Mesh_85
+    tag: Object
+  MeshComponent:
+    mesh: 10995060630978454172
+  MaterialComponent:
+    material: 15283354955162974029
+4234787398079228007:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 1441001987558361091
+    children:
+      - 18263969112728514049
+  TagComponent:
+    name: ornament_door_2ndfloor_15_glass_0
+    tag: Object
+17282538352541562198:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 1470938944217924270
+  TagComponent:
+    name: Mesh_84
+    tag: Object
+  MeshComponent:
+    mesh: 12066171186184215975
+  MaterialComponent:
+    material: 10826325120116743534
+1470938944217924270:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 1441001987558361091
+    children:
+      - 17282538352541562198
+  TagComponent:
+    name: ornament_door_2ndfloor_15_window_frame_01_0
+    tag: Object
+9202713894871841579:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 13725315641881481389
+  TagComponent:
+    name: Mesh_83
+    tag: Object
+  MeshComponent:
+    mesh: 15617600181098512828
+  MaterialComponent:
+    material: 17850460598892977384
+13725315641881481389:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 1441001987558361091
+    children:
+      - 9202713894871841579
+  TagComponent:
+    name: ornament_door_2ndfloor_15_door_stoneframe_02_0
+    tag: Object
+12827119785673201434:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 13511080058245986722
+  TagComponent:
+    name: Mesh_82
+    tag: Object
+  MeshComponent:
+    mesh: 12505150016920074510
+  MaterialComponent:
+    material: 16183088550991445475
+13511080058245986722:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 1441001987558361091
+    children:
+      - 12827119785673201434
+  TagComponent:
+    name: ornament_door_2ndfloor_15_metal_door_0
+    tag: Object
+12735739554029228830:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 13811477501603480289
+  TagComponent:
+    name: Mesh_81
+    tag: Object
+  MeshComponent:
+    mesh: 6858609130539892790
+  MaterialComponent:
+    material: 16183088550991445475
+13811477501603480289:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 1441001987558361091
+    children:
+      - 12735739554029228830
+  TagComponent:
+    name: ornament_door_2ndfloor_15_metal_door_0
+    tag: Object
+15163595486264558192:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 9407962257770511057
+  TagComponent:
+    name: Mesh_80
+    tag: Object
+  MeshComponent:
+    mesh: 8626266091599455600
+  MaterialComponent:
+    material: 16183088550991445475
+9407962257770511057:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 1441001987558361091
+    children:
+      - 15163595486264558192
+  TagComponent:
+    name: ornament_door_2ndfloor_15_metal_door_0
+    tag: Object
+6700051909283875080:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 16330700603236760791
+  TagComponent:
+    name: Mesh_79
+    tag: Object
+  MeshComponent:
+    mesh: 11321833613995139136
+  MaterialComponent:
+    material: 16183088550991445475
+16330700603236760791:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 1441001987558361091
+    children:
+      - 6700051909283875080
+  TagComponent:
+    name: ornament_door_2ndfloor_15_metal_door_0
+    tag: Object
+1040112940301737703:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 13317453078008935262
+  TagComponent:
+    name: Mesh_78
+    tag: Object
+  MeshComponent:
+    mesh: 7192619700998097598
+  MaterialComponent:
+    material: 3785244453793960196
+13317453078008935262:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 1441001987558361091
+    children:
+      - 1040112940301737703
+  TagComponent:
+    name: ornament_door_2ndfloor_15_arch_stone_wall_01_0
+    tag: Object
+2235085898019790065:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 17760954953897809798
+  TagComponent:
+    name: Mesh_77
+    tag: Object
+  MeshComponent:
+    mesh: 3742008809005083934
+  MaterialComponent:
+    material: 6592805830664410153
+17760954953897809798:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 1441001987558361091
+    children:
+      - 2235085898019790065
+  TagComponent:
+    name: ornament_door_2ndfloor_15_door_stoneframe_01_0
+    tag: Object
+6532609884472312059:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 4217292664994896919
+  TagComponent:
+    name: Mesh_76
+    tag: Object
+  MeshComponent:
+    mesh: 12334190731115871410
+  MaterialComponent:
+    material: 4073237043467660291
+4217292664994896919:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 1441001987558361091
+    children:
+      - 6532609884472312059
+  TagComponent:
+    name: ornament_door_2ndfloor_15_brickwall_02_0
+    tag: Object
+2171441499950080025:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 2185336717316093706
+  TagComponent:
+    name: Mesh_75
+    tag: Object
+  MeshComponent:
+    mesh: 13258488772546823214
+  MaterialComponent:
+    material: 16374697211561834394
+2185336717316093706:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 1441001987558361091
+    children:
+      - 2171441499950080025
+  TagComponent:
+    name: ornament_door_2ndfloor_15_stones_01_tile_0
+    tag: Object
+1441001987558361091:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 9991214350303879212
+    children:
+      - 2185336717316093706
+      - 4217292664994896919
+      - 17760954953897809798
+      - 13317453078008935262
+      - 16330700603236760791
+      - 9407962257770511057
+      - 13811477501603480289
+      - 13511080058245986722
+      - 13725315641881481389
+      - 1470938944217924270
+      - 4234787398079228007
+  TagComponent:
+    name: ornament_door_2ndfloor_15
+    tag: Object
+260033018241023500:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 17106977345523050201
+  TagComponent:
+    name: Mesh_74
+    tag: Object
+  MeshComponent:
+    mesh: 12888455511437938794
+  MaterialComponent:
+    material: 4624132011273660773
+17106977345523050201:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 3073400577085977524
+    children:
+      - 260033018241023500
+  TagComponent:
+    name: lamps_2ndflloor_01_column_head_1stfloor_0
+    tag: Object
+17814859234111290477:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 8363180873004094661
+  TagComponent:
+    name: Mesh_73
+    tag: Object
+  MeshComponent:
+    mesh: 18241947744279967895
+  MaterialComponent:
+    material: 15012323888944053811
+8363180873004094661:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 3073400577085977524
+    children:
+      - 17814859234111290477
+  TagComponent:
+    name: lamps_2ndflloor_01_lamp_glass_01_0
+    tag: Object
+100327954254576830:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 2459502373927394655
+  TagComponent:
+    name: Mesh_72
+    tag: Object
+  MeshComponent:
+    mesh: 17843963670131000290
+  MaterialComponent:
+    material: 14947077605485281964
+2459502373927394655:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 3073400577085977524
+    children:
+      - 100327954254576830
+  TagComponent:
+    name: lamps_2ndflloor_01_light_bulb_0
+    tag: Object
+12355254040910356819:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 8757113899261197348
+  TagComponent:
+    name: Mesh_71
+    tag: Object
+  MeshComponent:
+    mesh: 14445410164533958638
+  MaterialComponent:
+    material: 16183088550991445475
+8757113899261197348:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 3073400577085977524
+    children:
+      - 12355254040910356819
+  TagComponent:
+    name: lamps_2ndflloor_01_metal_door_0
+    tag: Object
+11889966578140278201:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 11701513622098640316
+  TagComponent:
+    name: Mesh_70
+    tag: Object
+  MeshComponent:
+    mesh: 1806150934486884669
+  MaterialComponent:
+    material: 16183088550991445475
+11701513622098640316:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 3073400577085977524
+    children:
+      - 11889966578140278201
+  TagComponent:
+    name: lamps_2ndflloor_01_metal_door_0
+    tag: Object
+3073400577085977524:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 9991214350303879212
+    children:
+      - 11701513622098640316
+      - 8757113899261197348
+      - 2459502373927394655
+      - 8363180873004094661
+      - 17106977345523050201
+  TagComponent:
+    name: lamps_2ndflloor_01
+    tag: Object
+4448949765116493081:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 10163752888704799832
+  TagComponent:
+    name: Mesh_69
+    tag: Object
+  MeshComponent:
+    mesh: 15247900760624047166
+  MaterialComponent:
+    material: 16183088550991445475
+10163752888704799832:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 2377921529950955202
+    children:
+      - 4448949765116493081
+  TagComponent:
+    name: arch_stones_01_metal_door_0
+    tag: Object
+12772474744417283847:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 17339729989266569487
+  TagComponent:
+    name: Mesh_68
+    tag: Object
+  MeshComponent:
+    mesh: 18252926921207761637
+  MaterialComponent:
+    material: 4073237043467660291
+17339729989266569487:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 2377921529950955202
+    children:
+      - 12772474744417283847
+  TagComponent:
+    name: arch_stones_01_brickwall_02_0
+    tag: Object
+1840544392306640913:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 13184484550679411051
+  TagComponent:
+    name: Mesh_67
+    tag: Object
+  MeshComponent:
+    mesh: 13971215530720692662
+  MaterialComponent:
+    material: 3785244453793960196
+13184484550679411051:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 2377921529950955202
+    children:
+      - 1840544392306640913
+  TagComponent:
+    name: arch_stones_01_arch_stone_wall_01_0
+    tag: Object
+16706573015334421647:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 4231533087515063528
+  TagComponent:
+    name: Mesh_66
+    tag: Object
+  MeshComponent:
+    mesh: 10001988596491006188
+  MaterialComponent:
+    material: 7168525992004393980
+4231533087515063528:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 2377921529950955202
+    children:
+      - 16706573015334421647
+  TagComponent:
+    name: arch_stones_01_stone_trims_01_0
+    tag: Object
+16266372196401712372:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 11878757679384428217
+  TagComponent:
+    name: Mesh_65
+    tag: Object
+  MeshComponent:
+    mesh: 9586815297498043665
+  MaterialComponent:
+    material: 7168525992004393980
+11878757679384428217:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 2377921529950955202
+    children:
+      - 16266372196401712372
+  TagComponent:
+    name: arch_stones_01_stone_trims_01_0
+    tag: Object
+2377921529950955202:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 9991214350303879212
+    children:
+      - 11878757679384428217
+      - 4231533087515063528
+      - 13184484550679411051
+      - 17339729989266569487
+      - 10163752888704799832
+  TagComponent:
+    name: arch_stones_01
+    tag: Object
+7406582832343944376:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 9306386835033728827
+  TagComponent:
+    name: Mesh_64
+    tag: Object
+  MeshComponent:
+    mesh: 2597194980756566553
+  MaterialComponent:
+    material: 3785244453793960196
+9306386835033728827:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 6090155530117168955
+    children:
+      - 7406582832343944376
+  TagComponent:
+    name: exterior_arch_stone_wall_01_0
+    tag: Object
+1540572140711520640:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 7090146007943812799
+  TagComponent:
+    name: Mesh_63
+    tag: Object
+  MeshComponent:
+    mesh: 6190708521990487033
+  MaterialComponent:
+    material: 16374697211561834394
+7090146007943812799:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 6090155530117168955
+    children:
+      - 1540572140711520640
+  TagComponent:
+    name: exterior_stones_01_tile_0
+    tag: Object
+10100585924609809152:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 10222922812488300018
+  TagComponent:
+    name: Mesh_62
+    tag: Object
+  MeshComponent:
+    mesh: 14940382853202724249
+  MaterialComponent:
+    material: 9452636202733707318
+10222922812488300018:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 6090155530117168955
+    children:
+      - 10100585924609809152
+  TagComponent:
+    name: exterior_brickwall_01_0
+    tag: Object
+6090155530117168955:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 9991214350303879212
+    children:
+      - 10222922812488300018
+      - 7090146007943812799
+      - 9306386835033728827
+  TagComponent:
+    name: exterior
+    tag: Object
+12198323625248407601:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 3515388544674180216
+  TagComponent:
+    name: Mesh_61
+    tag: Object
+  MeshComponent:
+    mesh: 6473189175872805318
+  MaterialComponent:
+    material: 7168525992004393980
+3515388544674180216:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 8892742260649082421
+    children:
+      - 12198323625248407601
+  TagComponent:
+    name: ornament_stones_01_stone_trims_01_0
+    tag: Object
+8892742260649082421:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 9991214350303879212
+    children:
+      - 3515388544674180216
+  TagComponent:
+    name: ornament_stones_01
+    tag: Object
+3100839629586730500:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 17524000917869293812
+  TagComponent:
+    name: Mesh_60
+    tag: Object
+  MeshComponent:
+    mesh: 10238504750706395502
+  MaterialComponent:
+    material: 12163383688074434228
+17524000917869293812:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 13586715951766259847
+    children:
+      - 3100839629586730500
+  TagComponent:
+    name: walls_1stfloor_01_stones_2ndfloor_0
+    tag: Object
+1606344194938365322:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 8057367001214111605
+  TagComponent:
+    name: Mesh_59
+    tag: Object
+  MeshComponent:
+    mesh: 12926615481074364053
+  MaterialComponent:
+    material: 4073237043467660291
+8057367001214111605:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 13586715951766259847
+    children:
+      - 1606344194938365322
+  TagComponent:
+    name: walls_1stfloor_01_brickwall_02_0
+    tag: Object
+36911331398179859:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 3490502336072748907
+  TagComponent:
+    name: Mesh_58
+    tag: Object
+  MeshComponent:
+    mesh: 10765633104900094315
+  MaterialComponent:
+    material: 17850460598892977384
+3490502336072748907:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 13586715951766259847
+    children:
+      - 36911331398179859
+  TagComponent:
+    name: walls_1stfloor_01_door_stoneframe_02_0
+    tag: Object
+8322545181824333686:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 4836397694227277661
+  TagComponent:
+    name: Mesh_57
+    tag: Object
+  MeshComponent:
+    mesh: 9616616932060186454
+  MaterialComponent:
+    material: 17575489096460067945
+4836397694227277661:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 13586715951766259847
+    children:
+      - 8322545181824333686
+  TagComponent:
+    name: walls_1stfloor_01_stone_trims_02_0
+    tag: Object
+9185427381483079755:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 13760779632335035664
+  TagComponent:
+    name: Mesh_56
+    tag: Object
+  MeshComponent:
+    mesh: 17804817379508097303
+  MaterialComponent:
+    material: 3785244453793960196
+13760779632335035664:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 13586715951766259847
+    children:
+      - 9185427381483079755
+  TagComponent:
+    name: walls_1stfloor_01_arch_stone_wall_01_0
+    tag: Object
+14514534982235607147:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 5776891926417977695
+  TagComponent:
+    name: Mesh_55
+    tag: Object
+  MeshComponent:
+    mesh: 1880647188717222617
+  MaterialComponent:
+    material: 10731730283897452324
+5776891926417977695:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 13586715951766259847
+    children:
+      - 14514534982235607147
+  TagComponent:
+    name: walls_1stfloor_01_floor_01_0
+    tag: Object
+4921203277497142230:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 17428724763890281445
+  TagComponent:
+    name: Mesh_54
+    tag: Object
+  MeshComponent:
+    mesh: 11460733383538454393
+  MaterialComponent:
+    material: 7168525992004393980
+17428724763890281445:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 13586715951766259847
+    children:
+      - 4921203277497142230
+  TagComponent:
+    name: walls_1stfloor_01_stone_trims_01_0
+    tag: Object
+13773321186136332682:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 8279689746905342471
+  TagComponent:
+    name: Mesh_53
+    tag: Object
+  MeshComponent:
+    mesh: 3640681089767291160
+  MaterialComponent:
+    material: 15283354955162974029
+8279689746905342471:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 13586715951766259847
+    children:
+      - 13773321186136332682
+  TagComponent:
+    name: walls_1stfloor_01_glass_0
+    tag: Object
+15788296760654462586:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 10092728168146803100
+  TagComponent:
+    name: Mesh_52
+    tag: Object
+  MeshComponent:
+    mesh: 10394532693077923721
+  MaterialComponent:
+    material: 16183088550991445475
+10092728168146803100:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 13586715951766259847
+    children:
+      - 15788296760654462586
+  TagComponent:
+    name: walls_1stfloor_01_metal_door_0
+    tag: Object
+9665244429709726007:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 6136041443965307087
+  TagComponent:
+    name: Mesh_51
+    tag: Object
+  MeshComponent:
+    mesh: 10215648325996515311
+  MaterialComponent:
+    material: 10826325120116743534
+6136041443965307087:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 13586715951766259847
+    children:
+      - 9665244429709726007
+  TagComponent:
+    name: walls_1stfloor_01_window_frame_01_0
+    tag: Object
+12486049078849681474:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 15107131206725049713
+  TagComponent:
+    name: Mesh_50
+    tag: Object
+  MeshComponent:
+    mesh: 158906777891573996
+  MaterialComponent:
+    material: 16374697211561834394
+15107131206725049713:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 13586715951766259847
+    children:
+      - 12486049078849681474
+  TagComponent:
+    name: walls_1stfloor_01_stones_01_tile_0
+    tag: Object
+781926920549469950:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 7382509156888506952
+  TagComponent:
+    name: Mesh_49
+    tag: Object
+  MeshComponent:
+    mesh: 6760771661261556608
+  MaterialComponent:
+    material: 14471971121488751661
+7382509156888506952:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 13586715951766259847
+    children:
+      - 781926920549469950
+  TagComponent:
+    name: walls_1stfloor_01_ceiling_plaster_02_0
+    tag: Object
+8804489239000138515:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 9531019690074297646
+  TagComponent:
+    name: Mesh_48
+    tag: Object
+  MeshComponent:
+    mesh: 16452165444424812036
+  MaterialComponent:
+    material: 9452636202733707318
+9531019690074297646:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 13586715951766259847
+    children:
+      - 8804489239000138515
+  TagComponent:
+    name: walls_1stfloor_01_brickwall_01_0
+    tag: Object
+13586715951766259847:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 9991214350303879212
+    children:
+      - 9531019690074297646
+      - 7382509156888506952
+      - 15107131206725049713
+      - 6136041443965307087
+      - 10092728168146803100
+      - 8279689746905342471
+      - 17428724763890281445
+      - 5776891926417977695
+      - 13760779632335035664
+      - 4836397694227277661
+      - 3490502336072748907
+      - 8057367001214111605
+      - 17524000917869293812
+  TagComponent:
+    name: walls_1stfloor_01
+    tag: Object
+12749851447959391513:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 12740737821087265766
+  TagComponent:
+    name: Mesh_47
+    tag: Object
+  MeshComponent:
+    mesh: 5919687667122695804
+  MaterialComponent:
+    material: 17964571956919595418
+12740737821087265766:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 6327106612986546488
+    children:
+      - 12749851447959391513
+  TagComponent:
+    name: wood_door_wood_01_0
+    tag: Object
+2424214695717453860:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 13785880531894454415
+  TagComponent:
+    name: Mesh_46
+    tag: Object
+  MeshComponent:
+    mesh: 2031317971378350826
+  MaterialComponent:
+    material: 7765786769844938561
+13785880531894454415:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 6327106612986546488
+    children:
+      - 2424214695717453860
+  TagComponent:
+    name: wood_door_wood_door_01_0
+    tag: Object
+6327106612986546488:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 9991214350303879212
+    children:
+      - 13785880531894454415
+      - 12740737821087265766
+  TagComponent:
+    name: wood_door
+    tag: Object
+8613270767808536600:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 4963590382696554888
+  TagComponent:
+    name: Mesh_45
+    tag: Object
+  MeshComponent:
+    mesh: 11436336540672717719
+  MaterialComponent:
+    material: 15283354955162974029
+4963590382696554888:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 9358530122900577928
+    children:
+      - 8613270767808536600
+  TagComponent:
+    name: wooden_parts_glass_0
+    tag: Object
+1188378243051322454:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 1441956497023511060
+  TagComponent:
+    name: Mesh_44
+    tag: Object
+  MeshComponent:
+    mesh: 13576108198200148438
+  MaterialComponent:
+    material: 7765786769844938561
+1441956497023511060:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 9358530122900577928
+    children:
+      - 1188378243051322454
+  TagComponent:
+    name: wooden_parts_wood_door_01_0
+    tag: Object
+11730669946503752298:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 12065077721987652354
+  TagComponent:
+    name: Mesh_43
+    tag: Object
+  MeshComponent:
+    mesh: 7670466503887761239
+  MaterialComponent:
+    material: 16183088550991445475
+12065077721987652354:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 9358530122900577928
+    children:
+      - 11730669946503752298
+  TagComponent:
+    name: wooden_parts_metal_door_0
+    tag: Object
+17029878313827269208:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 8990381930793541678
+  TagComponent:
+    name: Mesh_42
+    tag: Object
+  MeshComponent:
+    mesh: 254612063104859206
+  MaterialComponent:
+    material: 17964571956919595418
+8990381930793541678:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 9358530122900577928
+    children:
+      - 17029878313827269208
+  TagComponent:
+    name: wooden_parts_wood_01_0
+    tag: Object
+9358530122900577928:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 9991214350303879212
+    children:
+      - 8990381930793541678
+      - 12065077721987652354
+      - 1441956497023511060
+      - 4963590382696554888
+  TagComponent:
+    name: wooden_parts
+    tag: Object
+1308819867573902760:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 13960486726599413310
+  TagComponent:
+    name: Mesh_41
+    tag: Object
+  MeshComponent:
+    mesh: 967375511168510593
+  MaterialComponent:
+    material: 16183088550991445475
+13960486726599413310:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 1139519228671482760
+    children:
+      - 1308819867573902760
+  TagComponent:
+    name: arch_wall_2ndfloor_metal_door_0
+    tag: Object
+13742270916888658605:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 8350916693498051600
+  TagComponent:
+    name: Mesh_40
+    tag: Object
+  MeshComponent:
+    mesh: 11184360020088316650
+  MaterialComponent:
+    material: 9452636202733707318
+8350916693498051600:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 1139519228671482760
+    children:
+      - 13742270916888658605
+  TagComponent:
+    name: arch_wall_2ndfloor_brickwall_01_0
+    tag: Object
+17410306709973118733:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 4483729873633203586
+  TagComponent:
+    name: Mesh_39
+    tag: Object
+  MeshComponent:
+    mesh: 11257751960915125711
+  MaterialComponent:
+    material: 7168525992004393980
+4483729873633203586:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 1139519228671482760
+    children:
+      - 17410306709973118733
+  TagComponent:
+    name: arch_wall_2ndfloor_stone_trims_01_0
+    tag: Object
+1139519228671482760:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 9991214350303879212
+    children:
+      - 4483729873633203586
+      - 8350916693498051600
+      - 13960486726599413310
+  TagComponent:
+    name: arch_wall_2ndfloor
+    tag: Object
+16041239663151339372:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 4838966454128498368
+  TagComponent:
+    name: Mesh_38
+    tag: Object
+  MeshComponent:
+    mesh: 8633880487134312585
+  MaterialComponent:
+    material: 4073237043467660291
+4838966454128498368:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 11590610534754167203
+    children:
+      - 16041239663151339372
+  TagComponent:
+    name: stone_walls_2ndfloor_brickwall_02_0
+    tag: Object
+11911953073674019828:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 5843690849426994951
+  TagComponent:
+    name: Mesh_37
+    tag: Object
+  MeshComponent:
+    mesh: 12600824902324404693
+  MaterialComponent:
+    material: 10731730283897452324
+5843690849426994951:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 11590610534754167203
+    children:
+      - 11911953073674019828
+  TagComponent:
+    name: stone_walls_2ndfloor_floor_01_0
+    tag: Object
+12494085998196300962:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 6311948242463282486
+  TagComponent:
+    name: Mesh_36
+    tag: Object
+  MeshComponent:
+    mesh: 11095431026459380421
+  MaterialComponent:
+    material: 9452636202733707318
+6311948242463282486:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 11590610534754167203
+    children:
+      - 12494085998196300962
+  TagComponent:
+    name: stone_walls_2ndfloor_brickwall_01_0
+    tag: Object
+3494731071861841224:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 10666611285870270035
+  TagComponent:
+    name: Mesh_35
+    tag: Object
+  MeshComponent:
+    mesh: 9247764292111473912
+  MaterialComponent:
+    material: 12163383688074434228
+10666611285870270035:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 11590610534754167203
+    children:
+      - 3494731071861841224
+  TagComponent:
+    name: stone_walls_2ndfloor_stones_2ndfloor_0
+    tag: Object
+11590610534754167203:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 9991214350303879212
+    children:
+      - 10666611285870270035
+      - 6311948242463282486
+      - 5843690849426994951
+      - 4838966454128498368
+  TagComponent:
+    name: stone_walls_2ndfloor
+    tag: Object
+15904818170822764703:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 7180904095193181918
+  TagComponent:
+    name: Mesh_34
+    tag: Object
+  MeshComponent:
+    mesh: 8744077874402224784
+  MaterialComponent:
+    material: 7168525992004393980
+7180904095193181918:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 11628257273547102996
+    children:
+      - 15904818170822764703
+  TagComponent:
+    name: ornament_stones_2ndfloor_stone_trims_01_0
+    tag: Object
+11628257273547102996:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 9991214350303879212
+    children:
+      - 7180904095193181918
+  TagComponent:
+    name: ornament_stones_2ndfloor
+    tag: Object
+12043194796081893543:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 15616261752358377642
+  TagComponent:
+    name: Mesh_33
+    tag: Object
+  MeshComponent:
+    mesh: 15073400818379266130
+  MaterialComponent:
+    material: 7168525992004393980
+15616261752358377642:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 3559002283622626845
+    children:
+      - 12043194796081893543
+  TagComponent:
+    name: ornament_windows_stone_trims_01_0
+    tag: Object
+6549751235927971142:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 9485960659614729003
+  TagComponent:
+    name: Mesh_32
+    tag: Object
+  MeshComponent:
+    mesh: 17363887014417612444
+  MaterialComponent:
+    material: 15283354955162974029
+9485960659614729003:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 3559002283622626845
+    children:
+      - 6549751235927971142
+  TagComponent:
+    name: ornament_windows_glass_0
+    tag: Object
+8009673001185774165:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 14280431696018055934
+  TagComponent:
+    name: Mesh_31
+    tag: Object
+  MeshComponent:
+    mesh: 78474117410156533
+  MaterialComponent:
+    material: 16183088550991445475
+14280431696018055934:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 3559002283622626845
+    children:
+      - 8009673001185774165
+  TagComponent:
+    name: ornament_windows_metal_door_0
+    tag: Object
+1649722130221683977:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 11044148035316928291
+  TagComponent:
+    name: Mesh_30
+    tag: Object
+  MeshComponent:
+    mesh: 11114504056482009531
+  MaterialComponent:
+    material: 6592805830664410153
+11044148035316928291:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 3559002283622626845
+    children:
+      - 1649722130221683977
+  TagComponent:
+    name: ornament_windows_door_stoneframe_01_0
+    tag: Object
+3559002283622626845:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 9991214350303879212
+    children:
+      - 11044148035316928291
+      - 14280431696018055934
+      - 9485960659614729003
+      - 15616261752358377642
+  TagComponent:
+    name: ornament_windows
+    tag: Object
+13213533747730971106:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 11178213888838104456
+  TagComponent:
+    name: Mesh_29
+    tag: Object
+  MeshComponent:
+    mesh: 1052369569540128549
+  MaterialComponent:
+    material: 7112511140859922783
+11178213888838104456:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 17107479287110851948
+    children:
+      - 13213533747730971106
+  TagComponent:
+    name: sponza_ornament_ornament_01_0
+    tag: Object
+17107479287110851948:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 9991214350303879212
+    children:
+      - 11178213888838104456
+  TagComponent:
+    name: sponza_ornament
+    tag: Object
+15130666102180519266:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 6412777866201299239
+  TagComponent:
+    name: Mesh_28
+    tag: Object
+  MeshComponent:
+    mesh: 5692183177586536766
+  MaterialComponent:
+    material: 16183088550991445475
+6412777866201299239:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 8566515441418747514
+    children:
+      - 15130666102180519266
+  TagComponent:
+    name: ornament_roof_metal_door_0
+    tag: Object
+16120626568493456935:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 5786751053683342179
+  TagComponent:
+    name: Mesh_27
+    tag: Object
+  MeshComponent:
+    mesh: 4472264345623944599
+  MaterialComponent:
+    material: 7168525992004393980
+5786751053683342179:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 8566515441418747514
+    children:
+      - 16120626568493456935
+  TagComponent:
+    name: ornament_roof_stone_trims_01_0
+    tag: Object
+8566515441418747514:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 9991214350303879212
+    children:
+      - 5786751053683342179
+      - 6412777866201299239
+  TagComponent:
+    name: ornament_roof
+    tag: Object
+15020031851787922023:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 13289710567418328066
+  TagComponent:
+    name: Mesh_26
+    tag: Object
+  MeshComponent:
+    mesh: 756966173183359233
+  MaterialComponent:
+    material: 4073237043467660291
+13289710567418328066:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 819099215066380993
+    children:
+      - 15020031851787922023
+  TagComponent:
+    name: walls_floor_03_brickwall_02_0
+    tag: Object
+2153166893834210276:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 16177651958543712866
+  TagComponent:
+    name: Mesh_25
+    tag: Object
+  MeshComponent:
+    mesh: 14280589346363263482
+  MaterialComponent:
+    material: 7168525992004393980
+16177651958543712866:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 819099215066380993
+    children:
+      - 2153166893834210276
+  TagComponent:
+    name: walls_floor_03_stone_trims_01_0
+    tag: Object
+11559368097671024809:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 297977179368994670
+  TagComponent:
+    name: Mesh_24
+    tag: Object
+  MeshComponent:
+    mesh: 16734673038617996736
+  MaterialComponent:
+    material: 9452636202733707318
+297977179368994670:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 819099215066380993
+    children:
+      - 11559368097671024809
+  TagComponent:
+    name: walls_floor_03_brickwall_01_0
+    tag: Object
+17634602349333138914:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 4959126084008587243
+  TagComponent:
+    name: Mesh_23
+    tag: Object
+  MeshComponent:
+    mesh: 1384817080774273666
+  MaterialComponent:
+    material: 3785244453793960196
+4959126084008587243:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 819099215066380993
+    children:
+      - 17634602349333138914
+  TagComponent:
+    name: walls_floor_03_arch_stone_wall_01_0
+    tag: Object
+362466382771134824:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 6860097514247433241
+  TagComponent:
+    name: Mesh_22
+    tag: Object
+  MeshComponent:
+    mesh: 2172147131654136380
+  MaterialComponent:
+    material: 6592805830664410153
+6860097514247433241:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 819099215066380993
+    children:
+      - 362466382771134824
+  TagComponent:
+    name: walls_floor_03_door_stoneframe_01_0
+    tag: Object
+15467522489243228634:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 4370047234367676441
+  TagComponent:
+    name: Mesh_21
+    tag: Object
+  MeshComponent:
+    mesh: 6183566123427509126
+  MaterialComponent:
+    material: 16374697211561834394
+4370047234367676441:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 819099215066380993
+    children:
+      - 15467522489243228634
+  TagComponent:
+    name: walls_floor_03_stones_01_tile_0
+    tag: Object
+819099215066380993:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 9991214350303879212
+    children:
+      - 4370047234367676441
+      - 6860097514247433241
+      - 4959126084008587243
+      - 297977179368994670
+      - 16177651958543712866
+      - 13289710567418328066
+  TagComponent:
+    name: walls_floor_03
+    tag: Object
+17697751264372898671:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 339752165406459178
+  TagComponent:
+    name: Mesh_20
+    tag: Object
+  MeshComponent:
+    mesh: 5874448717779659656
+  MaterialComponent:
+    material: 7897777860043837682
+339752165406459178:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 14551579890418422080
+    children:
+      - 17697751264372898671
+  TagComponent:
+    name: lionhead_ornament_lion_0
+    tag: Object
+14551579890418422080:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 9991214350303879212
+    children:
+      - 339752165406459178
+  TagComponent:
+    name: lionhead
+    tag: Object
+12437647452122991851:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 10575894777821331717
+  TagComponent:
+    name: Mesh_19
+    tag: Object
+  MeshComponent:
+    mesh: 3117199831481891077
+  MaterialComponent:
+    material: 12163383688074434228
+10575894777821331717:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 4978182507199530183
+    children:
+      - 12437647452122991851
+  TagComponent:
+    name: ornament_doors_09_stones_2ndfloor_0
+    tag: Object
+14944650189848907523:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 932040963651951756
+  TagComponent:
+    name: Mesh_18
+    tag: Object
+  MeshComponent:
+    mesh: 12212268085199179791
+  MaterialComponent:
+    material: 16374697211561834394
+932040963651951756:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 4978182507199530183
+    children:
+      - 14944650189848907523
+  TagComponent:
+    name: ornament_doors_09_stones_01_tile_0
+    tag: Object
+14859188818425344175:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 10807106650206237214
+  TagComponent:
+    name: Mesh_17
+    tag: Object
+  MeshComponent:
+    mesh: 13312917757537857092
+  MaterialComponent:
+    material: 6592805830664410153
+10807106650206237214:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 4978182507199530183
+    children:
+      - 14859188818425344175
+  TagComponent:
+    name: ornament_doors_09_door_stoneframe_01_0
+    tag: Object
+13454191229143993995:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 12268914507892342830
+  TagComponent:
+    name: Mesh_16
+    tag: Object
+  MeshComponent:
+    mesh: 8282308311292555378
+  MaterialComponent:
+    material: 15283354955162974029
+12268914507892342830:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 4978182507199530183
+    children:
+      - 13454191229143993995
+  TagComponent:
+    name: ornament_doors_09_glass_0
+    tag: Object
+12547938173604744868:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 12992923207814364644
+  TagComponent:
+    name: Mesh_15
+    tag: Object
+  MeshComponent:
+    mesh: 589434445264466318
+  MaterialComponent:
+    material: 10826325120116743534
+12992923207814364644:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 4978182507199530183
+    children:
+      - 12547938173604744868
+  TagComponent:
+    name: ornament_doors_09_window_frame_01_0
+    tag: Object
+1443718766896504099:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 10572466715888793243
+  TagComponent:
+    name: Mesh_14
+    tag: Object
+  MeshComponent:
+    mesh: 16564014852562793768
+  MaterialComponent:
+    material: 16183088550991445475
+10572466715888793243:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 4978182507199530183
+    children:
+      - 1443718766896504099
+  TagComponent:
+    name: ornament_doors_09_metal_door_0
+    tag: Object
+9418103388796137433:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 1989426754476864128
+  TagComponent:
+    name: Mesh_13
+    tag: Object
+  MeshComponent:
+    mesh: 7844425715469815818
+  MaterialComponent:
+    material: 16183088550991445475
+1989426754476864128:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 4978182507199530183
+    children:
+      - 9418103388796137433
+  TagComponent:
+    name: ornament_doors_09_metal_door_0
+    tag: Object
+7233593107032928678:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 5247521437169477272
+  TagComponent:
+    name: Mesh_12
+    tag: Object
+  MeshComponent:
+    mesh: 15212356981814922474
+  MaterialComponent:
+    material: 16183088550991445475
+5247521437169477272:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 4978182507199530183
+    children:
+      - 7233593107032928678
+  TagComponent:
+    name: ornament_doors_09_metal_door_0
+    tag: Object
+12423747642580994053:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 4977644054220820856
+  TagComponent:
+    name: Mesh_11
+    tag: Object
+  MeshComponent:
+    mesh: 1937538932503831380
+  MaterialComponent:
+    material: 17850460598892977384
+4977644054220820856:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 4978182507199530183
+    children:
+      - 12423747642580994053
+  TagComponent:
+    name: ornament_doors_09_door_stoneframe_02_0
+    tag: Object
+4978182507199530183:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 9991214350303879212
+    children:
+      - 4977644054220820856
+      - 5247521437169477272
+      - 1989426754476864128
+      - 10572466715888793243
+      - 12992923207814364644
+      - 12268914507892342830
+      - 10807106650206237214
+      - 932040963651951756
+      - 10575894777821331717
+  TagComponent:
+    name: ornament_doors_09
+    tag: Object
+6260096922508697589:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 4479917816433750019
+  TagComponent:
+    name: Mesh_10
+    tag: Object
+  MeshComponent:
+    mesh: 7395813140493925390
+  MaterialComponent:
+    material: 15283354955162974029
+4479917816433750019:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 2206817184838383799
+    children:
+      - 6260096922508697589
+  TagComponent:
+    name: roof_floor_03_01_glass_0
+    tag: Object
+10343219908472410756:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 8259156188746023683
+  TagComponent:
+    name: Mesh_9
+    tag: Object
+  MeshComponent:
+    mesh: 2719472217934766249
+  MaterialComponent:
+    material: 10826325120116743534
+8259156188746023683:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 2206817184838383799
+    children:
+      - 10343219908472410756
+  TagComponent:
+    name: roof_floor_03_01_window_frame_01_0
+    tag: Object
+15983497563857034989:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 16621463393582314611
+  TagComponent:
+    name: Mesh_8
+    tag: Object
+  MeshComponent:
+    mesh: 9032774922095006452
+  MaterialComponent:
+    material: 9452636202733707318
+16621463393582314611:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 2206817184838383799
+    children:
+      - 15983497563857034989
+  TagComponent:
+    name: roof_floor_03_01_brickwall_01_0
+    tag: Object
+2756702856218071012:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 167442986939084858
+  TagComponent:
+    name: Mesh_7
+    tag: Object
+  MeshComponent:
+    mesh: 16341999878060922783
+  MaterialComponent:
+    material: 4073237043467660291
+167442986939084858:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 2206817184838383799
+    children:
+      - 2756702856218071012
+  TagComponent:
+    name: roof_floor_03_01_brickwall_02_0
+    tag: Object
+4808586553118315376:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 6199966477221939132
+  TagComponent:
+    name: Mesh_6
+    tag: Object
+  MeshComponent:
+    mesh: 4767765472917255823
+  MaterialComponent:
+    material: 16183088550991445475
+6199966477221939132:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 2206817184838383799
+    children:
+      - 4808586553118315376
+  TagComponent:
+    name: roof_floor_03_01_metal_door_0
+    tag: Object
+525103838708058264:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 52411410136506025
+  TagComponent:
+    name: Mesh_5
+    tag: Object
+  MeshComponent:
+    mesh: 8622103913505698640
+  MaterialComponent:
+    material: 16374697211561834394
+52411410136506025:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 2206817184838383799
+    children:
+      - 525103838708058264
+  TagComponent:
+    name: roof_floor_03_01_stones_01_tile_0
+    tag: Object
+5480471031719394685:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 16949955122867037339
+  TagComponent:
+    name: Mesh_4
+    tag: Object
+  MeshComponent:
+    mesh: 1729588084590761912
+  MaterialComponent:
+    material: 627266156236302698
+16949955122867037339:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 2206817184838383799
+    children:
+      - 5480471031719394685
+  TagComponent:
+    name: roof_floor_03_01_roof_tiles_01_0
+    tag: Object
+4040199658964066379:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 5902581537626013926
+  TagComponent:
+    name: Mesh_3
+    tag: Object
+  MeshComponent:
+    mesh: 2073517284258655560
+  MaterialComponent:
+    material: 627266156236302698
+5902581537626013926:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 2206817184838383799
+    children:
+      - 4040199658964066379
+  TagComponent:
+    name: roof_floor_03_01_roof_tiles_01_0
+    tag: Object
+10948569142900126709:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 13361700218437729894
+  TagComponent:
+    name: Mesh_2
+    tag: Object
+  MeshComponent:
+    mesh: 5345462694569343675
+  MaterialComponent:
+    material: 627266156236302698
+13361700218437729894:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 2206817184838383799
+    children:
+      - 10948569142900126709
+  TagComponent:
+    name: roof_floor_03_01_roof_tiles_01_0
+    tag: Object
+5317547403361633877:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 12429081809651700049
+  TagComponent:
+    name: Mesh_1
+    tag: Object
+  MeshComponent:
+    mesh: 11561428229115284356
+  MaterialComponent:
+    material: 627266156236302698
+12429081809651700049:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 2206817184838383799
+    children:
+      - 5317547403361633877
+  TagComponent:
+    name: roof_floor_03_01_roof_tiles_01_0
+    tag: Object
+8644783117241574945:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 4677818968397730283
+  TagComponent:
+    name: Mesh_0
+    tag: Object
+  MeshComponent:
+    mesh: 10717763377562910144
+  MaterialComponent:
+    material: 627266156236302698
+4677818968397730283:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 2206817184838383799
+    children:
+      - 8644783117241574945
+  TagComponent:
+    name: roof_floor_03_01_roof_tiles_01_0
+    tag: Object
+2206817184838383799:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 1]
+    scale: [1, 1, 1]
+    parent: 9991214350303879212
+    children:
+      - 4677818968397730283
+      - 12429081809651700049
+      - 13361700218437729894
+      - 5902581537626013926
+      - 16949955122867037339
+      - 52411410136506025
+      - 6199966477221939132
+      - 167442986939084858
+      - 16621463393582314611
+      - 8259156188746023683
+      - 4479917816433750019
+  TagComponent:
+    name: roof_floor_03_01
+    tag: Object
+9991214350303879212:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0.7071068, 0, 0, -0.7071067]
+    scale: [100, 99.99999, 99.99999]
+    parent: 8583136361800296034
+    children:
+      - 2206817184838383799
+      - 4978182507199530183
+      - 14551579890418422080
+      - 819099215066380993
+      - 8566515441418747514
+      - 17107479287110851948
+      - 3559002283622626845
+      - 11628257273547102996
+      - 11590610534754167203
+      - 1139519228671482760
+      - 9358530122900577928
+      - 6327106612986546488
+      - 13586715951766259847
+      - 8892742260649082421
+      - 6090155530117168955
+      - 2377921529950955202
+      - 3073400577085977524
+      - 1441001987558361091
+      - 10444447389865421367
+      - 6558565748796233468
+      - 7707437311839597202
+      - 9418173878537052026
+  TagComponent:
+    name: group
+    tag: Object
+8583136361800296034:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [1, 0, 0, -1.1920927e-07]
+    scale: [0.01, 0.01, 0.01]
+    parent: 13302854275297994803
+    children:
+      - 9991214350303879212
+  TagComponent:
+    name: RootNode
+    tag: Object
+13302854275297994803:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0.7071068, 0, 0, -0.7071067]
+    scale: [1, 1.0000001, 1.0000001]
+    parent: 10978066359105863807
+    children:
+      - 8583136361800296034
+  TagComponent:
+    name: Sponza.fbx
+    tag: Object
+10978066359105863807:
+  TransformComponent:
+    position: [0, 0, 0]
+    rotation: [0, 0, 0, 0]
+    scale: [1, 1, 1]
+    children:
+      - 13302854275297994803
+  TagComponent:
+    name: Model
+    tag: Object

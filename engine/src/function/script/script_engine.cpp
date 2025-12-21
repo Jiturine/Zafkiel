@@ -10,7 +10,6 @@
 #include <mono/metadata/loader.h>
 #include <mono/metadata/object.h>
 #include "platform/filesystem/filesystem.h"
-#include "engine.h"
 #include "function/scene/scene.h"
 
 namespace Zafkiel
@@ -45,12 +44,12 @@ Ref<ScriptInstance> ScriptDomain::InstantiateScriptClass(const Ref<ScriptClass> 
     auto rawInstance = mono_object_new(handle, scriptClass->monoClass);
     if (!rawInstance)
     {
-        Log::CoreError("Failed to Instantiate Class: {}.{}", scriptClass->classNamespace, scriptClass->className);
+        Log::Error("Failed to Instantiate Class: {}.{}", scriptClass->classNamespace, scriptClass->className);
         return nullptr;
     }
     mono_runtime_object_init(rawInstance);
     auto constructor = entityClass->GetMethod(".ctor");
-    auto instance = MakeRef<ScriptInstance>(rawInstance, scriptClass);
+    auto instance = CreateRef<ScriptInstance>(rawInstance, scriptClass);
     void *params = &uuid;
     instance->InvokeMethod(constructor, &params);
     return instance;
@@ -62,7 +61,7 @@ ScriptDomain::ScriptDomain(const std::string &name)
     handle = mono_domain_create_appdomain((char *)"Editor Domain", nullptr);
     if (!handle)
     {
-        Log::CoreError("Failed to Create Domain!");
+        Log::Error("Failed to Create Domain!");
         return;
     }
     mono_domain_set(handle, false);
@@ -94,12 +93,12 @@ void ScriptDomain::LoadCoreAssembly(const Path &path)
     coreAssembly = mono_domain_assembly_open(handle, path.string().c_str());
     if (!coreAssembly)
     {
-        Log::CoreError("Failed to Load Core Assembly: {}", path.string());
+        Log::Error("Failed to Load Core Assembly: {}", path.string());
     }
     coreAssemblyImage = mono_assembly_get_image(coreAssembly);
     if (!coreAssemblyImage)
     {
-        Log::CoreError("Failed to Load Core Assembly Image: {}", path.string());
+        Log::Error("Failed to Load Core Assembly Image: {}", path.string());
     }
 
     entityClass = RegisterCoreClass("Zafkiel", "Entity");
@@ -111,19 +110,19 @@ void ScriptDomain::LoadAppAssembly(const Path &path)
 {
     if (!coreAssembly)
     {
-        Log::CoreError("Need to Load Core Assembly first!");
+        Log::Error("Need to Load Core Assembly first!");
         return;
     }
     mono_domain_set(handle, false);
     appAssembly = mono_domain_assembly_open(handle, path.string().c_str());
     if (!appAssembly)
     {
-        Log::CoreError("Failed to App Assembly: {}", path.string());
+        Log::Error("Failed to App Assembly: {}", path.string());
     }
     appAssemblyImage = mono_assembly_get_image(appAssembly);
     if (!appAssemblyImage)
     {
-        Log::CoreError("Failed to App Assembly Image: {}", path.string());
+        Log::Error("Failed to App Assembly Image: {}", path.string());
     }
 
     scriptClasses.clear();
@@ -145,7 +144,7 @@ void ScriptDomain::LoadAppAssembly(const Path &path)
 Ref<ScriptClass> ScriptDomain::RegisterCoreClass(const std::string &namespaceStr, const std::string &nameStr)
 {
     auto monoClass = mono_class_from_name(coreAssemblyImage, namespaceStr.c_str(), nameStr.c_str());
-    return MakeRef<ScriptClass>(monoClass, namespaceStr, nameStr);
+    return CreateRef<ScriptClass>(monoClass, namespaceStr, nameStr);
 }
 
 void ScriptDomain::RegisterAppClass(const std::string &namespaceStr, const std::string &nameStr)
@@ -155,7 +154,7 @@ void ScriptDomain::RegisterAppClass(const std::string &namespaceStr, const std::
     if (isEntity)
     {
         std::string fullName = !namespaceStr.empty() ? std::format("{}.{}", namespaceStr, nameStr) : nameStr;
-        scriptClasses[fullName] = MakeRef<ScriptClass>(monoClass, namespaceStr, nameStr);
+        scriptClasses[fullName] = CreateRef<ScriptClass>(monoClass, namespaceStr, nameStr);
     }
 }
 
@@ -164,13 +163,13 @@ MonoObject *ScriptClass::InvokeStaticMethod(const std::string &name, void **para
     auto it = methods.find(name);
     if (it == methods.end())
     {
-        Log::CoreError("Cannot Find Method: {}", name);
+        Log::Error("Cannot Find Method: {}", name);
         return nullptr;
     }
     ScriptMethod method = it->second;
     if (!method.isStatic)
     {
-        Log::CoreError("Method {} isn't Static!", name);
+        Log::Error("Method {} isn't Static!", name);
         return nullptr;
     }
     MonoObject *exc = nullptr;
@@ -179,7 +178,7 @@ MonoObject *ScriptClass::InvokeStaticMethod(const std::string &name, void **para
     {
         MonoString *excMonoStr = mono_object_to_string(exc, nullptr);
         std::string excStr = MonoStringToCppString(excMonoStr);
-        Log::CoreError("Invoke Static Method Exception: {}", excStr);
+        Log::Error("Invoke Static Method Exception: {}", excStr);
         return nullptr;
     }
     return ret;
@@ -213,7 +212,7 @@ ScriptMethod ScriptClass::GetMethod(const std::string &name) const
     auto it = methods.find(name);
     if (it == methods.end())
     {
-        Log::CoreError("Cannot Find Script Method: {}", name);
+        Log::Error("Cannot Find Script Method: {}", name);
         return ScriptMethod{};
     }
     return it->second;
@@ -224,7 +223,7 @@ ScriptField ScriptClass::GetField(const std::string &name) const
     auto it = fields.find(name);
     if (it == fields.end())
     {
-        Log::CoreError("Cannot Find Script Field: {}", name);
+        Log::Error("Cannot Find Script Field: {}", name);
         return ScriptField{};
     }
     return it->second;
@@ -235,13 +234,13 @@ MonoObject *ScriptInstance::InvokeMethod(const std::string &name, void **params)
     auto it = scriptClass->methods.find(name);
     if (it == scriptClass->methods.end())
     {
-        Log::CoreError("Cannot Find Method: {}", name);
+        Log::Error("Cannot Find Method: {}", name);
         return nullptr;
     }
     ScriptMethod method = it->second;
     if (method.isStatic)
     {
-        Log::CoreError("Method {} is Static!", name);
+        Log::Error("Method {} is Static!", name);
         return nullptr;
     }
     MonoObject *exc = nullptr;
@@ -250,7 +249,7 @@ MonoObject *ScriptInstance::InvokeMethod(const std::string &name, void **params)
     {
         MonoString *excMonoStr = mono_object_to_string(exc, nullptr);
         std::string excStr = MonoStringToCppString(excMonoStr);
-        Log::CoreError("Invoke Method Exception: {}", excStr);
+        Log::Error("Invoke Method Exception: {}", excStr);
         return nullptr;
     }
     return ret;
@@ -260,7 +259,7 @@ MonoObject *ScriptInstance::InvokeMethod(ScriptMethod method, void **params)
 {
     if (method.isStatic)
     {
-        Log::CoreError("Method is Static!");
+        Log::Error("Method is Static!");
         return nullptr;
     }
     MonoObject *exc = nullptr;
@@ -269,7 +268,7 @@ MonoObject *ScriptInstance::InvokeMethod(ScriptMethod method, void **params)
     {
         MonoString *excMonoStr = mono_object_to_string(exc, nullptr);
         std::string excStr = MonoStringToCppString(excMonoStr);
-        Log::CoreError("Invoke Method Exception: {}", excStr);
+        Log::Error("Invoke Method Exception: {}", excStr);
         return nullptr;
     }
     return ret;

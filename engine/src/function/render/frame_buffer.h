@@ -1,5 +1,6 @@
 #pragma once
 #include "texture.h"
+#include "render_pass.h"
 
 namespace Zafkiel
 {
@@ -7,30 +8,40 @@ namespace Zafkiel
 struct FrameBufferSpecification
 {
     uint32_t width, height;
-    std::vector<TextureFormat> attachments;
+    std::vector<Observer<Image>> attachments;
+    Observer<RenderPass> renderPass;
 };
 
-class FrameBuffer : public RefCounted
+class FrameBufferBackend
 {
   public:
-    virtual ~FrameBuffer() = default;
-    virtual const FrameBufferSpecification &GetSpecification() const = 0;
-    virtual void Bind() const = 0;
-    virtual void Unbind() const = 0;
-
+    virtual ~FrameBufferBackend() = default;
     virtual void Resize(uint32_t width, uint32_t height) = 0;
+};
 
-    template <typename T>
-    T ReadPixel(uint32_t attachmentIndex, int x, int y);
+class FrameBuffer final
+{
+  public:
+    FrameBuffer(const FrameBufferSpecification &spec, Scope<FrameBufferBackend> backend)
+        : width(spec.width), height(spec.height), backend(std::move(backend)) {}
+    uint32_t GetWidth() const { return width; }
+    uint32_t GetHeight() const { return height; }
 
-    virtual void ClearColorAttachment(uint32_t index, const void *value) = 0;
+    void Resize(uint32_t width, uint32_t height)
+    {
+        this->width = width;
+        this->height = height;
+        backend->Resize(width, height);
+    }
+    
+    Observer<FrameBufferBackend> GetBackend() { return backend; }
+    const Observer<FrameBufferBackend> GetBackend() const { return backend; }
 
-    virtual Ref<Texture2D> GetColorAttachment(uint32_t index = 0) const = 0;
+  private:
+    uint32_t width;
+    uint32_t height;
+    Scope<FrameBufferBackend> backend;
 
-    virtual uint32_t GetRendererID() const = 0;
-
-  protected:
-    virtual uint32_t ReadPixelUInt(uint32_t attachmentIndex, int x, int y) = 0;
 };
 
 }

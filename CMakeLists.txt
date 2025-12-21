@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.6)
+cmake_minimum_required(VERSION 3.12)
 
 project(Zafkiel)
 
@@ -14,5 +14,6 @@ add_subdirectory(engine)
 
 add_subdirectory(editor)
 
-# enable_testing()
-# add_subdirectory(tests)
+enable_testing()
+
+add_subdirectory(engine_tests)

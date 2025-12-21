@@ -7,7 +7,7 @@ template <typename T>
     requires std::derived_from<T, Type>
 const T *Type::As() const
 {
-    return dynamic_cast<const T *>(this);
+    return static_cast<const T *>(this);
 }
 
 Enum &Enum::Add(auto value, const std::string &name)

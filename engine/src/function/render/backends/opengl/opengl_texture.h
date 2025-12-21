@@ -5,25 +5,30 @@
 
 namespace Zafkiel
 {
-class OpenGLTexture2D : public Texture2D
+class OpenGLTexture2DBackend final : public Texture2DBackend
 {
   public:
-    OpenGLTexture2D(const TextureSpecification &spec);
-    OpenGLTexture2D(const TextureSpecification &spec, const Buffer &buffer);
-    OpenGLTexture2D(const Path &path);
-    virtual void SetData(const Buffer &buffer) override;
-    virtual void Clear(const void *value) override;
-    virtual ~OpenGLTexture2D();
-    virtual uint32_t GetWidth() const override { return width; }
-    virtual uint32_t GetHeight() const override { return height; }
-    virtual uint32_t GetRendererID() const override { return rendererID; }
-    virtual void Bind(uint32_t slot = 0) const override;
-  private:
-    uint32_t width;
-    uint32_t height;
-    uint32_t rendererID;
-    TextureFormat format;
-    GLenum internalFormat, dataFormat, dataType;
-    uint32_t bytesPerPixel;
+    OpenGLTexture2DBackend(const Texture2DSpecification &spec);
+
+    void SetData(Observer<Image> image, Buffer buffer);
+
 };
+
+class OpenGLTexture2DFactory final : public Texture2DFactory<OpenGLTexture2DFactory>
+{
+  public:
+    static Scope<Texture2D> Create(const Texture2DSpecification &spec);
+    static Scope<Texture2D> Create(const Texture2DSpecification &spec, Buffer buffer);
+};
+
+// class OpenGLCubeMap : public CubeMap
+// {
+//   public:
+//     OpenGLCubeMap(const std::vector<Path> &paths);
+//     virtual uint32_t GetFaceSize() const override { return faceSize; }
+//   private:
+//     uint32_t faceSize;
+//     uint32_t rendererID;
+// };
+
 }

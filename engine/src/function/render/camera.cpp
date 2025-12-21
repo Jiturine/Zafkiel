@@ -1,4 +1,5 @@
 #include "camera.h"
+#include "renderer.h"
 
 namespace Zafkiel
 {
@@ -22,7 +23,7 @@ void Camera::SetViewportSize(uint32_t width, uint32_t height)
 {
     if (width <= 0 || height <= 0)
     {
-        Log::CoreError("Viewport size must be larger than 0!");
+        Log::Error("Viewport size must be larger than 0!");
     }
     aspectRatio = (float)width / (float)height;
     RecalculateProjection();

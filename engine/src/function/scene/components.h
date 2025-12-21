@@ -2,7 +2,6 @@
 #include "core/meta/reflection/refl.h"
 #include "core/meta/serializer/custom_serialize.h"
 #include "core/base/uuid.h"
-#include "core/meta/serializer/deserialize.h"
 #include "entity.h"
 #include "resource/asset.h"
 
@@ -29,6 +28,7 @@ struct [[refl]] TransformComponent
     quat GetWorldRotation() const;
     vec3 GetWorldScale() const;
 
+    void SetLocalMatrix(const mat4 &matrix);
     void SetPosition(const vec3 &newPosition);
     void SetRotation(const quat &newRotation);
     void SetScale(const vec3 &newScale);
@@ -53,8 +53,8 @@ template <>
 struct Serialization<TransformComponent>
 {
     static constexpr bool has_serialize = true;
-    static void Serialize(const Any instance, Any context, YAML::Emitter &out);
-    static void Deserialize(Any instance, Any context, const YAML::Node &data);
+    static void Serialize(const AnyRef instance, AnyRef context, ISerializer &out);
+    static void Deserialize(AnyRef instance, AnyRef context, IDeserializer &data);
 };
 
 struct [[refl]] TagComponent
@@ -79,6 +79,38 @@ struct [[refl]] MaterialComponent
     AssetHandle material;
 };
 
+enum class [[refl]] LightType
+{
+    Directional,
+    Point,
+    Spot
+};
+
+struct [[refl]] LightComponent
+{
+    LightType type = LightType::Directional;
+
+    vec3 color = vec3(1.0f);
+    float intensity = 1.0f;
+
+    // 方向光
+    vec3 direction = vec3(0.0f, -1.0f, 0.0f);
+
+    // 点光/聚光灯
+    float radius = 10.0f; // 衰减范围
+
+    // 聚光灯特有
+    float spotAngle = glm::radians(30.0f);
+};
+
+template <>
+struct Serialization<LightComponent>
+{
+    static constexpr bool has_serialize = true;
+    static void Serialize(const AnyRef instance, AnyRef context, ISerializer &out);
+    static void Deserialize(AnyRef instance, AnyRef context, IDeserializer &data);
+};
+
 struct [[refl]] ScriptComponent
 {
     UUID entityUUID;
@@ -89,10 +121,10 @@ template <>
 struct Serialization<ScriptComponent>
 {
     static constexpr bool has_serialize = true;
-    static void Serialize(const Any instance, Any context, YAML::Emitter &out);
-    static void Deserialize(Any instance, Any context, const YAML::Node &data);
+    static void Serialize(const AnyRef instance, AnyRef context, ISerializer &out);
+    static void Deserialize(AnyRef instance, AnyRef context, IDeserializer &data);
 };
 
-using ComponentList = std::tuple<TransformComponent, TagComponent, SpriteRendererComponent, MeshComponent, MaterialComponent, ScriptComponent>;
+using ComponentList = std::tuple<TransformComponent, TagComponent, SpriteRendererComponent, MeshComponent, MaterialComponent, LightComponent, ScriptComponent>;
 
 }

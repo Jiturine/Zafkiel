@@ -19,18 +19,31 @@ using ScriptInstanceMap = std::unordered_map<std::string, Ref<ScriptInstance>>;
 using EntityMap = std::unordered_map<UUID, ScriptInstanceMap>;
 using ScriptClassMap = std::unordered_map<std::string, Ref<ScriptClass>>;
 
-class ScriptEngine : public RefCounted
+// 分 Editor 和 Runtime
+class ScriptEngine
 {
   public:
-    ScriptEngine() = default;
-    ~ScriptEngine() = default;
-    virtual bool HasScriptInstance(UUID uuid, const std::string &scriptName) const = 0;
-    virtual Ref<ScriptInstance> GetScriptInstance(UUID uuid, const std::string &scriptName) const = 0;
-    virtual Ref<ScriptInstance> AddScriptInstance(UUID uuid, const std::string &scriptName) = 0;
-    virtual void RemoveScriptInstance(UUID uuid, const std::string &scriptName) = 0;
+    virtual ~ScriptEngine() = default;
+    
+    static Observer<ScriptEngine> Instance() { return instancePtr; }
 
-    virtual const ScriptInstanceMap &GetScriptInstances(UUID uuid) const = 0;
-    virtual ScriptInstanceMap &GetScriptInstances(UUID uuid) = 0;
+    static ScriptInstanceMap &GetScriptInstances(UUID uuid) { return instancePtr->GetScriptInstancesImpl(uuid); }
+    static bool HasScriptInstance(UUID uuid, const std::string &scriptName) { return instancePtr->HasScriptInstanceImpl(uuid, scriptName); }
+    static Ref<ScriptInstance> GetScriptInstance(UUID uuid, const std::string &scriptName) { return instancePtr->GetScriptInstanceImpl(uuid, scriptName); }
+    static Ref<ScriptInstance> AddScriptInstance(UUID uuid, const std::string &scriptName) { return instancePtr->AddScriptInstanceImpl(uuid, scriptName); }
+    static void RemoveScriptInstance(UUID uuid, const std::string &scriptName) { instancePtr->RemoveScriptInstanceImpl(uuid, scriptName); }
+    static bool HasScript(const std::string &name) { return instancePtr->HasScriptImpl(name); }
+    
+  protected:
+    virtual const ScriptInstanceMap &GetScriptInstancesImpl(UUID uuid) const = 0;
+    virtual ScriptInstanceMap &GetScriptInstancesImpl(UUID uuid) = 0;
+    virtual bool HasScriptInstanceImpl(UUID uuid, const std::string &scriptName) const = 0;
+    virtual Ref<ScriptInstance> GetScriptInstanceImpl(UUID uuid, const std::string &scriptName) const = 0;
+    virtual Ref<ScriptInstance> AddScriptInstanceImpl(UUID uuid, const std::string &scriptName) = 0;
+    virtual void RemoveScriptInstanceImpl(UUID uuid, const std::string &scriptName) = 0;
+    virtual bool HasScriptImpl(const std::string &name) const = 0;
+    
+    inline static Observer<ScriptEngine> instancePtr;
 };
 
 class ScriptDomain : public RefCounted
@@ -65,7 +78,6 @@ class ScriptDomain : public RefCounted
 
 enum class ScriptFieldType
 {
-    // clang-format off
     Unknown,
     Bool, Char,
     Int16, Int32, Int64,
@@ -73,7 +85,6 @@ enum class ScriptFieldType
     Float, Double,
     Vector2, Vector3, Vector4,
     Entity
-    // clang-format on
 };
 
 struct ScriptField
@@ -103,7 +114,7 @@ class ScriptClass : public RefCounted
     MonoClass *GetHandle() const { return monoClass; }
   private:
     template <typename T, typename... Args>
-    friend Ref<T> MakeRef(Args &&...args);
+    friend Ref<T> CreateRef(Args &&...args);
 
     ScriptClass(MonoClass *monoClass, const std::string &classNamespace, const std::string &className);
     std::string classNamespace;

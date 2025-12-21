@@ -1,38 +1,50 @@
 #include "opengl_context.h"
 #include <SDL3/SDL_opengl.h>
-#include "opengl_vertex_array.h"
-#include "opengl_frame_buffer.h"
-#include "opengl_shader.h"
-#include "opengl_texture.h"
+#include "opengl_vertex_buffer.h"
+#include "opengl_index_buffer.h"
 #include "opengl_mesh.h"
+#include "opengl_frame_buffer.h"
+#include "opengl_graphics_shader.h"
+#include "opengl_image.h"
+#include "opengl_texture.h"
+#include "opengl_graphics_pipeline.h"
+#include "opengl_render_pass.h"
+#include "opengl_render_resource.h"
+#include "opengl_render_resource_template.h"
+#include "opengl_global_render_resource.h"
+#include "opengl_render_pass_resource.h"
+#include "opengl_material.h"
+#include "opengl_object_render_resource.h"
 
 namespace Zafkiel
 {
 
-OpenGLContext::OpenGLContext(SDL_Window *window)
-    : window(window)
+OpenGLContext::OpenGLContext(const Window &window)
+    : window(window.GetHandle())
 {
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 5);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 6);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
-    handle = SDL_GL_CreateContext(window);
+    handle = SDL_GL_CreateContext(window.GetHandle());
     if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress))
     {
-        Log::CoreCritical("Failed to initialize glad!");
+        Log::Critical("Failed to initialize glad!");
     }
 
     if (!handle)
     {
-        Log::CoreError("Could not create an OpenGL context: {}", SDL_GetError());
+        Log::Error("Could not create an OpenGL context: {}", SDL_GetError());
     }
     else
     {
-        Log::CoreInfo("OpenGL Info:");
-        Log::CoreInfo("  Vendor: {}", (const char *)glGetString(GL_VENDOR));
-        Log::CoreInfo("  Renderer: {}", (const char *)glGetString(GL_RENDERER));
-        Log::CoreInfo("  Version: {}", (const char *)glGetString(GL_VERSION));
+        Log::Info("OpenGL Info:");
+        Log::Info("  Vendor: {}", (const char *)glGetString(GL_VENDOR));
+        Log::Info("  Renderer: {}", (const char *)glGetString(GL_RENDERER));
+        Log::Info("  Version: {}", (const char *)glGetString(GL_VERSION));
     }
+
+    SDL_GL_MakeCurrent(window.GetHandle(), handle);
 }
 
 OpenGLContext::~OpenGLContext()
@@ -40,65 +52,74 @@ OpenGLContext::~OpenGLContext()
     SDL_GL_DestroyContext(handle);
 }
 
-void OpenGLContext::SetCurrent()
+Scope<VertexBuffer> OpenGLContext::CreateVertexBuffer(const float *vertices, uint32_t size) const
 {
-    SDL_GL_MakeCurrent(window, handle);
+    return OpenGLVertexBufferFactory::Create(vertices, size);
+}
+Scope<IndexBuffer> OpenGLContext::CreateIndexBuffer(const uint32_t *indices, uint32_t count) const
+{
+    return OpenGLIndexBufferFactory::Create(indices, count);
+}
+Scope<Mesh> OpenGLContext::CreateMesh(const std::vector<MeshVertex> &vertices, const std::vector<uint32_t> &indices) const 
+{
+    return OpenGLMeshFactory::Create(vertices, indices);
+}
+Scope<FrameBuffer> OpenGLContext::CreateFrameBuffer(const FrameBufferSpecification &spec) const
+{
+    return OpenGLFrameBufferFactory::Create(spec);
+}
+Scope<GraphicsShader> OpenGLContext::CreateGraphicsShader(const Path &path) const
+{
+    return OpenGLGraphicsShaderFactory::Create(path);
+}
+Scope<Texture2D> OpenGLContext::CreateTexture2D(const Texture2DSpecification &spec) const
+{
+    return OpenGLTexture2DFactory::Create(spec);
+}
+Scope<Image> OpenGLContext::CreateImage(const ImageSpecification &spec) const
+{
+    return OpenGLImageFactory::Create(spec);
+}
+Scope<Texture2D> OpenGLContext::CreateTexture2D(const Texture2DSpecification &spec, Buffer buffer) const
+{
+    return OpenGLTexture2DFactory::Create(spec, buffer);
+}
+Scope<GraphicsPipeline> OpenGLContext::CreateGraphicsPipeline(const GraphicsPipelineSpecification &spec) const 
+{
+    return OpenGLGraphicsPipelineFactory::Create(spec);
+}
+Scope<RenderPass> OpenGLContext::CreateRenderPass(const RenderPassSpecification &spec) const 
+{
+    return OpenGLRenderPassFactory::Create(spec);
+}
+Scope<RenderResource> OpenGLContext::CreateRenderResource(const Observer<RenderResourceTemplate> renderResourceTemplate) const
+{
+    return OpenGLRenderResourceFactory::Create(renderResourceTemplate);
 }
 
-Ref<VertexArray> OpenGLContext::CreateVertexArray() const
+Scope<GlobalRenderResource> OpenGLContext::CreateGlobalRenderResource(const Path &path) const 
 {
-    return MakeRef<OpenGLVertexArray>();
+    return OpenGLGlobalRenderResourceFactory::Create(path);
 }
-Ref<VertexBuffer> OpenGLContext::CreateVertexBuffer(uint32_t size) const
+Scope<RenderPassResource> OpenGLContext::CreateRenderPassResource(const Path &path) const
 {
-    return MakeRef<OpenGLVertexBuffer>(size);
+    return OpenGLRenderPassResourceFactory::Create(path);
 }
-Ref<VertexBuffer> OpenGLContext::CreateVertexBuffer(const float *vertices, uint32_t size) const
+Scope<Material> OpenGLContext::CreateMaterial(const MaterialSpecification &spec) const 
 {
-    return MakeRef<OpenGLVertexBuffer>(vertices, size);
+    return OpenGLMaterialFactory::Create(spec);
 }
-Ref<IndexBuffer> OpenGLContext::CreateIndexBuffer(const uint32_t *indices, uint32_t count) const
+Scope<ObjectRenderResource> OpenGLContext::CreateObjectRenderResource(const Path &path) const 
 {
-    return MakeRef<OpenGLIndexBuffer>(indices, count);
+    return OpenGLObjectRenderResourceFactory::Create(path);
 }
-Ref<FrameBuffer> OpenGLContext::CreateFrameBuffer(const FrameBufferSpecification &spec) const
+Scope<RenderResourceTemplate> OpenGLContext::CreateRenderResourceTemplate(const Observer<RenderResourceSchema> schema) const 
 {
-    return MakeRef<OpenGLFrameBuffer>(spec);
+    return OpenGLRenderResourceTemplateFactory::Create(schema);
 }
-Ref<Shader> OpenGLContext::CreateShader(const Path &path) const
+void OpenGLContext::Resize(uint32_t width, uint32_t height)
 {
-    return MakeRef<OpenGLShader>(path);
-}
-Ref<Texture2D> OpenGLContext::CreateTexture2D(const Path &path) const
-{
-    return MakeRef<OpenGLTexture2D>(path);
-}
-Ref<Texture2D> OpenGLContext::CreateTexture2D(const TextureSpecification &spec, const Buffer &buffer) const
-{
-    return MakeRef<OpenGLTexture2D>(spec, buffer);
-}
-Ref<Mesh> OpenGLContext::CreateMesh(const std::vector<MeshVertex> &vertices, const std::vector<uint32_t> &indices) const
-{
-    return MakeRef<OpenGLMesh>(vertices, indices);
-}
 
-void OpenGLContext::Clear(vec4 color)
-{
-    glClearColor(color.r, color.g, color.b, color.a);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-}
-
-void OpenGLContext::DrawIndexed(Ref<VertexArray> vertexArray, Ref<Shader> shader, uint32_t indexCount)
-{
-    vertexArray->Bind();
-    shader->Bind();
-    auto count = indexCount == 0 ? vertexArray->GetIndexBuffer()->GetCount() : indexCount;
-    glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, nullptr);
-}
-
-void OpenGLContext::SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
-{
-    glViewport(x, y, width, height);
 }
 
 }

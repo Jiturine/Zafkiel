@@ -55,7 +55,7 @@ Property_Impl<Ptr>::Property_Impl(const std::string &name, const Class *owner, P
 }
 
 template <typename Ptr>
-Any Property_Impl<Ptr>::Call(Any &instance) const
+AnyRef Property_Impl<Ptr>::Call(AnyRef &instance) const
 {
     using ClassType = property_traits<Ptr>::ClassType;
     if (GetType<ClassType>() != GetOwner())
@@ -66,7 +66,7 @@ Any Property_Impl<Ptr>::Call(Any &instance) const
 }
 
 template <typename Ptr>
-Any Property_Impl<Ptr>::Call(const Any &instance) const
+AnyRef Property_Impl<Ptr>::Call(const AnyRef &instance) const
 {
     using ClassType = property_traits<Ptr>::ClassType;
     if (GetType<ClassType>() != GetOwner())
@@ -98,28 +98,28 @@ ClassTypeInfo<T> &ClassTypeInfo<T>::AddProperty(Ptr accessor, const std::string 
 // 简化用户接口
 
 template <typename T>
-std::vector<std::pair<Any, std::shared_ptr<Property>>> GetProperties(T &obj)
+std::vector<std::pair<AnyRef, std::shared_ptr<Property>>> GetProperties(T &obj)
 {
     const Class *type = GetType<T>()->template As<Class>();
-    Any instance = obj;
-    std::vector<std::pair<Any, std::shared_ptr<Property>>> ret;
+    AnyRef instance = obj;
+    std::vector<std::pair<AnyRef, std::shared_ptr<Property>>> ret;
     for (const auto &prop : type->GetProperties())
     {
-        Any subInstance = prop->Call(instance);
+        AnyRef subInstance = prop->Call(instance);
         ret.emplace_back(subInstance, prop);
     }
     return ret;
 }
 
 template <typename T>
-std::vector<std::pair<Any, std::shared_ptr<Property>>> GetProperties(const T &obj)
+std::vector<std::pair<AnyRef, std::shared_ptr<Property>>> GetProperties(const T &obj)
 {
     const Class *type = GetType<T>()->template As<Class>();
-    const Any instance = obj;
-    std::vector<std::pair<Any, std::shared_ptr<Property>>> ret;
+    const AnyRef instance = obj;
+    std::vector<std::pair<AnyRef, std::shared_ptr<Property>>> ret;
     for (const auto &prop : type->GetProperties())
     {
-        Any subInstance = prop->Call(instance);
+        AnyRef subInstance = prop->Call(instance);
         ret.emplace_back(subInstance, prop);
     }
     return ret;

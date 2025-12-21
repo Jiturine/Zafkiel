@@ -13,9 +13,10 @@
 #include <cstdint>
 #include <memory>
 #include <iostream>
+#include <variant>
 
 #include "core/log/log.h"
-#include "core/base/ref.h"
+#include "core/base/memory.h"
 #include "core/base/buffer.h"
 #include "core/base/common.h"
 #include "core/maths/maths.h"

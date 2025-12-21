@@ -11,62 +11,62 @@ class Log
     Log() = delete;
 
     template <typename... Args>
-    static void CoreTrace(fmt::format_string<Args...> format, Args &&...args)
+    static void Trace(fmt::format_string<Args...> format, Args &&...args)
     {
         GetCoreLogger()->trace(format, std::forward<Args>(args)...);
     }
     template <typename... Args>
-    static void Trace(fmt::format_string<Args...> format, Args &&...args)
+    static void ClientTrace(fmt::format_string<Args...> format, Args &&...args)
     {
         GetClientLogger()->trace(format, std::forward<Args>(args)...);
     }
     template <typename... Args>
-    static void CoreDebug(fmt::format_string<Args...> format, Args &&...args)
+    static void Debug(fmt::format_string<Args...> format, Args &&...args)
     {
         GetCoreLogger()->debug(format, std::forward<Args>(args)...);
     }
     template <typename... Args>
-    static void Debug(fmt::format_string<Args...> format, Args &&...args)
+    static void ClientDebug(fmt::format_string<Args...> format, Args &&...args)
     {
         GetClientLogger()->debug(format, std::forward<Args>(args)...);
     }
     template <typename... Args>
-    static void CoreInfo(fmt::format_string<Args...> format, Args &&...args)
+    static void Info(fmt::format_string<Args...> format, Args &&...args)
     {
         GetCoreLogger()->info(format, std::forward<Args>(args)...);
     }
     template <typename... Args>
-    static void Info(fmt::format_string<Args...> format, Args &&...args)
+    static void ClientInfo(fmt::format_string<Args...> format, Args &&...args)
     {
         GetClientLogger()->info(format, std::forward<Args>(args)...);
     }
     template <typename... Args>
-    static void CoreWarn(fmt::format_string<Args...> format, Args &&...args)
+    static void Warn(fmt::format_string<Args...> format, Args &&...args)
     {
         GetCoreLogger()->warn(format, std::forward<Args>(args)...);
     }
     template <typename... Args>
-    static void Warn(fmt::format_string<Args...> format, Args &&...args)
+    static void ClientWarn(fmt::format_string<Args...> format, Args &&...args)
     {
         GetClientLogger()->warn(format, std::forward<Args>(args)...);
     }
     template <typename... Args>
-    static void CoreError(fmt::format_string<Args...> format, Args &&...args)
+    static void Error(fmt::format_string<Args...> format, Args &&...args)
     {
         GetCoreLogger()->error(format, std::forward<Args>(args)...);
     }
     template <typename... Args>
-    static void Error(fmt::format_string<Args...> format, Args &&...args)
+    static void ClientError(fmt::format_string<Args...> format, Args &&...args)
     {
         GetClientLogger()->error(format, std::forward<Args>(args)...);
     }
     template <typename... Args>
-    static void CoreCritical(fmt::format_string<Args...> format, Args &&...args)
+    static void Critical(fmt::format_string<Args...> format, Args &&...args)
     {
         GetCoreLogger()->critical(format, std::forward<Args>(args)...);
     }
     template <typename... Args>
-    static void Critical(fmt::format_string<Args...> format, Args &&...args)
+    static void ClientCritical(fmt::format_string<Args...> format, Args &&...args)
     {
         GetClientLogger()->critical(format, std::forward<Args>(args)...);
     }

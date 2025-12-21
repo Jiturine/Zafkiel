@@ -58,18 +58,18 @@ class String : public Type
 
 struct EnumFunctions
 {
-    std::function<int(const Any &)> getValueFunc;
-    std::function<void(Any &, int)> setValueFunc;
+    std::function<int(const AnyRef &)> getValueFunc;
+    std::function<void(AnyRef &, int)> setValueFunc;
 };
 
 template <typename ElemType>
 struct EnumOperations
 {
-    static int GetValue(const Any &instance)
+    static int GetValue(const AnyRef &instance)
     {
         return static_cast<int>(instance.As<ElemType>());
     }
-    static void SetValue(Any &instance, int value)
+    static void SetValue(AnyRef &instance, int value)
     {
         instance.As<ElemType>() = static_cast<ElemType>(value);
     }
@@ -93,13 +93,13 @@ class Enum : public Type
 
     Enum &Add(auto value, const std::string &name);
 
-    int GetValue(const Any &) const;
+    int GetValue(const AnyRef &) const;
 
-    std::string GetValueName(const Any &) const;
+    std::string GetValueName(const AnyRef &) const;
 
-    void SetValue(Any &, int value) const;
+    void SetValue(AnyRef &, int value) const;
 
-    void SetValueName(Any &, const std::string &itemName) const;
+    void SetValueName(AnyRef &, const std::string &itemName) const;
 
     virtual Any CreateInstance() const override { return createInstanceFunc(); }
   private:
@@ -110,43 +110,43 @@ class Enum : public Type
 
 struct ListFunctions
 {
-    std::function<Any(size_t, Any &)> getElemFunc;
-    std::function<const Any(size_t, const Any &)> getElemConstFunc;
-    std::function<Any(Any &)> getBackFunc;
-    std::function<const Any(const Any &)> getBackConstFunc;
-    std::function<size_t(const Any &)> getSizeFunc;
-    std::function<void(size_t, Any &)> resizeFunc;
+    std::function<AnyRef(size_t, AnyRef &)> getElemFunc;
+    std::function<const AnyRef(size_t, const AnyRef &)> getElemConstFunc;
+    std::function<AnyRef(AnyRef &)> getBackFunc;
+    std::function<const AnyRef(const AnyRef &)> getBackConstFunc;
+    std::function<size_t(const AnyRef &)> getSizeFunc;
+    std::function<void(size_t, AnyRef &)> resizeFunc;
 };
 
 template <typename ElemType>
 struct ListOperations
 {
-    static Any GetElem(size_t index, Any &instance)
+    static AnyRef GetElem(size_t index, AnyRef &instance)
     {
         auto &lst = instance.As<std::vector<ElemType>>();
         return lst[index];
     }
-    static const Any GetElemConst(size_t index, const Any &instance)
+    static const AnyRef GetElemConst(size_t index, const AnyRef &instance)
     {
         auto &lst = instance.As<std::vector<ElemType>>();
         return lst[index];
     }
-    static Any GetBack(Any &instance)
+    static AnyRef GetBack(AnyRef &instance)
     {
         auto &lst = instance.As<std::vector<ElemType>>();
         return lst.back();
     }
-    static const Any GetBackConst(const Any &instance)
+    static const AnyRef GetBackConst(const AnyRef &instance)
     {
         auto &lst = instance.As<std::vector<ElemType>>();
         return lst.back();
     }
-    static size_t GetSize(const Any &instance)
+    static size_t GetSize(const AnyRef &instance)
     {
         auto &lst = instance.As<std::vector<ElemType>>();
         return lst.size();
     }
-    static void Resize(size_t size, Any &instance)
+    static void Resize(size_t size, AnyRef &instance)
     {
         auto &lst = instance.As<std::vector<ElemType>>();
         lst.resize(size);
@@ -160,12 +160,12 @@ class List : public Type
 
     const Type *GetElemType() const { return elemType; }
 
-    Any GetElem(size_t index, Any &) const;
-    const Any GetElem(size_t index, const Any &) const;
-    Any GetBack(Any &) const;
-    const Any GetBack(const Any &) const;
-    size_t GetSize(const Any &) const;
-    void Resize(size_t, Any &) const;
+    AnyRef GetElem(size_t index, AnyRef &) const;
+    const AnyRef GetElem(size_t index, const AnyRef &) const;
+    AnyRef GetBack(AnyRef &) const;
+    const AnyRef GetBack(const AnyRef &) const;
+    size_t GetSize(const AnyRef &) const;
+    void Resize(size_t, AnyRef &) const;
     virtual Any CreateInstance() const override { return createInstanceFunc(); }
 
   private:
@@ -176,28 +176,28 @@ class List : public Type
 
 struct DictFunctions
 {
-    std::function<std::vector<std::pair<Any, Any>>(const Any &)> getKeyValPairsFunc;
-    std::function<void(Any &, const Any &, const Any &)> insertFunc;
-    std::function<size_t(const Any &)> getSizeFunc;
+    std::function<std::vector<std::pair<AnyRef, AnyRef>>(const AnyRef &)> getKeyValPairsFunc;
+    std::function<void(AnyRef &, const AnyRef &, const AnyRef &)> insertFunc;
+    std::function<size_t(const AnyRef &)> getSizeFunc;
 };
 
 template <typename KeyType, typename ValType>
 struct DictOperations
 {
-    static std::vector<std::pair<Any, Any>> GetKeyValPairs(const Any &instance)
+    static std::vector<std::pair<AnyRef, AnyRef>> GetKeyValPairs(const AnyRef &instance)
     {
         auto &dict = instance.As<std::unordered_map<KeyType, ValType>>();
-        std::vector<std::pair<Any, Any>> res;
+        std::vector<std::pair<AnyRef, AnyRef>> res;
         for (const auto &[k, v] : dict)
         {
-            Any instance_k = k;
-            Any instance_v = v;
+            AnyRef instance_k = k;
+            AnyRef instance_v = v;
             res.emplace_back(instance_k, instance_v);
         }
         return res;
     }
 
-    static void Insert(Any &instance, const Any &key, const Any &val)
+    static void Insert(AnyRef &instance, const AnyRef &key, const AnyRef &val)
     {
         auto &dict = instance.As<std::unordered_map<KeyType, ValType>>();
 
@@ -207,7 +207,7 @@ struct DictOperations
         dict.insert({std::move(keyInstance), std::move(valInstance)});
     }
 
-    static size_t GetSize(const Any &instance)
+    static size_t GetSize(const AnyRef &instance)
     {
         auto &dict = instance.As<std::unordered_map<KeyType, ValType>>();
         return dict.size();
@@ -221,9 +221,9 @@ class Dict : public Type
 
     const Type *GetKeyType() const { return keyType; }
     const Type *GetValType() const { return valType; }
-    std::vector<std::pair<Any, Any>> GetKeyValPairs(const Any &instance) const;
-    void Insert(Any &instance, const Any &key, const Any &val) const;
-    size_t GetSize(const Any &instance) const;
+    std::vector<std::pair<AnyRef, AnyRef>> GetKeyValPairs(const AnyRef &instance) const;
+    void Insert(AnyRef &instance, const AnyRef &key, const AnyRef &val) const;
+    size_t GetSize(const AnyRef &instance) const;
     virtual Any CreateInstance() const override { return createInstanceFunc(); }
 
   private:
@@ -246,38 +246,36 @@ class Class : public Type
     Class &AddProperty(const std::shared_ptr<Property> &prop);
     virtual Any CreateInstance() const override
     {
-        Any ins = createInstanceFunc();
-        return ins;
+        return createInstanceFunc();
     }
-
 
   private:
     std::vector<std::shared_ptr<Property>> properties;
     CreateInstanceFunc createInstanceFunc;
 };
 
-class Property : public Type
+class Property
 {
   public:
     Property(const std::string &name, const Class *owner)
-        : Type(name, TypeCategory::Property), owner(owner) {}
+        : name(name), owner(owner) {}
 
-    ~Property() = default;
-
-    virtual Any Call(Any &) const = 0;
-    virtual Any Call(const Any &) const = 0;
+    virtual AnyRef Call(AnyRef &) const = 0;
+    virtual AnyRef Call(const AnyRef &) const = 0;
     virtual const Type *GetTypeInfo() const = 0;
 
     const Class *GetOwner() const { return owner; }
+    std::string GetName() const { return name; }
+
   private:
     const Class *owner;
-    const Type *info;
+    std::string name;
 };
 
 template <typename T>
 struct CreateInstanceOperations
 {
-    static Any CreateInstance() { return std::make_unique<T>(); }
+    static Any CreateInstance() { return T{}; }
 };
 
 }

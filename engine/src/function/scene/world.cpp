@@ -1,93 +1,40 @@
 #include "world.h"
 #include "components.h"
 #include "core/meta/serializer/custom_serialize.h"
-#include "engine.h"
 #include "function/render/model.h"
 #include "function/script/script_engine.h"
 #include "resource/asset_manager.h"
+#include "resource/model_asset.h"
 
 namespace Zafkiel
 {
 
-template <typename... T, typename Func>
-void for_each_type(std::tuple<T...>, Func &&f)
+void World::InstantiateModelNode(const ModelAssetNode &node, Entity nodeEntity)
 {
-    (f.template operator()<T>(), ...);
+    for (auto modelMesh : node.meshes)
+    {
+        Entity meshEntity = SpawnEntity(TransformComponent{}, TagComponent{node.name, "Object"}, MeshComponent{modelMesh.mesh}, MaterialComponent{modelMesh.material});
+        meshEntity.SetParent(nodeEntity);
+    }
+    for (auto child : node.children)
+    {
+        Entity childEntity = SpawnEntity(TransformComponent{}, TagComponent{child.name, "Object"});
+        childEntity.GetComponent<TransformComponent>().SetLocalMatrix(node.localTransform);
+        childEntity.SetParent(nodeEntity);
+        InstantiateModelNode(child, childEntity);
+    }
 }
 
 Entity World::InstantiateModel(AssetHandle model)
 {
-    Ref<Model> modelAsset = Engine::GetAssetManager()->GetAsset(model).As<Model>();
+    Ref<ModelAsset> modelAsset = AssetManager::LoadAsset(model).As<ModelAsset>();
     Entity modelEntity = SpawnEntity(TransformComponent{}, TagComponent{"Model", "Object"});
-    size_t index = 0;
-    for (auto mesh : modelAsset->GetMeshes())
-    {
-        Entity meshEntity = SpawnEntity(TransformComponent{}, TagComponent{std::format("Mesh_{}", index++), "Object"}, MeshComponent{mesh->handle});
-        meshEntity.SetParent(modelEntity);
-    }
+
+    auto &rootNode = modelAsset->GetRootNode();
+
+    InstantiateModelNode(rootNode, modelEntity);
+
     return modelEntity;
-}
-
-void Serialization<World>::Serialize(const Any instance, Any context, YAML::Emitter &out)
-{
-    out << YAML::BeginMap;
-    const World &world = instance.As<World>();
-    for (auto entity : world.AllEntities())
-    {
-        UUID uuid = entity.GetUUID();
-        out << YAML::Key;
-        SerializeAny(uuid, GetType<UUID>(), out);
-        out << YAML::Value << YAML::BeginMap;
-
-        for_each_type(ComponentList{}, [&entity, &out]<typename T>() {
-            if (entity.HasComponent<T>())
-            {
-                out << YAML::Key << GetType<T>()->GetName() << YAML::Value;
-                const T &component = entity.GetComponent<T>();
-                if (GetType<T>() == GetType<ScriptComponent>())
-                    SerializeAny(component, GetType<T>(), out, Engine::GetScriptEngine()->GetScriptInstances(entity.GetUUID()));
-                else
-                    SerializeAny(component, GetType<T>(), out);
-            }
-        });
-
-        out << YAML::EndMap;
-    }
-    out << YAML::EndMap;
-}
-
-void Serialization<World>::Deserialize(Any instance, Any context, const YAML::Node &data)
-{
-    World &world = instance.As<World>();
-    for (const auto &kvp : data)
-    {
-        world.SpawnEntityWithUUID(kvp.first.as<uint64_t>());
-    }
-
-    for (const auto &kvp : data)
-    {
-        Entity entity = world.GetEntityByUUID(kvp.first.as<uint64_t>());
-        auto &componentData = kvp.second;
-        for_each_type(ComponentList{}, [&]<typename T>() {
-            const Type *componentType = GetType<T>();
-
-            if (componentData[componentType->GetName()])
-            {
-                T component;
-                Any componentInstance = component;
-                if (componentType == GetType<ScriptComponent>())
-                {
-                    auto context = std::make_pair(Engine::GetScriptEngine(), entity);
-                    DeserializeAny(componentInstance, componentType, componentData[componentType->GetName()], context);
-                }
-                else
-                {
-                    DeserializeAny(componentInstance, componentType, componentData[componentType->GetName()], world);
-                }
-                entity.AddComponent(std::move(component));
-            }
-        });
-    }
 }
 
 }

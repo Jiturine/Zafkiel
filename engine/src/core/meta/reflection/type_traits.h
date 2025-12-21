@@ -11,8 +11,7 @@ enum class TypeCategory
     Enum,
     List,
     Dict,
-    Class,
-    Property
+    Class
 };
 
 class Fundamental;
@@ -21,7 +20,6 @@ class List;
 class Dict;
 class Enum;
 class Class;
-class Property;
 
 template <typename>
 struct type_traits
@@ -65,13 +63,6 @@ struct type_traits<Class>
     static constexpr TypeCategory category = TypeCategory::Class;
 };
 
-template <>
-struct type_traits<Property>
-{
-    static constexpr TypeCategory category = TypeCategory::Property;
-};
-
-// clang-format off
 enum class FundamentalKind
 {
     Unknown,
@@ -80,7 +71,6 @@ enum class FundamentalKind
     UInt8, UInt16, UInt32, UInt64,
     Float, Double
 };
-// clang-format on
 
 template <typename>
 struct fundamental_traits

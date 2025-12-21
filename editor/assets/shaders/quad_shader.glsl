@@ -1,20 +1,23 @@
 #type vertex
-#version 330 core
+#version 450 core
 layout(location = 0) in vec3 a_Position;
 layout(location = 1) in vec4 a_Color;
 layout(location = 2) in vec2 a_TexCoord;
 layout(location = 3) in int a_TexIndex;
 layout(location = 4) in uint a_EntityID;
-uniform mat4 u_ViewProjection;
 
-out vec4 v_Color;
-out vec2 v_TexCoord;
-flat out int v_TexIndex;
-flat out uint v_EntityID;
+layout(binding = 0) uniform UBO {
+    mat4 viewProjection;
+} ubo;
+
+layout(location = 0) out vec4 v_Color;
+layout(location = 1) out vec2 v_TexCoord;
+layout(location = 2) flat out int v_TexIndex;
+layout(locaiton = 3) flat out uint v_EntityID;
 
 void main()
 {
-    gl_Position = u_ViewProjection * vec4(a_Position, 1.0);
+    gl_Position = ubo.viewProjection * vec4(a_Position, 1.0);
     v_Color = a_Color;
     v_TexCoord = a_TexCoord;
     v_TexIndex = a_TexIndex;
@@ -22,20 +25,22 @@ void main()
 }
 
 #type fragment
-#version 330 core
-in vec4 v_Color;
-in vec2 v_TexCoord;
-flat in int v_TexIndex;
-flat in uint v_EntityID;
+#version 450 core
+layout(location = 0) in vec4 v_Color;
+layout(location = 1) in vec2 v_TexCoord;
+layout(location = 2) flat in int v_TexIndex;
+layout(locaiton = 3) flat in uint v_EntityID;
 
 layout(location = 0) out vec4 FragColor;
 layout(location = 1) out uint EntityID;
 
-uniform sampler2D u_Textures[32];
+layout(binding = 1) uniform UBO {
+    sampler2D textures[32];
+} ubo;
 
 void main()
 {
-    vec4 texColor = texture(u_Textures[v_TexIndex], v_TexCoord);
+    vec4 texColor = texture(ubo.textures[v_TexIndex], v_TexCoord);
     FragColor = texColor * v_Color;
     EntityID = v_EntityID;
 }

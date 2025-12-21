@@ -120,8 +120,8 @@ class Property_Impl : public Property
   public:
     Property_Impl(const std::string &name, const Class *owner, Ptr accessor);
 
-    Any Call(Any &instance) const override;
-    Any Call(const Any &instance) const override;
+    AnyRef Call(AnyRef &instance) const override;
+    AnyRef Call(const AnyRef &instance) const override;
 
     virtual const Type *GetTypeInfo() const override { return info; };
 
@@ -145,10 +145,10 @@ template <typename T>
 std::shared_ptr<Property> PropertyTypeInfo<T>::info;
 
 template <typename T>
-std::vector<std::pair<Any, std::shared_ptr<Property>>> GetProperties(T &obj);
+std::vector<std::pair<AnyRef, std::shared_ptr<Property>>> GetProperties(T &obj);
 
 template <typename T>
-std::vector<std::pair<Any, std::shared_ptr<Property>>> GetProperties(const T &obj);
+std::vector<std::pair<AnyRef, std::shared_ptr<Property>>> GetProperties(const T &obj);
 
 template <typename Ptr>
 Ptr GetPropertyAddress(Ptr accessor)

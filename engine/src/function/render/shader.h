@@ -1,21 +1,34 @@
 #pragma once
-
+#include "shader_reflection.h"
+#include "platform/filesystem/filesystem.h"
 namespace Zafkiel
 {
-class Shader : public RefCounted
+
+enum class ShaderType
+{
+    Graphics,
+    Compute
+};
+
+class ShaderBackend
 {
   public:
-    virtual ~Shader() = default;
-
-    virtual void Bind() const = 0;
-    virtual void Unbind() const = 0;
-
-    virtual void Set(const std::string &name, const mat4 &matrix) const = 0;
-    virtual void Set(const std::string &name, const vec4 &vector) const = 0;
-    virtual void Set(const std::string &name, int value) const = 0;
-    virtual void Set(const std::string &name, uint32_t value) const = 0;
-    virtual void Set(const std::string &name, int *value, uint32_t count) const = 0;
-
-    virtual uint32_t GetRendererID() const = 0;
+    virtual ~ShaderBackend() = default;
 };
+
+class Shader
+{
+  public:
+    Shader(Scope<ShaderBackend> backend) : backend(std::move(backend)) {}
+    virtual ~Shader() = default;
+    virtual ShaderType GetShaderType() const = 0;
+
+    Observer<ShaderBackend> GetShaderBackend() { return backend; }
+    const Observer<ShaderBackend> GetShaderBackend() const { return backend; }
+
+  private:
+    Scope<ShaderBackend> backend;
+
+};
+
 }

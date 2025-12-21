@@ -23,10 +23,13 @@ if (NOT TARGET imgui)
         imgui/imgui_tables.cpp
         imgui/backends/imgui_impl_sdl3.cpp
         imgui/backends/imgui_impl_opengl3.cpp
+        imgui/backends/imgui_impl_vulkan.cpp
     )
     target_include_directories(imgui PUBLIC
         SDL/include
         imgui
+        imgui/backends/
+        vulkanSDK/include
     )
 endif()
 
@@ -70,5 +73,18 @@ if (NOT TARGET filewatch)
 endif()
 
 if (NOT TARGET assimp)
+    set(ASSIMP_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+    set(ASSIMP_BUILD_ASSIMP_TOOLS OFF CACHE BOOL "" FORCE)
+    set(ASSIMP_INSTALL OFF CACHE BOOL "" FORCE)
     add_subdirectory(assimp)
+endif()
+
+if (NOT TARGET vulkan)
+    add_subdirectory(vulkanSDK)
+endif()
+
+if (NOT TARGET glslang)
+    set(ENABLE_OPT off)
+    set(BUILD_SHARED_LIBS off)
+    add_subdirectory(glslang)
 endif()

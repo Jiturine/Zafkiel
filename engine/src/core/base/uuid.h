@@ -23,15 +23,14 @@ template <>
 struct Serialization<UUID>
 {
     static constexpr bool has_serialize = true;
-    static void Serialize(const Any instance, Any context, YAML::Emitter &out)
+    static void Serialize(const AnyRef instance, AnyRef context, ISerializer &out)
     {
         auto &uuidInstance = instance.As<UUID>();
-        out << static_cast<uint64_t>(uuidInstance);
+        out.Value((uint64_t)uuidInstance);
     }
-    static void Deserialize(Any instance, Any context, const YAML::Node &data)
+    static void Deserialize(AnyRef instance, AnyRef context, IDeserializer &data)
     {
-        auto &uuidInstance = instance.As<UUID>();
-        uuidInstance = UUID(data.as<uint64_t>());
+        instance.As<UUID>() = data.As<uint64_t>();
     }
 };
 

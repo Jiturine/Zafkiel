@@ -1,0 +1,84 @@
+#pragma once
+
+#include "function/scene/components.h"
+#include "function/scene/scene.h"
+#include "editor/editorGUI/editorGUI.h"
+#include "editor/panels/panel.h"
+
+namespace Zafkiel
+{
+
+using namespace Reflection;
+
+class PropertiesPanel : public Panel
+{
+  public:
+    PropertiesPanel() {}
+
+    virtual void Render() override;
+
+  private:
+    void DrawComponents(Entity entity);
+
+    void DrawTagComponent(TagComponent &tagComponent);
+
+    void DrawTransformComponent(TransformComponent &transformComponent);
+
+    void DrawLightComponent(LightComponent &lightComponent);
+
+    void DrawScriptComponent(Entity entity, ScriptComponent &scriptComponent);
+
+    template <typename T>
+    void DrawCommonComponent(T &component)
+    {
+        const Class *typeInfo = GetType<T>()->template As<Class>();
+        GUITreeNode node((void *)typeInfo, ImGuiTreeNodeFlags_OpenOnArrow, typeInfo->GetName());
+        node.Popup([&]() {
+            // EditorGUI().MenuItem("Remove", [&]() {
+            //     Editor::GetSelectedEntity().RemoveComponent<T>();
+            // });
+        });
+        node.Expand([&]() {
+            AnyRef instance = component;
+            for (const auto &prop : typeInfo->GetProperties())
+            {
+                AnyRef subInstance = prop->Call(instance);
+                switch (prop->GetTypeInfo()->GetCategory())
+                {
+                case TypeCategory::Fundamental: {
+                    auto typeInfo = prop->GetTypeInfo()->As<Fundamental>();
+                    if (typeInfo->GetKind() == FundamentalKind::Float)
+                    {
+                        EditorGUI().DragFloat(prop->GetName(), subInstance.As<float>());
+                    }
+                    else if (typeInfo->GetKind() == FundamentalKind::Int32)
+                    {
+                        EditorGUI().DragInt(prop->GetName(), subInstance.As<int>());
+                    }
+                    break;
+                }
+                case TypeCategory::Class:
+                    if (prop->GetTypeInfo() == GetType<vec2>())
+                    {
+                        EditorGUI().DragVec2(prop->GetName(), subInstance.As<vec2>());
+                    }
+                    else if (prop->GetTypeInfo() == GetType<vec3>())
+                    {
+                        EditorGUI().DragVec3(prop->GetName(), subInstance.As<vec3>());
+                    }
+                    else if (prop->GetTypeInfo() == GetType<vec4>())
+                    {
+                        EditorGUI().DragVec4(prop->GetName(), subInstance.As<vec4>());
+                    }
+                    break;
+                case TypeCategory::String:
+                    EditorGUI().InputText(prop->GetName(), subInstance.As<std::string>());
+                    break;
+
+                default: break;
+                }
+            }
+        });
+    }
+};
+}

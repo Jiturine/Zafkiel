@@ -1,167 +1,165 @@
 #include "opengl_texture.h"
-#include <stb_image.h>
+#include "opengl_image.h"
+#include <glad/glad.h>
 
 namespace Zafkiel
 {
-OpenGLTexture2D::OpenGLTexture2D(const TextureSpecification &spec)
-    : width(spec.width), height(spec.height), format(spec.format)
+
+GLenum TextureWrapToOpenGLType(TextureWrap wrap)
 {
-    switch (spec.format)
+    switch (wrap)
     {
-        using enum TextureFormat;
-    case RGB8:
-        internalFormat = GL_RGB8;
-        dataFormat = GL_RGB;
-        dataType = GL_UNSIGNED_BYTE;
-        bytesPerPixel = 3;
-        break;
-    case RGBA8:
-        internalFormat = GL_RGBA8;
-        dataFormat = GL_RGBA;
-        dataType = GL_UNSIGNED_BYTE;
-        bytesPerPixel = 4;
-        break;
-    case DEPTH24STENCIL8:
-        internalFormat = GL_DEPTH24_STENCIL8;
-        dataFormat = GL_DEPTH_STENCIL;
-        dataType = GL_UNSIGNED_INT_24_8;
-        bytesPerPixel = 4;
-        break;
-    case R32UI:
-        internalFormat = GL_R32UI;
-        dataFormat = GL_RED_INTEGER;
-        dataType = GL_UNSIGNED_INT;
-        bytesPerPixel = 4;
-        break;
+        using enum TextureWrap;
+    case Clamp: return GL_CLAMP_TO_EDGE;
+    case Repeat: return GL_REPEAT;
     default:
-        Log::CoreError("Unknown data format!");
-        break;
+        Log::Error("Unsupported TextureWrap!");
+        return GL_REPEAT;
     }
-    if (width == 0 || height == 0)
+}
+GLenum FilterTypeToOpenGLType(TextureFilter filter)
+{
+    switch (filter)
     {
-        Log::CoreError("Invalid texture dimensions: {}x{}", width, height);
-        return;
-    }
-
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-
-    glCreateTextures(GL_TEXTURE_2D, 1, &rendererID);
-    glTextureStorage2D(rendererID, 1, internalFormat, width, height);
-
-    switch (format)
-    {
-        using enum TextureFormat;
-    case R32UI:
-    case DEPTH24STENCIL8:
-        glTextureParameteri(rendererID, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTextureParameteri(rendererID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        break;
-    case RGB8:
-    case RGBA8:
-        glTextureParameteri(rendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTextureParameteri(rendererID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        break;
+        using enum TextureFilter;
+    case Nearest: return GL_NEAREST;
+    case Linear: return GL_LINEAR;
     default:
-        Log::CoreError("Unknown data format!");
-        break;
-    }
-
-    glTextureParameteri(rendererID, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTextureParameteri(rendererID, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-}
-
-OpenGLTexture2D::OpenGLTexture2D(const TextureSpecification &spec, const Buffer &buffer)
-    : OpenGLTexture2D(spec)
-{
-    if (!buffer.empty())
-    {
-        SetData(buffer);
+        Log::Error("Unsupported TextureFilter!");
+        return GL_NEAREST;
     }
 }
 
-OpenGLTexture2D::OpenGLTexture2D(const Path &path)
+OpenGLTexture2DBackend::OpenGLTexture2DBackend(const Texture2DSpecification &spec)
 {
-    int width, height, channels;
-    stbi_set_flip_vertically_on_load(1);
-    auto data = stbi_load(path.string().c_str(), &width, &height, &channels, 0);
-    if (!data)
-    {
-        Log::CoreError("Failed to load image!");
-    }
-    this->width = width;
-    this->height = height;
-
-    internalFormat = 0, dataFormat = 0;
-    if (channels == 4)
-    {
-        internalFormat = GL_RGBA8;
-        dataFormat = GL_RGBA;
-    }
-    else if (channels == 3)
-    {
-        internalFormat = GL_RGB8;
-        dataFormat = GL_RGB;
-    }
-    dataType = GL_UNSIGNED_BYTE;
-    if (!internalFormat || !dataFormat)
-    {
-        Log::CoreError("Format not supported!");
-        stbi_image_free(data);
-        return;
-    }
-
-    if (width == 0 || height == 0)
-    {
-        Log::CoreError("Invalid image dimensions: {}x{}", width, height);
-        stbi_image_free(data);
-        return;
-    }
-
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-
-    glCreateTextures(GL_TEXTURE_2D, 1, &rendererID);
-    glTextureStorage2D(rendererID, 1, internalFormat, width, height);
-
-    glTextureParameteri(rendererID, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTextureParameteri(rendererID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-    glTextureParameteri(rendererID, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTextureParameteri(rendererID, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-    glTextureSubImage2D(rendererID, 0, 0, 0, width, height, dataFormat, GL_UNSIGNED_BYTE, data);
-    stbi_image_free(data);
+    
 }
-OpenGLTexture2D::~OpenGLTexture2D()
+
+void OpenGLTexture2DBackend::SetData(Observer<Image> image, Buffer buffer)
 {
-    glDeleteTextures(1, &rendererID);
-}
-void OpenGLTexture2D::Bind(uint32_t slot) const
-{
-    glBindTextureUnit(slot, rendererID);
-}
-void OpenGLTexture2D::SetData(const Buffer &buffer)
-{
-    if (format == TextureFormat::None)
+    OpenGLImageFormat format = ImageFormatToOpenGLType(image->GetFormat());
+    uint32_t bytes = ImageFormatToBytes(image->GetFormat());
+    if (buffer.Size<uint8_t>() != image->GetWidth() * image->GetHeight() * bytes)
     {
-        Log::CoreError("Texture format not initialized!");
-        return;
-    }
-    if (width == 0 || height == 0)
-    {
-        Log::CoreError("Texture dimensions not initialized!");
-        return;
-    }
-    if (buffer.size() != width * height * bytesPerPixel)
-    {
-        Log::CoreError("Data must be entire texture! Expected: {}, Got: {}", width * height * bytesPerPixel, buffer.size());
+        Log::Error("Data must be entire texture! Expected: {}, Got: {}", image->GetWidth() * image->GetHeight() * bytes, buffer.Size<uint8_t>());
         return;
     }
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-    glTextureSubImage2D(rendererID, 0, 0, 0, width, height, dataFormat, dataType, buffer.data());
+    glTextureSubImage2D(image->GetBackend().As<OpenGLImageBackend>()->GetRendererID(), 0, 0, 0,
+        image->GetWidth(), image->GetHeight(), format.dataFormat, format.dataType, buffer.Data<uint8_t>());
 }
 
-void OpenGLTexture2D::Clear(const void *value)
+Scope<Texture2D> OpenGLTexture2DFactory::Create(const Texture2DSpecification &spec)
 {
-    glClearTexImage(rendererID, 0, dataFormat, dataType, value);
+    auto backend = CreateScope<OpenGLTexture2DBackend>(spec);
+
+    ImageSpecification imageSpec
+    {
+        .format = spec.format,
+        .usages = spec.usages,
+        .updateFrequency = spec.updateFrequency,
+        .width = spec.width,
+        .height = spec.height,
+        .samples = spec.samples
+    };
+    auto texture2D = CreateScope<Texture2D>(spec, std::move(backend));
+    AccessImage(texture2D) = OpenGLImageFactory::Create(imageSpec);
+    
+    OpenGLImageFormat openglFormat = ImageFormatToOpenGLType(spec.format);
+    GLenum wrap = TextureWrapToOpenGLType(spec.wrap);
+    GLenum filter = FilterTypeToOpenGLType(spec.filter);
+    uint32_t imageID = texture2D->GetImage()->GetBackend().As<OpenGLImageBackend>()->GetRendererID();
+    
+    glBindTexture(GL_TEXTURE_2D, imageID);
+    glTextureParameteri(imageID, GL_TEXTURE_MIN_FILTER, filter);
+    glTextureParameteri(imageID, GL_TEXTURE_MAG_FILTER, filter);
+
+    glTextureParameteri(imageID, GL_TEXTURE_WRAP_S, wrap);
+    glTextureParameteri(imageID, GL_TEXTURE_WRAP_T, wrap);
+    
+    return texture2D;
 }
+
+Scope<Texture2D> OpenGLTexture2DFactory::Create(const Texture2DSpecification &spec, Buffer buffer)
+{
+    auto backend = CreateScope<OpenGLTexture2DBackend>(spec);
+
+    ImageSpecification imageSpec
+    {
+        .format = spec.format,
+        .usages = spec.usages,
+        .updateFrequency = spec.updateFrequency,
+        .width = spec.width,
+        .height = spec.height,
+        .samples = spec.samples
+    };
+    auto texture2D = CreateScope<Texture2D>(spec, std::move(backend));
+    if (std::find(imageSpec.usages.begin(), imageSpec.usages.end(), ImageUsage::Upload) == imageSpec.usages.end())
+    {
+        imageSpec.usages.push_back(ImageUsage::Upload);
+    }
+    AccessImage(texture2D) = OpenGLImageFactory::Create(imageSpec);
+    
+    OpenGLImageFormat openglFormat = ImageFormatToOpenGLType(spec.format);
+    GLenum wrap = TextureWrapToOpenGLType(spec.wrap);
+    GLenum filter = FilterTypeToOpenGLType(spec.filter);
+    uint32_t imageID = texture2D->GetImage()->GetBackend().As<OpenGLImageBackend>()->GetRendererID();
+
+    glBindTexture(GL_TEXTURE_2D, imageID);
+    glTextureParameteri(imageID, GL_TEXTURE_MIN_FILTER, filter);
+    glTextureParameteri(imageID, GL_TEXTURE_MAG_FILTER, filter);
+
+    glTextureParameteri(imageID, GL_TEXTURE_WRAP_S, wrap);
+    glTextureParameteri(imageID, GL_TEXTURE_WRAP_T, wrap);
+    
+    texture2D->GetBackend().As<OpenGLTexture2DBackend>()->SetData(texture2D->GetImage(), buffer);
+
+    return texture2D;
 }
+
+// OpenGLCubeMap::OpenGLCubeMap(const std::vector<Path> &paths)
+// {
+//     glGenTextures(1, &rendererID);
+//     glBindTexture(GL_TEXTURE_CUBE_MAP, rendererID);
+//     int width, height, nrChannels;
+//     unsigned char *data;
+//
+//     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+//     for (unsigned int i = 0; i < paths.size(); i++)
+//     {
+//         data = stbi_load(paths[i].c_str(), &width, &height, &nrChannels, 0);
+//
+//         if (!data)
+//         {
+//             Log::Error("Cubemap texture failed to load at path: {}", paths[i].string());
+//             stbi_image_free(data);
+//             return;
+//         }
+//         if (width != height)
+//         {
+//             Log::Error("CubeMap must be square!");
+//             stbi_image_free(data);
+//             return;
+//         }
+//         GLenum format = GL_RGB;
+//         if (nrChannels == 4)
+//             format = GL_RGBA;
+//         else if (nrChannels == 1)
+//             format = GL_RED;
+//
+//         glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+//         stbi_image_free(data);
+//
+//         if (i == 0)
+//         {
+//             faceSize = width;
+//         }
+//     }
+//     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+//     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+//     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+//     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+//     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+// }
+
+ }

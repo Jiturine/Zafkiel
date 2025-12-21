@@ -2,14 +2,16 @@
 
 #include "entity.h"
 #include "core/meta/reflection/refl.h"
+#include "function/render/model.h"
 #include "resource/asset.h"
+#include "resource/model_asset.h"
 
 namespace Zafkiel
 {
 
 class WorldSerializer;
 
-class [[refl]] World
+class World
 {
   public:
     template <typename... Components>
@@ -65,7 +67,7 @@ class [[refl]] World
         {
             return Entity(it->second, registry, uuid);
         }
-        Log::CoreError("Cannot Find Entity: {}", (uint64_t)uuid);
+        Log::Error("Cannot Find Entity: {}", (uint64_t)uuid);
         return Entity();
     }
     std::vector<Entity> AllEntities() const
@@ -93,6 +95,7 @@ class [[refl]] World
         registry.destroy(entity.GetHandle());
     }
     Entity InstantiateModel(AssetHandle model);
+    void InstantiateModelNode(const ModelAssetNode &node, Entity nodeEntity);
 
   private:
     template <typename T, typename... Remains>
@@ -111,8 +114,8 @@ template <>
 struct Serialization<World>
 {
     static constexpr bool has_serialize = true;
-    static void Serialize(const Any instance, Any context, YAML::Emitter &out);
-    static void Deserialize(Any instance, Any context, const YAML::Node &data);
+    static void Serialize(const AnyRef instance, AnyRef context, ISerializer &out);
+    static void Deserialize(AnyRef instance, AnyRef context, IDeserializer &data);
 };
 
 }

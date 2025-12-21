@@ -4,8 +4,16 @@ namespace Zafkiel
 {
 namespace Maths
 {
+static GraphicsAPI graphicsAPI;
+
+void SetAPI(GraphicsAPI api) { graphicsAPI = api; }
+
 mat4 Perspective(float FOV, float aspectRatio, float perspectiveNear, float perspectiveFar)
 {
+    if (graphicsAPI == GraphicsAPI::OpenGL)
+        return glm::perspective(glm::radians(FOV), aspectRatio, perspectiveNear, perspectiveFar);
+    else if (graphicsAPI == GraphicsAPI::Vulkan)
+        return glm::perspectiveZO(glm::radians(FOV), aspectRatio, perspectiveNear, perspectiveFar);
     return glm::perspective(glm::radians(FOV), aspectRatio, perspectiveNear, perspectiveFar);
 }
 

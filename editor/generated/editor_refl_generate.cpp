@@ -1,12 +1,12 @@
-#include "editor_refl.h"
-#include "engine_extensions_resource_editor_asset_manager_refl.h"
-#include "project_project_refl.h"
+#include "editor_editor_layer_refl.h"
+#include "editor_project_project_refl.h"
+#include "editor_project_project_manager_refl.h"
 
 namespace Zafkiel::Reflection 
 {
 void RegisterEditor() {
-    Register_editor();
-    Register_engine_extensions_resource_editor_asset_manager();
-    Register_project_project();
+    Register_editor_editor_layer();
+    Register_editor_project_project();
+    Register_editor_project_project_manager();
 }
 }

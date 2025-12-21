@@ -2,6 +2,7 @@
 
 #include "../reflection/type.h"
 #include <yaml-cpp/yaml.h>
+#include "core/meta/serializer/serializer_base.h"
 
 namespace Zafkiel
 {
@@ -9,8 +10,8 @@ using namespace Reflection;
 
 struct SerializeOperations
 {
-    std::function<void(const Any, Any, YAML::Emitter &)> serializeFunc;
-    std::function<void(Any, Any, const YAML::Node &)> deserializeFunc;
+    std::function<void(const AnyRef, AnyRef, ISerializer &)> serializeFunc;
+    std::function<void(AnyRef, AnyRef, IDeserializer &)> deserializeFunc;
 };
 
 template <typename T>

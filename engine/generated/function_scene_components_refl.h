@@ -6,7 +6,12 @@ namespace Zafkiel::Reflection
 {
 inline void Register_function_scene_components() 
 {
-    
+    ::Zafkiel::Reflection::Register<::Zafkiel::LightType>("LightType")
+    .Add(::Zafkiel::LightType::Directional, "Directional")
+    .Add(::Zafkiel::LightType::Point, "Point")
+    .Add(::Zafkiel::LightType::Spot, "Spot")
+    ;
+ 
 
     ::Zafkiel::Reflection::Register<::Zafkiel::TransformComponent>("TransformComponent")
     .AddProperty(&::Zafkiel::TransformComponent::position, "position")
@@ -28,6 +33,14 @@ inline void Register_function_scene_components()
     ;
     ::Zafkiel::Reflection::Register<::Zafkiel::MaterialComponent>("MaterialComponent")
     .AddProperty(&::Zafkiel::MaterialComponent::material, "material")
+    ;
+    ::Zafkiel::Reflection::Register<::Zafkiel::LightComponent>("LightComponent")
+    .AddProperty(&::Zafkiel::LightComponent::type, "type")
+    .AddProperty(&::Zafkiel::LightComponent::color, "color")
+    .AddProperty(&::Zafkiel::LightComponent::intensity, "intensity")
+    .AddProperty(&::Zafkiel::LightComponent::direction, "direction")
+    .AddProperty(&::Zafkiel::LightComponent::radius, "radius")
+    .AddProperty(&::Zafkiel::LightComponent::spotAngle, "spotAngle")
     ;
     ::Zafkiel::Reflection::Register<::Zafkiel::ScriptComponent>("ScriptComponent")
     .AddProperty(&::Zafkiel::ScriptComponent::entityUUID, "entityUUID")

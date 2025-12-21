@@ -9,34 +9,6 @@ std::string GetCursorKindName(CXCursorKind kind)
     return clang_getCString(clang_getCursorKindSpelling(kind));
 }
 
-// void PrintCursorInfo(const Cursor &cursor, int depth = 0)
-// {
-//     std::string indent(depth * 2, ' ');
-//     auto kind = cursor.GetKind();
-//     auto spelling = cursor.GetSpelling();
-//     auto attr = cursor.GetAnnotateAttr();
-
-//     std::cout << indent << "Cursor: " << GetCursorKindName(kind) << std::endl
-//               << " | Spelling: \"" << spelling << "\"" << std::endl
-//               << " | Attribute: \"" << attr << "\"" << std::endl;
-
-//     // Print location info
-//     CXSourceLocation location = cursor.GetLocation();
-//     CXFile file;
-//     unsigned line, column, offset;
-//     clang_getExpansionLocation(location, &file, &line, &column, &offset);
-//     std::string filename = clang_getCString(clang_getFileName(file));
-
-//     std::cout << " | Location: " << filename << ":" << line << ":" << column << std::endl;
-
-//     // Print children
-//     auto children = cursor.GetChildren();
-//     for (const auto &child : children)
-//     {
-//         PrintCursorInfo(child, depth + 1);
-//     }
-// }
-
 Attribute ParseAttributes(const Cursor &cursor)
 {
     const auto &attr = cursor.GetAnnotateAttr();

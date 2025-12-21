@@ -1,22 +1,22 @@
 #pragma once
 #include "function/render/mesh.h"
-#include "opengl_vertex_array.h"
+#include "opengl_vertex_buffer.h"
+#include "opengl_index_buffer.h"
 
-namespace Zafkiel
+namespace Zafkiel 
 {
-struct OpenGLMesh : public Mesh
+
+class OpenGLMeshFactory 
 {
-    OpenGLMesh(const std::vector<MeshVertex> &vertices, const std::vector<uint32_t> &indices);
-    std::vector<MeshVertex> vertices;
-    std::vector<uint32_t> indices;
-
-    Ref<OpenGLVertexArray> vertexArray;
-    Ref<OpenGLVertexBuffer> vertexBuffer;
-    Ref<OpenGLIndexBuffer> indexBuffer;
-
-    virtual Ref<VertexArray> GetVertexArray() const override { return vertexArray; }
-
-    // uint32_t materialIndex = 0;
+  public:
+    static Scope<Mesh> Create(const std::vector<MeshVertex> &vertices, const std::vector<uint32_t> &indices)
+    {
+        const float *data = reinterpret_cast<const float*>(vertices.data());
+        uint32_t size = vertices.size() * sizeof(MeshVertex);
+        auto vertexBuffer = OpenGLVertexBufferFactory::Create(data, size);
+        auto indexBuffer = OpenGLIndexBufferFactory::Create(indices.data(), indices.size());
+        return CreateScope<Mesh>(std::move(vertexBuffer), std::move(indexBuffer));
+    }
 };
 
 }

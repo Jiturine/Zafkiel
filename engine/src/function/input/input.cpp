@@ -5,38 +5,43 @@
 
 namespace Zafkiel
 {
-bool Input::IsKeyPressed(Scancode key)
+bool Input::IsKeyDown(KeyCode key)
 {
-    return SDL_GetKeyboardState(nullptr)[(int)key];
+    if (auto it = keyState.find((uint32_t)key); it != keyState.end())
+        return it->second;
+    return false;
 }
-bool Input::IsMouseButtonPressed(MouseButton button)
+
+bool Input::IsKeyPressed(KeyCode key)
 {
-    float mouseX, mouseY;
-    SDL_MouseButtonFlags mouseButtons = SDL_GetMouseState(&mouseX, &mouseY);
-    if (button == MouseButton::Left && (mouseButtons & SDL_BUTTON_MASK(SDL_BUTTON_LEFT)))
-        return true;
-
-    if (button == MouseButton::Right && (mouseButtons & SDL_BUTTON_MASK(SDL_BUTTON_RIGHT)))
-        return true;
-
+    if (auto it = keyPressed.find((uint32_t)key); it != keyPressed.end())
+        return it->second;
+    return false;
+}
+bool Input::IsKeyReleased(KeyCode key)
+{
+    if (auto it = keyReleased.find((uint32_t)key); it != keyReleased.end())
+        return it->second;
     return false;
 }
 
 bool Input::IsMouseButtonDown(MouseButton button)
 {
-    if (button == MouseButton::Left)
-        return mouseDown[SDL_BUTTON_LEFT];
-    if (button == MouseButton::Right)
-        return mouseDown[SDL_BUTTON_RIGHT];
+    if (auto it = mouseButtonState.find((uint32_t)button); it != mouseButtonState.end())
+        return it->second;
     return false;
 }
 
-bool Input::IsMouseButtonUp(MouseButton button)
+bool Input::IsMouseButtonPressed(MouseButton button)
 {
-    if (button == MouseButton::Left)
-        return mouseUp[SDL_BUTTON_LEFT];
-    if (button == MouseButton::Right)
-        return mouseUp[SDL_BUTTON_RIGHT];
+    if (auto it = mouseButtonPressed.find((uint32_t)button); it != mouseButtonPressed.end())
+        return it->second;
+    return false;
+}
+bool Input::IsMouseButtonReleased(MouseButton button)
+{
+    if (auto it = mouseButtonReleased.find((uint32_t)button); it != mouseButtonReleased.end())
+        return it->second;
     return false;
 }
 
@@ -45,30 +50,36 @@ void Input::ProcessEvent(SDL_Event &e)
     switch (e.type)
     {
     case SDL_EVENT_MOUSE_BUTTON_DOWN:
-        if (e.button.button >= 1 && e.button.button <= 5)
-        {
-            mouseCurrent[e.button.button] = true;
-            mouseDown[e.button.button] = true;
-        }
+        mouseButtonState[e.button.button] = true;
+        mouseButtonPressed[e.button.button] = true;
         break;
 
     case SDL_EVENT_MOUSE_BUTTON_UP:
-        if (e.button.button >= 1 && e.button.button <= 5)
-        {
-            mouseCurrent[e.button.button] = false;
-            mouseUp[e.button.button] = true;
-        }
+        mouseButtonState[e.button.button] = false;
+        mouseButtonReleased[e.button.button] = true;
+        break;
+
+    case SDL_EVENT_KEY_DOWN:
+        keyState[e.key.key] = true;
+        keyPressed[e.key.key] = true;
+        break;
+
+    case SDL_EVENT_KEY_UP:
+        keyState[e.key.key] = false;
+        keyReleased[e.key.key] = true;
         break;
     }
 }
 
 void Input::ClearState()
 {
-    for (int i = 0; i < 6; i++)
-    {
-        mouseCurrent[i] = false;
-        mouseDown[i] = false;
-        mouseUp[i] = false;
-    }
+    for (auto &it : keyPressed)
+        it.second = false;
+    for (auto &it : keyReleased)
+        it.second = false;
+    for (auto &it : mouseButtonPressed)
+        it.second = false;
+    for (auto &it : mouseButtonReleased)
+        it.second = false;
 }
 }
