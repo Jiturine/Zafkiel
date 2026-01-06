@@ -35,8 +35,6 @@ class ModelAsset : public Asset
     ModelAssetNode &GetRootNode() { return rootNode; }
 
   private:
-    // void GenerateModelNode(const ModelAssetNode &assetNode, ModelNode &node);
-
     void LoadModelNode(ModelAssetNode &node, const IDeserializer &nodeData);
 
     ModelAssetNode rootNode;

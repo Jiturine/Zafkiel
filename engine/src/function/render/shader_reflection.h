@@ -198,6 +198,18 @@ struct UniformFieldLayout
     std::vector<UniformFieldLayout> children; // Struct 使用
 };
 
+struct UniformValuePath 
+{
+    enum PathElemType { Indent, Index };
+    struct PathElem 
+    {
+        PathElemType type;
+        std::string name;
+        uint32_t index;
+    };
+    std::vector<PathElem> elems;
+};
+
 class UniformBlock final : public ResourceType
 { 
   public:
@@ -205,6 +217,44 @@ class UniformBlock final : public ResourceType
         : ResourceType(name, ResourceTypeCategory::UniformBlock), layoutRule(layoutRule), structType(structType), layout(layout) {}
 
     const UniformFieldLayout &GetLayout() const { return layout; }
+
+    uint32_t GetStructSize(const UniformValuePath &path) const
+    {
+        auto curLayout = &layout;
+        for (auto &elem : path.elems)
+        {
+            if (elem.type == UniformValuePath::PathElemType::Indent && curLayout->dataType->GetCategory() == ShaderReflection::DataTypeCategory::Struct)
+            {
+                auto &fields = curLayout->dataType->As<ShaderReflection::Struct>()->GetFields();
+                for (auto &field : fields)
+                {
+                    if (field->GetName() == elem.name)
+                    {
+                        auto it = std::find_if(curLayout->children.begin(), curLayout->children.end(), [&elem](const ShaderReflection::UniformFieldLayout &layout) {
+                            return layout.name == elem.name;
+                        });
+                        if (it != curLayout->children.end()) 
+                        {
+                            curLayout = &(*it);
+                        }
+                        else  
+                        {
+                            Log::Error("Field and Layout don't match!");
+                            return 0;
+                        }
+                        break;
+                    }
+                }
+            }
+            else if (elem.type == UniformValuePath::PathElemType::Index && curLayout->dataType->GetCategory() == ShaderReflection::DataTypeCategory::Array)
+            {
+                // TODO: deal with array;
+                Log::Error("TODO array");
+                return 0;
+            }
+        }
+        return curLayout->size;
+    }
     
   private:
     const Struct *structType;

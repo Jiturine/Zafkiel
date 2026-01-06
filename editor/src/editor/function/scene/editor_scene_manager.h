@@ -27,7 +27,7 @@ class EditorSceneManager final : public SceneManager
     Observer<Scene> OpenSceneImpl(const Path &filePath);
 
     Observer<Scene> activeScene;
-    
+    std::vector<Scope<Scene>> scenes;
 };
 
 }

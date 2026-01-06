@@ -23,7 +23,7 @@ MaterialAsset::MaterialAsset(AssetHandle handle, const std::string &name, const 
         }
         else if (paramType->GetCategory() == ShaderReflection::ResourceTypeCategory::SampledImage)
         {
-            parameters[paramName] = MaterialAssetParameter(); // TODO: default val
+            // parameters[paramName] = MaterialAssetParameter(); // TODO: default val
         }
     }
 
@@ -46,9 +46,30 @@ MaterialAsset::MaterialAsset(AssetHandle handle, const std::string &name, Shader
         }
         else if (paramType->GetCategory() == ShaderReflection::ResourceTypeCategory::SampledImage)
         {
-            parameters[paramName] = MaterialAssetParameter(); // TODO: default val
+            // parameters[paramName] = MaterialAssetParameter(); // TODO: default val
         }
     }
+}
+
+bool MaterialAsset::HasParam(const std::string &paramAlias)
+{
+    if (!schema->HasAlias(paramAlias)) return false;
+    
+    auto paramPath = schema->GetAliasPath(paramAlias);
+    if (schema->GetParameterTypeCategory(paramPath.elems[0].name) == ShaderReflection::ResourceTypeCategory::UniformBlock)
+    {
+        return true; // TODO: change this
+    }
+    else if (schema->GetParameterTypeCategory(paramPath.elems[0].name) == ShaderReflection::ResourceTypeCategory::SampledImage)
+    {
+        auto paramType = schema->GetParameterTypes().at(paramPath.elems[0].name);
+        return HasSampledImage(paramType->As<ShaderReflection::SampledImage>(), paramAlias);
+    }
+}
+
+bool MaterialAsset::HasSampledImage(const ShaderReflection::SampledImage *imageType, const std::string &paramAlias)
+{
+    return HasTexture2D(paramAlias);
 }
 
 std::string MaterialAsset::Serialize()
@@ -59,8 +80,11 @@ std::string MaterialAsset::Serialize()
     serializer.Key("Parameters").BeginMap();
     for (auto &[alias, path] : schema->GetAliases())
     {
-        serializer.Key(alias);
-        SerializeParam(alias, serializer);
+        if (HasParam(alias))
+        {
+            serializer.Key(alias);
+            SerializeParam(alias, serializer);
+        }
     }
     serializer.EndMap().EndMap();
     return serializer.c_str();

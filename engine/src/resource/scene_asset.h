@@ -11,14 +11,16 @@ class SceneAsset : public Asset
     virtual AssetType GetAssetType() const override { return AssetType::Scene; }
 
     SceneAsset(AssetHandle handle, const std::string &sceneData)
-        : Asset(handle)
+        : Asset(handle), sceneData(sceneData)
     {
-        scene = CreateScope<Scene>(sceneData);
+    }
+    
+    Scope<Scene> LoadScene() 
+    {
+        return CreateScope<Scene>(sceneData);
     }
 
-    Observer<Scene> GetScene() { return scene; }
-
   private:
-    Scope<Scene> scene;
+    std::string sceneData;
 };  
 }

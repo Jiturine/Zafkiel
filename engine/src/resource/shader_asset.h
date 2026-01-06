@@ -13,22 +13,10 @@ class ShaderAsset : public Asset
     ShaderAsset(AssetHandle handle, const Path &path)
         : Asset(handle)
     {
-        // Renderer::Submit([self = Ref(this), path]() mutable {
-        //     self->shader = Renderer::GetGraphicsContext()->CreateGraphicsShader(path);
-        // });
     }
 
     ~ShaderAsset()
     {
-        // Renderer::Submit([shader = std::move(shader)]() mutable {
-        //     shader = nullptr;
-        // });
     }
-
-    // Observer<Shader> GetShader() { return shader; }
-
-  private:
-    // Scope<Shader> shader;
-    
 };
 }

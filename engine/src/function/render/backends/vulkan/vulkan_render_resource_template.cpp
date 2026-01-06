@@ -26,7 +26,7 @@ void VulkanRenderResourceTemplateBackend::InitTemplate(Observer<RenderResourceTe
                    .setDescriptorCount(1)
                    .setDescriptorType(vk::DescriptorType::eCombinedImageSampler)
                    .setStageFlags(vk::ShaderStageFlagBits::eAll);
-            bindings.push_back(binding);           
+            bindings.push_back(binding);
         }
     }
 
@@ -43,5 +43,5 @@ Scope<RenderResourceTemplate> VulkanRenderResourceTemplateFactory::Create(const 
     res->GetBackend().As<VulkanRenderResourceTemplateBackend>()->InitTemplate(res);
     return res;
 }
-  
+
 }

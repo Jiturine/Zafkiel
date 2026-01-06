@@ -81,17 +81,15 @@ AssetHandle ModelImporter::ImportAssimpTexture(const AssimpTexture &texture, Ass
     AssetHandle textureHandle;
     if (texture.IsEmbedded()) // 内嵌纹理
     {
-        int texIndex = texture.GetIndex();
-
-        if (registeredEmbeddedTextures.contains(texIndex))
+        if (registeredEmbeddedTextures.contains(texture.GetPath().string()))
         {
-            textureHandle = registeredEmbeddedTextures.at(texIndex);
+            textureHandle = registeredEmbeddedTextures.at(texture.GetPath().string());
         }
         else
         {
             Path textureFilePath = SaveEmbeddedTexture(texture);
             textureHandle = EditorAssetManager::ImportAsset(textureFilePath);
-            registeredEmbeddedTextures[texIndex] = textureHandle;
+            registeredEmbeddedTextures[texture.GetPath().string()] = textureHandle;
         }
     }
     else // 外部文件路径
@@ -130,7 +128,7 @@ void ModelImporter::SaveRawTexture2DFromMemory(uint32_t width, uint32_t height, 
 
 Path ModelImporter::SaveEmbeddedTexture(const AssimpTexture &texture)
 {
-    Path texturePath = EditorAssetManager::GetAssetDirectory() / modelGeneratedDirectory / "embedded_textures" / std::format("embedded_texture_{}.png", texture.GetIndex());
+    Path texturePath = EditorAssetManager::GetAssetDirectory() / modelGeneratedDirectory / "embedded_textures" / std::format("embedded_texture_{}.png", texture.GetPath().string());
     if (texture.IsCompressed()) // 压缩纹理，例如 PNG/JPG
     {
         SaveCompressedTexture2DFromMemory(texture.GetData(), texture.GetDataSize(), texturePath);

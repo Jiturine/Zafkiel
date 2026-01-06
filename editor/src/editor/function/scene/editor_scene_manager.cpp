@@ -17,7 +17,8 @@ Observer<Scene> EditorSceneManager::OpenSceneImpl(const Path &filePath)
         sceneHandle = EditorAssetManager::GetRegisterdAsset(assetPath);
     }
     auto sceneAsset = EditorAssetManager::GetAsset(sceneHandle).As<SceneAsset>();
-    activeScene = sceneAsset->GetScene();
+    scenes.push_back(sceneAsset->LoadScene());
+    activeScene = scenes.back();
     return activeScene;
 }
 

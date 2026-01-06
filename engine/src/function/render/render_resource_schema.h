@@ -27,6 +27,15 @@ struct RenderResourceDescription
     uint32_t set;
     uint32_t binding;
 };
+
+struct UniformValue
+{
+    const ShaderReflection::UniformBlock *blockType;
+    const ShaderReflection::DataType *type;
+    ShaderReflection::UniformValuePath path;
+    ScopedBuffer value;
+};
+
 // 纯 CPU 端
 class RenderResourceSchema final
 {
@@ -54,6 +63,24 @@ class RenderResourceSchema final
     ShaderReflection::ResourceTypeCategory GetParameterTypeCategory(const std::string &name) const 
     {
         return parameterTypes.at(name)->GetCategory();
+    }
+    
+    UniformValue CreateStructValue(const std::string &alias) const 
+    {
+        auto path = GetAliasPath(alias);
+        auto uniformBlock = parameterTypes.at(path.elems[0].name)->As<ShaderReflection::UniformBlock>();
+        auto valueType = GetUniformParameterType(path);
+        ShaderReflection::UniformValuePath valuePath;
+        for (int i = 1; i < path.elems.size(); i++)
+        {
+            valuePath.elems.push_back({
+                path.elems[i].type == RenderResourceParameterPath::PathElemType::Indent ? ShaderReflection::UniformValuePath::PathElemType::Indent : ShaderReflection::UniformValuePath::Index,
+                path.elems[i].name, 
+                path.elems[i].index
+            });
+        }
+        auto size = uniformBlock->GetStructSize(valuePath);
+        return UniformValue {uniformBlock, valueType, valuePath, ScopedBuffer(size)};
     }
 
     const ShaderReflection::DataType *GetUniformParameterType(const RenderResourceParameterPath &path) const;

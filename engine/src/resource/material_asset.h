@@ -46,6 +46,9 @@ class MaterialAsset : public Asset
     ShaderFamily GetShaderFamily() const { return shaderFamily; }
     const std::unordered_map<std::string, MaterialAssetParameter> &GetParameters() const { return parameters; }
     
+    bool HasParam(const std::string &paramAlias);
+    bool HasSampledImage(const ShaderReflection::SampledImage *imageType, const std::string &paramAlias);
+    
     std::string Serialize();
     
     void DeserializeParamAlias(const std::string &paramAlias, const IDeserializer &param);
@@ -93,6 +96,17 @@ class MaterialAsset : public Asset
         }
         Log::Error("Texture2D Path doesn't exist!");
         return {};
+    }
+    
+    bool HasTexture2D(const std::string &key) const 
+    {
+        
+        auto paramPath = schema->GetAliasPath(key);
+        if (paramPath.elems.size() == 1 && paramPath.elems[0].type == RenderResourceParameterPath::PathElemType::Indent)
+        {
+            return parameters.contains(paramPath.elems[0].name);
+        }
+        return false;
     }
     
     void SerializeParam(const std::string &paramAlias, ISerializer &serializer);

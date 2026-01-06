@@ -60,13 +60,13 @@ class AssimpTexture
         return texPathName;
     }
 
-    int GetIndex() const
-    {
-        return atoi(path.c_str() + 1);
-    }
-
     bool IsEmbedded() const
     {
+        const aiTexture* tex = scene->GetEmbeddedTexture(path.c_str());
+        if (tex) 
+            return true;
+        else 
+            return false;
         if (!path.empty() && path.c_str()[0] == '*')
             return true;
         else
@@ -75,30 +75,30 @@ class AssimpTexture
 
     bool IsCompressed() const
     {
-        aiTexture *texture = scene->mTextures[GetIndex()];
+        const aiTexture *texture = scene->GetEmbeddedTexture(path.c_str());
         return texture->mHeight == 0;
     }
 
     uint32_t GetWidth() const 
     { 
-        aiTexture *texture = scene->mTextures[GetIndex()];
+        const aiTexture *texture = scene->GetEmbeddedTexture(path.c_str());
         return texture->mWidth; 
     }
     uint32_t GetHeight() const 
     {
-        aiTexture *texture = scene->mTextures[GetIndex()];
+        const aiTexture *texture = scene->GetEmbeddedTexture(path.c_str());
         return texture->mHeight; 
     }
 
     const uint8_t *GetData() const
     {
-        aiTexture *texture = scene->mTextures[GetIndex()];
+        const aiTexture *texture = scene->GetEmbeddedTexture(path.c_str());
         return reinterpret_cast<const uint8_t*>(texture->pcData);
     }
 
     uint32_t GetDataSize() const
     {
-        aiTexture *texture = scene->mTextures[GetIndex()];
+        const aiTexture *texture = scene->GetEmbeddedTexture(path.c_str());
         if (texture->mHeight == 0)
             return texture->mWidth;
         else

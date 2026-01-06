@@ -70,7 +70,7 @@ void TestLayer::OnAttach()
     EditorAssetManager::SetAssetDirectory(ProjectManager::GetCurrentProject()->GetAssetDirectory());
     EditorAssetManager::RegisterAssets();
     EditorAssetManager::LoadBuiltinShader();
-    // EditorAssetManager::ImportAsset("models/furina/furina.pmx");
+    // EditorAssetManager::ImportAsset("models/sponza_gltf_version/scene.gltf");
 
     EditorSceneManager::Init();
     EditorSceneManager::OpenScene(projConfig.startScene);
@@ -81,7 +81,8 @@ void TestLayer::OnAttach()
     editorCamera->SetLookAtDir(vec3(0.0f, 0.0f, 1.0f));
     editorCamera->SetPosition(vec3(0.0f, 0.0f, -1.0f));
 
-    EditorSceneManager::GetActiveScene()->GetWorld().InstantiateModel(13795713560453464113);
+    auto model = EditorSceneManager::GetActiveScene()->GetWorld().InstantiateModel(15573915810613239818);
+    model.GetComponent<TransformComponent>().SetScale(vec3(0.3f, 0.3f, 0.3f));
 
     Application::KickRenderThread();
     Application::WaitRenderThread();

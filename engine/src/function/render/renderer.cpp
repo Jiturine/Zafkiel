@@ -66,10 +66,13 @@ Observer<Material> Renderer::GetMaterialImpl(const Ref<MaterialAsset> &materialA
             }
             else if (param.type->GetCategory() == ShaderReflection::ResourceTypeCategory::SampledImage)
             {
-                auto texture2DAsset = AssetManager::GetAsset(materialAsset->GetParameters().at(paramName).handle).As<Texture2DAsset>();
-                param.texture2D = GetTexture2DImpl(texture2DAsset); 
-                // TODO: 优化
-                material->GetRenderResource()->GetBackend()->SetTexture2D(paramName, param.texture2D);
+                if (materialAsset->GetParameters().contains(paramName))
+                {
+                    auto texture2DAsset = AssetManager::GetAsset(materialAsset->GetParameters().at(paramName).handle).As<Texture2DAsset>();
+                    param.texture2D = GetTexture2DImpl(texture2DAsset); 
+                    // TODO: 优化
+                    material->GetRenderResource()->GetBackend()->SetTexture2D(paramName, param.texture2D);
+                }
             }
         }
         materials[materialAsset->handle] = std::move(material);

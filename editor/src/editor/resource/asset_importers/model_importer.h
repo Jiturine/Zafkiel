@@ -23,7 +23,7 @@ class ModelImporter final : public AssetImporter
     void SerializeModelNode(ModelAssetNode &node, ISerializer &serializer);
     
     std::unordered_map<uint32_t, AssetHandle> materialMap;
-    std::unordered_map<uint32_t, AssetHandle> registeredEmbeddedTextures;
+    std::unordered_map<std::string, AssetHandle> registeredEmbeddedTextures;
     std::unordered_map<uint32_t, AssetHandle> registeredMeshes;
     AssetHandle modelHandle;
     Path modelAssetPath;

@@ -1,5 +1,6 @@
 #include "camera.h"
 #include "renderer.h"
+#include <iterator>
 
 namespace Zafkiel
 {
