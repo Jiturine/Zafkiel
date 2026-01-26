@@ -1,10 +1,10 @@
-#include "editor_scene_manager.h"
+#include "editor/function/scene/editor_scene_manager.h"
 #include "editor/resource/editor_asset_manager.h"
 #include "resource/scene_asset.h"
 
 namespace Zafkiel 
 {
-Observer<Scene> EditorSceneManager::OpenSceneImpl(const Path &filePath)
+Borrow<Scene> EditorSceneManager::OpenScene(const Path &filePath)
 {
     AssetHandle sceneHandle;
     Path assetPath = filePath.RelativeTo(EditorAssetManager::GetAssetDirectory());
@@ -18,8 +18,8 @@ Observer<Scene> EditorSceneManager::OpenSceneImpl(const Path &filePath)
     }
     auto sceneAsset = EditorAssetManager::GetAsset(sceneHandle).As<SceneAsset>();
     scenes.push_back(sceneAsset->LoadScene());
-    activeScene = scenes.back();
-    return activeScene;
+    activeSceneIndex = scenes.size() - 1;
+    return Borrow(scenes.back());
 }
 
 }

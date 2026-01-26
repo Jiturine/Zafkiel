@@ -24,17 +24,9 @@ struct DirLight
     vec3 direction;
 };
 
-layout(std140, set = 0, binding = 0) uniform GlobalUBO {
-    vec3 viewPos;
-    mat4 viewMatrix;
-    mat4 projectionMatrix;
-    mat4 viewProjectionMatrix;
-} uGlobal;
+#include "schema/global.zss"
 
-layout(set = 1, binding = 0) uniform sampler2D uPosition;
-layout(set = 1, binding = 1) uniform sampler2D uNormal;
-layout(set = 1, binding = 2) uniform sampler2D uAlbedo;
-
+#include "schema/shading_pass.zss"
 
 vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir, vec3 albedo)
 {

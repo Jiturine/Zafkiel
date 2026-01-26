@@ -1,7 +1,7 @@
 #pragma once
 
-#include "serializer_base.h"
-#include "custom_serialize.h"
+#include "core/meta/serializer/serializer_base.h"
+#include "core/meta/serializer/custom_serialize.h"
 
 namespace Zafkiel 
 {

@@ -20,6 +20,6 @@ class VulkanBuffer final
     vk::raii::DeviceMemory memory;
     size_t size;
     size_t memorySize;
-    VulkanBuffer(const VulkanBufferSpecification& spec, const Scope<VulkanDevice> &device, const Scope<VulkanPhysicalDevice> &physicalDevice);
+    VulkanBuffer(const VulkanBufferSpecification& spec, Borrow<VulkanDevice> device, Borrow<VulkanPhysicalDevice> physicalDevice);
 };
 }

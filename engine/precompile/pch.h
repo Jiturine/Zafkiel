@@ -14,6 +14,7 @@
 #include <memory>
 #include <iostream>
 #include <variant>
+#include <ranges>
 
 #include "core/log/log.h"
 #include "core/base/memory.h"

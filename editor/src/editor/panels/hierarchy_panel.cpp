@@ -1,4 +1,4 @@
-#include "hierarchy_panel.h"
+#include "editor/panels/hierarchy_panel.h"
 #include "editor/editorGUI/editorGUI.h"
 #include "function/scene/components.h"
 #include "editor/editor_context/editor_context.h"
@@ -22,7 +22,7 @@ static bool ContainsEntityRecursive(Entity parent, Entity target)
 
 void HierarchyPanel::DrawEntityNode(Entity entity)
 {
-    auto scene = SceneManager::GetActiveScene();
+    auto scene = SceneManager::Instance().GetActiveSceneMut();
     auto &selectionContext = EditorContext::GetSelectionContext();
 
     ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow;
@@ -75,7 +75,7 @@ void HierarchyPanel::Render()
 {
     GUIWindow hierarchyPanel("Hierarchy");
 
-    auto scene = SceneManager::GetActiveScene();
+    auto scene = SceneManager::Instance().GetActiveSceneMut();
     std::vector<Entity> rootEntities;
     for (auto entity : scene->GetWorld().AllEntities())
     {

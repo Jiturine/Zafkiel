@@ -1,4 +1,4 @@
-#include "model_asset.h"
+#include "resource/model_asset.h"
 #include "core/meta/serializer/yaml_serializer.h"
 
 namespace Zafkiel 

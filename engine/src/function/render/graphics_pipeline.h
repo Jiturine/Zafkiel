@@ -1,10 +1,10 @@
 #pragma once
-#include "object_render_resource_template.h"
-#include "render_resource_template.h"
-#include "pipeline.h"
-#include "render_pass.h"
-#include "graphics_shader.h"
-#include "vertex_buffer.h"
+#include "function/render/object_shader_material_template.h"
+#include "function/render/shader_material_template.h"
+#include "function/render/pipeline.h"
+#include "function/render/render_pass.h"
+#include "function/render/graphics_shader.h"
+#include "function/render/vertex_buffer.h"
 
 namespace Zafkiel
 {
@@ -43,9 +43,9 @@ enum class PolygonMode
 struct GraphicsPipelineSpecification
 {
     PrimitiveTopology primitiveTopology;
-    Observer<GraphicsShader> shader;
-    std::vector<std::variant<Observer<RenderResourceTemplate>, Observer<ObjectRenderResourceTemplate>>> renderResourceTemplates;
-    Observer<RenderPass> renderPass;
+    RenderHandle shader;
+    std::vector<RenderHandle> shaderMaterialTemplates;
+    RenderHandle renderPass;
     CullMode cullMode;
     FrontFace frontFace = FrontFace::CounterClockWise;
     PolygonMode polygonMode;
@@ -53,28 +53,22 @@ struct GraphicsPipelineSpecification
     uint32_t colorAttachmentCount;
 };
 
-class GraphicsPipelineBackend
-{
-  public:
-    virtual ~GraphicsPipelineBackend() = default;
-};
-
 class GraphicsPipeline final : public Pipeline
 {
   public:
-    GraphicsPipeline(const GraphicsPipelineSpecification &spec, Scope<PipelineBackend> pipelineBackend, Scope<GraphicsPipelineBackend> graphicsShaderBackend)
-        : Pipeline(std::move(pipelineBackend)), spec(spec), backend(std::move(graphicsShaderBackend)) {}
+    GraphicsPipeline(const GraphicsPipelineSpecification &spec, Scope<PipelineBackend> backend)
+        : spec(spec), Pipeline(std::move(backend)) {}
 
     virtual PipelineType GetPipelineType() const override { return PipelineType::Graphics; }
 
-    Observer<GraphicsPipelineBackend> GetGraphicsPipelineBackend() { return backend; }
-    const Observer<GraphicsPipelineBackend> GetGraphicsPipelineBackend() const { return backend; }
-
-    Observer<GraphicsShader> GetShader() { return spec.shader; }
-    const Observer<GraphicsShader> GetShader() const { return spec.shader; }
+    CullMode GetCullMode() const { return spec.cullMode; }
+    FrontFace GetFrontFace() const { return spec.frontFace; }
+    PolygonMode GetPolygonMode() const { return spec.polygonMode; }
+    PrimitiveTopology GetPrimitiveTopology() const { return spec.primitiveTopology; }
+    bool GetDepthTest() const { return spec.depthTest; }
+    RenderHandle GetShader() const { return spec.shader; }
 
   private:
-    Scope<GraphicsPipelineBackend> backend;
     GraphicsPipelineSpecification spec;
 };
 }

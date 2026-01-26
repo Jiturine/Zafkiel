@@ -1,19 +1,12 @@
-#include "vulkan_uniform_buffer.h"
+#include "function/render/backends/vulkan/vulkan_uniform_buffer.h"
 
 namespace Zafkiel
 {
 
-VulkanUniformBufferBackend::VulkanUniformBufferBackend(uint32_t size, const Scope<VulkanDevice> &device, const Scope<VulkanPhysicalDevice> &physicalDevice)
+VulkanUniformBufferBackend::VulkanUniformBufferBackend(Scope<VulkanBuffer> buffer)
+    : buffer(std::move(buffer))
 {
-    VulkanBufferSpecification bufferSpec
-    {
-        .size = size,
-        .usage = vk::BufferUsageFlagBits::eUniformBuffer,
-        .property = vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent
-    };
-    buffer = CreateScope<VulkanBuffer>(bufferSpec, device, physicalDevice);
-    
-    mappedMemory = reinterpret_cast<std::byte*>(buffer->memory.mapMemory(0, buffer->size));
+    mappedMemory = reinterpret_cast<std::byte*>(this->buffer->memory.mapMemory(0, this->buffer->size));
 }
 
 VulkanUniformBufferBackend::~VulkanUniformBufferBackend()
@@ -26,10 +19,5 @@ void VulkanUniformBufferBackend::SetData(uint32_t offset, uint32_t size, const v
     memcpy(mappedMemory + offset, data, size);
 }
 
-Scope<UniformBuffer> VulkanUniformBufferFactory::Create(uint32_t size, const Scope<VulkanDevice> &device, const Scope<VulkanPhysicalDevice> &physicalDevice)
-{
-    auto backend = CreateScope<VulkanUniformBufferBackend>(size, device, physicalDevice);
-    return CreateScope<UniformBuffer>(size, std::move(backend));
-}
 
 }

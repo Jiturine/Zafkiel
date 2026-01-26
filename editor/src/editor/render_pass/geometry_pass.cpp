@@ -1,4 +1,4 @@
-#include "geometry_pass.h"
+#include "editor/render_pass/geometry_pass.h"
 #include "function/render/renderer.h"
 #include "function/render/render_command.h"
 #include "function/scene/components.h"
@@ -7,8 +7,8 @@
 namespace Zafkiel
 {
 
-GeometryPass::GeometryPass(Observer<GlobalRenderResource> globalRenderResource, Observer<ObjectRenderResource> objectRenderResource)
-    : objectRenderResource(objectRenderResource)
+GeometryPass::GeometryPass(RenderHandle globalMaterial, RenderHandle objectShaderMaterial)
+    : objectShaderMaterial(objectShaderMaterial)
 {
     std::vector<AttachmentDescription> attachmentDescs
     {
@@ -61,20 +61,20 @@ GeometryPass::GeometryPass(Observer<GlobalRenderResource> globalRenderResource, 
         .attachments = attachmentDescs,
         .subpasses = subpassSpecs
     };
-    renderPass = Renderer::GetGraphicsContext()->CreateRenderPass(renderPassSpec);
+    renderPass = Renderer::Instance().CreateRenderPass(renderPassSpec);
     
-    blinnPhongShader = Renderer::GetGraphicsContext()->CreateGraphicsShader("assets/shaders/gbuffer_shader.glsl");
+    blinnPhongShader = Renderer::Instance().CreateGraphicsShader("assets/shaders/gbuffer_shader.glsl");
 
     GraphicsPipelineSpecification pipelineSpec
     {
         .primitiveTopology = PrimitiveTopology::Triangles,
         .shader = blinnPhongShader,
-        .renderResourceTemplates 
+        .shaderMaterialTemplates 
         {
-            globalRenderResource->GetRenderResource()->GetTemplate(),
+            Renderer::Instance().GetGlobalMaterial(globalMaterial)->GetTemplate(),
             {},
-            Renderer::GetBuiltInMaterialTemplate(ShaderFamily::BlinnPhong),
-            objectRenderResource->GetTemplate()
+            Renderer::Instance().GetBuiltInMaterialTemplate(ShaderFamily::BlinnPhong),
+            Renderer::Instance().GetObjectShaderMaterial(objectShaderMaterial)->GetTemplate()
         },
         .renderPass = renderPass,
         .cullMode = CullMode::None,
@@ -82,7 +82,7 @@ GeometryPass::GeometryPass(Observer<GlobalRenderResource> globalRenderResource, 
         .depthTest = true,
         .colorAttachmentCount = 4,
     };
-    blinnPhongPipeline = Renderer::GetGraphicsContext()->CreateGraphicsPipeline(pipelineSpec);
+    blinnPhongPipeline = Renderer::Instance().CreateGraphicsPipeline(pipelineSpec);
 
     // Textures
     Texture2DSpecification positionTextureSpec
@@ -95,7 +95,7 @@ GeometryPass::GeometryPass(Observer<GlobalRenderResource> globalRenderResource, 
         .wrap = TextureWrap::Repeat,
         .filter = TextureFilter::Nearest
     };
-    positionTexture = Renderer::GetGraphicsContext()->CreateTexture2D(positionTextureSpec);
+    positionTexture = Renderer::Instance().CreateTexture2D(positionTextureSpec);
     Texture2DSpecification normalTextureSpec
     {
         .width = 1280,
@@ -106,7 +106,7 @@ GeometryPass::GeometryPass(Observer<GlobalRenderResource> globalRenderResource, 
         .wrap = TextureWrap::Repeat,
         .filter = TextureFilter::Nearest
     };
-    normalTexture = Renderer::GetGraphicsContext()->CreateTexture2D(normalTextureSpec); 
+    normalTexture = Renderer::Instance().CreateTexture2D(normalTextureSpec); 
     Texture2DSpecification albedoTextureSpec
     {
         .width = 1280,
@@ -117,7 +117,7 @@ GeometryPass::GeometryPass(Observer<GlobalRenderResource> globalRenderResource, 
         .wrap = TextureWrap::Repeat,
         .filter = TextureFilter::Nearest
     };
-    albedoTexture = Renderer::GetGraphicsContext()->CreateTexture2D(albedoTextureSpec); 
+    albedoTexture = Renderer::Instance().CreateTexture2D(albedoTextureSpec); 
     Texture2DSpecification entityIDTextureSpec
     {
         .width = 1280,
@@ -128,7 +128,7 @@ GeometryPass::GeometryPass(Observer<GlobalRenderResource> globalRenderResource, 
         .wrap = TextureWrap::Repeat,
         .filter = TextureFilter::Nearest
     };
-    entityIDTexture = Renderer::GetGraphicsContext()->CreateTexture2D(entityIDTextureSpec);
+    entityIDTexture = Renderer::Instance().CreateTexture2D(entityIDTextureSpec);
     
     ImageSpecification depthImageSpec
     {
@@ -139,7 +139,7 @@ GeometryPass::GeometryPass(Observer<GlobalRenderResource> globalRenderResource, 
         .height = 720,
         .samples = 1,
     };
-    depthImage = Renderer::GetGraphicsContext()->CreateImage(depthImageSpec);
+    depthImage = Renderer::Instance().CreateImage(depthImageSpec);
     
     FrameBufferSpecification frameBufferSpec
     {
@@ -147,15 +147,15 @@ GeometryPass::GeometryPass(Observer<GlobalRenderResource> globalRenderResource, 
         .height = 720,
         .attachments = 
         {
-            positionTexture->GetImage(),
-            normalTexture->GetImage(),
-            albedoTexture->GetImage(),
-            entityIDTexture->GetImage(),
+            Renderer::Instance().GetTexture2D(positionTexture)->GetImage(),
+            Renderer::Instance().GetTexture2D(normalTexture)->GetImage(),
+            Renderer::Instance().GetTexture2D(albedoTexture)->GetImage(),
+            Renderer::Instance().GetTexture2D(entityIDTexture)->GetImage(),
             depthImage
         },
         .renderPass = renderPass,
     };
-    frameBuffer = Renderer::GetGraphicsContext()->CreateFrameBuffer(frameBufferSpec);
+    frameBuffer = Renderer::Instance().CreateFrameBuffer(frameBufferSpec);
 }
 
 void GeometryPass::Render(const FrameData &frameData)
@@ -173,34 +173,35 @@ void GeometryPass::Render(const FrameData &frameData)
            {.type = AttachmentType::Depth, .format = ImageFormat::DEPTH24STENCIL8, .floatValue = 1.0f }
         }
     };
-    RenderCommand::BeginRenderPass(beginInfo);
-    
-    RenderCommand::BindPipeline(blinnPhongPipeline);
+    Renderer::Instance().CmdBeginRenderPass(beginInfo);
+
+    Renderer::Instance().CmdBindGraphicsPipeline(blinnPhongPipeline);
     
     for (auto renderable : frameData.renderables)
     {
         Ref<MeshAsset> meshAsset = AssetManager::GetAsset(renderable.mesh).As<MeshAsset>();
         Ref<MaterialAsset> materialAsset = AssetManager::GetAsset(renderable.material).As<MaterialAsset>();
         
-        RenderCommand::BindMaterial(Renderer::GetMaterial(materialAsset));
+        Renderer::Instance().CmdBindSurfaceMaterial(Renderer::Instance().GetSurfaceMaterialFromAsset(materialAsset));
         
-        RenderCommand::BindObjectRenderResource(renderable.index, objectRenderResource);
+        Renderer::Instance().CmdBindObjectShaderMaterial(renderable.index, objectShaderMaterial);
 
-        auto mesh = Renderer::GetMesh(meshAsset);
-        RenderCommand::DrawIndexed(mesh->GetVertexBuffer(), mesh->GetIndexBuffer());
+        auto mesh = Renderer::Instance().GetMeshFromAsset(meshAsset);
+        auto meshObj = Renderer::Instance().GetMesh(mesh);
+        Renderer::Instance().CmdDrawIndexed(meshObj->GetVertexBuffer(), meshObj->GetIndexBuffer());
     }
 
-    RenderCommand::EndRenderPass();
+    Renderer::Instance().CmdEndRenderPass();
 }
 
 void GeometryPass::Resize(uint32_t width, uint32_t height)
 {
-    positionTexture->Resize(width, height);
-    normalTexture->Resize(width, height);
-    albedoTexture->Resize(width, height);
-    entityIDTexture->Resize(width, height);
-    depthImage->Resize(width, height);
-    frameBuffer->Resize(width, height);
+    Renderer::Instance().ResizeTexture2D(positionTexture, width, height);
+    Renderer::Instance().ResizeTexture2D(normalTexture, width, height);
+    Renderer::Instance().ResizeTexture2D(albedoTexture, width, height);
+    Renderer::Instance().ResizeTexture2D(entityIDTexture, width, height);
+    Renderer::Instance().ResizeImage(depthImage, width, height);
+    Renderer::Instance().ResizeFrameBuffer(frameBuffer, width, height);
 }
 
 }

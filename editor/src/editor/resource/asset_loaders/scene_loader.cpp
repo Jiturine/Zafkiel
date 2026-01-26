@@ -1,4 +1,4 @@
-#include "scene_loader.h"
+#include "editor/resource/asset_loaders/scene_loader.h"
 #include "editor/resource/editor_asset_manager.h"
 
 namespace Zafkiel 

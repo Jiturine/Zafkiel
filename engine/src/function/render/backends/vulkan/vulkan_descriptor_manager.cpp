@@ -1,8 +1,8 @@
-#include "vulkan_descriptor_manager.h"
+#include "function/render/backends/vulkan/vulkan_descriptor_manager.h"
 
 namespace Zafkiel 
 {
-VulkanDescriptorManager::VulkanDescriptorManager(const Scope<VulkanDevice> &device)
+VulkanDescriptorManager::VulkanDescriptorManager(Borrow<VulkanDevice> device)
     : descriptorPool(nullptr)
 {
     vk::DescriptorPoolCreateInfo descriptorPoolCreateInfo;

@@ -1,4 +1,4 @@
-#include "opengl_vertex_buffer.h"
+#include "function/render/backends/opengl/opengl_vertex_buffer.h"
 #include <glad/glad.h>
 
 namespace Zafkiel
@@ -57,34 +57,9 @@ uint32_t ShaderDataTypeCount(ShaderFundamentalType type)
     return 0;
 }
 
-OpenGLVertexBufferBackend::OpenGLVertexBufferBackend(const float *vertices, uint32_t size)
-{
-    glCreateBuffers(1, &rendererID);
-    glBindBuffer(GL_ARRAY_BUFFER, rendererID);
-    glBufferData(GL_ARRAY_BUFFER, size, vertices, GL_STATIC_DRAW);
-}
 OpenGLVertexBufferBackend::~OpenGLVertexBufferBackend()
 {
     glDeleteBuffers(1, &rendererID);
-}
-/* void OpenGLVertexBufferBackend::Bind() const
-{
-    glBindBuffer(GL_ARRAY_BUFFER, rendererID);
-}
-void OpenGLVertexBufferBackend::Unbind() const
-{
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-}
-void OpenGLVertexBufferBackend::SetData(Buffer buffer)
-{
-    glBindBuffer(GL_ARRAY_BUFFER, rendererID);
-    glBufferSubData(GL_ARRAY_BUFFER, 0, buffer.size(), buffer.data());
-} */
-
-Scope<VertexBuffer> OpenGLVertexBufferFactory::Create(const float *vertices, uint32_t size)
-{
-    auto backend = CreateScope<OpenGLVertexBufferBackend>(vertices, size);
-    return CreateScope<VertexBuffer>(vertices, size, std::move(backend));
 }
 
 }

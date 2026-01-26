@@ -26,10 +26,11 @@ class EditorContext final
     ~EditorContext() = default;
     static void Init()
     {
-        instance.reset(new EditorContext);
+        instance = new EditorContext;
     }
     static void Destroy()
     {
+        delete instance;
         instance = nullptr;
     }
     
@@ -41,7 +42,7 @@ class EditorContext final
     
     void SetSelectedEntityImpl(Entity entity);
 
-    inline static Scope<EditorContext> instance;
+    inline static EditorContext *instance;
 };
 
 }

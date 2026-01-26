@@ -1,6 +1,6 @@
 #pragma once
 #include "function/render/shader_module.h"
-#include <vulkan/vulkan_raii.hpp>
+#include "function/render/backends/vulkan/vulkan_device.h"
 
 namespace Zafkiel
 {
@@ -8,12 +8,11 @@ namespace Zafkiel
 class VulkanShaderModuleBackend final : public ShaderModuleBackend
 {
   public:
-    VulkanShaderModuleBackend() : shaderModule(nullptr) {}
+    VulkanShaderModuleBackend(vk::raii::ShaderModule shaderModule)
+        : shaderModule(std::move(shaderModule)) {}
     vk::raii::ShaderModule &GetHandle() { return shaderModule; }
     const vk::raii::ShaderModule &GetHandle() const { return shaderModule; }
 
-    friend class VulkanVertexModuleBackend;
-    friend class VulkanFragmentModuleBackend;
   private:
     vk::raii::ShaderModule shaderModule;
 };

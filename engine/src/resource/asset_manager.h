@@ -1,6 +1,6 @@
 #pragma once
 
-#include "asset.h"
+#include "resource/asset.h"
 
 namespace Zafkiel
 {
@@ -15,9 +15,11 @@ class AssetManager
     static Ref<AssetMetadata> GetAssetMetadata(AssetHandle handle) { return instancePtr->GetAssetMetadataImpl(handle); }
     static bool IsAssetValid(AssetHandle handle) { return instancePtr->IsAssetValidImpl(handle); }
     static bool IsAssetLoaded(AssetHandle handle) { return instancePtr->IsAssetLoadedImpl(handle); }
+  
+    static AssetManager &Instance() { return *instancePtr; }
 
   protected:
-    inline static Observer<AssetManager> instancePtr;
+    inline static AssetManager *instancePtr;
 
     virtual Ref<Asset> GetAssetImpl(AssetHandle handle) = 0;
     virtual Ref<Asset> LoadAssetImpl(AssetHandle handle) = 0;

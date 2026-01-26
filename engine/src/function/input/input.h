@@ -1,5 +1,5 @@
 #pragma once
-#include "keycode.h"
+#include "function/input/keycode.h"
 #include <SDL3/SDL.h>
 
 namespace Zafkiel

@@ -1,5 +1,5 @@
 #pragma once
-#include "shader_reflection.h"
+#include "function/render/shader_reflection.h"
 
 namespace Zafkiel
 {
@@ -15,8 +15,7 @@ class UniformBuffer final
   public:
     UniformBuffer(uint32_t size, Scope<UniformBufferBackend> backend)
         : size(size), backend(std::move(backend)) {}
-    Observer<UniformBufferBackend> GetBackend() { return backend; }
-    const Observer<UniformBufferBackend> GetBackend() const { return backend; }
+    Borrow<UniformBufferBackend> GetBackend() const { return Borrow(backend); }
     uint32_t GetSize() const { return size; }
   private:
     Scope<UniformBufferBackend> backend;

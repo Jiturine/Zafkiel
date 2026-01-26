@@ -1,5 +1,5 @@
 #pragma once
-#include "project.h"
+#include "editor/project/project.h"
 
 namespace Zafkiel 
 {
@@ -11,13 +11,14 @@ class ProjectManager final
     ~ProjectManager() = default;
     static void Init()
     {
-        instance.reset(new ProjectManager);
+        instance = new ProjectManager;
     }
     static void Destroy()
     {
+        delete instance;
         instance = nullptr;
     }
-    static Scope<ProjectManager> &Instance() { return instance; }
+    static ProjectManager &Instance() { return *instance; }
     
     static Ref<Project> CreateProject(const ProjectConfig &config) { return instance->CreateProjectImpl(config); }
     
@@ -28,7 +29,7 @@ class ProjectManager final
     
     Ref<Project> currentProject;
 
-    inline static Scope<ProjectManager> instance;
+    inline static ProjectManager *instance = nullptr;
 };
 
 }

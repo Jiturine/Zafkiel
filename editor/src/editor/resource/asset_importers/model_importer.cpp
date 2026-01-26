@@ -1,4 +1,4 @@
-#include "model_importer.h"
+#include "editor/resource/asset_importers/model_importer.h"
 #include "core/meta/serializer/binary_serializer.h"
 #include "editor/resource/editor_asset_manager.h"
 #include "editor/resource/asset_metadata_serializers/material_metadata_serializer.h"
@@ -50,11 +50,12 @@ AssetHandle ModelImporter::ImportMaterial(const AssimpMaterial &material)
     // }
 
     std::vector<AssetHandle> dependencies;
-    for (auto &[paramName, param] : materialAsset.GetParameters())
+    for (auto [binding, resource] : std::views::enumerate(materialAsset.GetResources()))
     {
-        if (param.type->GetCategory() == ShaderReflection::ResourceTypeCategory::SampledImage)
+        if (!resource) continue;
+        if (resource.value().type->GetCategory() == ShaderReflection::ResourceTypeCategory::SampledImage)
         {
-            dependencies.push_back(param.handle);
+            dependencies.push_back(resource.value().handle);
         }
     }
 

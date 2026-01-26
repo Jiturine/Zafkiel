@@ -1,4 +1,4 @@
-#include "serializer_base.h"
+#include "core/meta/serializer/serializer_base.h"
 
 namespace Zafkiel
 {

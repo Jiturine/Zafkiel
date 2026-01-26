@@ -1,5 +1,5 @@
 #pragma once
-#include "function/render/material.h"
+#include "function/render/surface_material.h"
 #include "function/render/mesh.h"
 #include "function/render/graphics_context.h"
 #include "function/scene/entity.h"

@@ -1,4 +1,4 @@
-#include "toolbar_panel.h"
+#include "editor/panels/toolbar_panel.h"
 #include "core/meta/serializer/yaml_serializer.h"
 #include "editor/editorGUI/editorGUI.h"
 #include "function/scene/components.h"

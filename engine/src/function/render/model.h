@@ -1,16 +1,16 @@
 #pragma once
 #include "core/base/memory.h"
 #include "resource/asset.h"
-#include "mesh.h"
-#include "material.h"
+#include "function/render/mesh.h"
+#include "function/render/surface_material.h"
 
 namespace Zafkiel
 {
 
 struct ModelMesh
 {
-    Observer<Mesh> mesh;
-    Observer<Material> meshes;
+    RenderHandle mesh;
+    RenderHandle materials;
 };
 
 struct ModelNode
@@ -24,9 +24,8 @@ struct ModelNode
 class Model
 {
   public:
-    Model(ModelNode rootNode) : rootNode(rootNode)
-    {
-    }
+    Model(ModelNode rootNode) : rootNode(rootNode) {}
+
     const ModelNode &GetRootNode() const { return rootNode; }
 
   private:

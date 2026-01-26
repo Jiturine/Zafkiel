@@ -1,7 +1,7 @@
 #pragma once
 
 #include "resource/asset.h"
-#include "image.h"
+#include "function/render/image.h"
 
 namespace Zafkiel
 {
@@ -47,32 +47,19 @@ class Texture2DBackend
 class Texture2D final : public Texture
 {
   public:
-    Texture2D(const Texture2DSpecification &spec, Scope<Texture2DBackend> backend)
-        : backend(std::move(backend)) {}
-    uint32_t GetWidth() const { return image->GetWidth(); }
-    uint32_t GetHeight() const { return image->GetHeight(); }
-    const Observer<Image> GetImage() const { return image; }
-    Observer<Texture2DBackend> GetBackend() { return backend; }
-    const Observer<Texture2DBackend> GetBackend() const { return backend; }
+    Texture2D(const Texture2DSpecification &spec, RenderHandle image, Scope<Texture2DBackend> backend)
+        : spec(spec), image(image), backend(std::move(backend)) {}
 
-    void Resize(uint32_t width, uint32_t height) { image->Resize(width, height); }
-    
-    template<typename Derived>
-    friend class Texture2DFactory;
+    RenderHandle GetImage() const { return image; }
+  
+    const Texture2DSpecification &GetSpecification() const { return spec; }
+
+    Borrow<Texture2DBackend> GetBackend() const { return Borrow(backend); }
 
   private:
-    Scope<Image> image;
+    Texture2DSpecification spec;
+    RenderHandle image;
     Scope<Texture2DBackend> backend;
-};
-
-template<typename Derived>
-class Texture2DFactory
-{
-  protected:
-    static Scope<Image> &AccessImage(const Scope<Texture2D> &texture2D)
-    {
-        return texture2D->image;
-    }
 };
 
 class CubeMap : public Texture

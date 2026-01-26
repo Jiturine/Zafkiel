@@ -1,6 +1,6 @@
 #pragma once
-#include "texture.h"
-#include "render_pass.h"
+#include "function/render/texture.h"
+#include "function/render/render_pass.h"
 
 namespace Zafkiel
 {
@@ -8,38 +8,31 @@ namespace Zafkiel
 struct FrameBufferSpecification
 {
     uint32_t width, height;
-    std::vector<Observer<Image>> attachments;
-    Observer<RenderPass> renderPass;
+    std::vector<RenderHandle> attachments;
+    RenderHandle renderPass;
 };
 
 class FrameBufferBackend
 {
   public:
     virtual ~FrameBufferBackend() = default;
-    virtual void Resize(uint32_t width, uint32_t height) = 0;
 };
 
 class FrameBuffer final
 {
   public:
     FrameBuffer(const FrameBufferSpecification &spec, Scope<FrameBufferBackend> backend)
-        : width(spec.width), height(spec.height), backend(std::move(backend)) {}
-    uint32_t GetWidth() const { return width; }
-    uint32_t GetHeight() const { return height; }
+        : spec(spec), backend(std::move(backend)) {}
 
-    void Resize(uint32_t width, uint32_t height)
-    {
-        this->width = width;
-        this->height = height;
-        backend->Resize(width, height);
-    }
-    
-    Observer<FrameBufferBackend> GetBackend() { return backend; }
-    const Observer<FrameBufferBackend> GetBackend() const { return backend; }
+    uint32_t GetWidth() const { return spec.width; }
+    uint32_t GetHeight() const { return spec.height; }
+
+    Borrow<FrameBufferBackend> GetBackend() const { return Borrow(backend); }
+  
+    const FrameBufferSpecification &GetSpecification() const { return spec; }
 
   private:
-    uint32_t width;
-    uint32_t height;
+    FrameBufferSpecification spec;
     Scope<FrameBufferBackend> backend;
 
 };

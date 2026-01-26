@@ -9,24 +9,27 @@ class EditorSceneManager final : public SceneManager
   public:
     static void Init()
     {
-        instance.reset(new EditorSceneManager);
-        SceneManager::instancePtr = instance;
+        instance = new EditorSceneManager;
+        SceneManager::Instance().instancePtr = instance;
     }
     static void Destroy()
     {
+        delete instance;
         instance = nullptr;
-        SceneManager::instancePtr = nullptr;
+        SceneManager::Instance().instancePtr = nullptr;
     }
+
+    static EditorSceneManager &Instance() { return *instance; }
+
+    virtual Borrow<Scene> GetActiveScene() const override { return Borrow(scenes[activeSceneIndex]); }
+    virtual MutBorrow<Scene> GetActiveSceneMut() override { return MutBorrow(scenes[activeSceneIndex]); }
     
-    static Observer<Scene> OpenScene(const Path &filePath) { return instance->OpenSceneImpl(filePath); }
+    Borrow<Scene> OpenScene(const Path &filePath);
 
   private:
-    inline static Scope<EditorSceneManager> instance;
+    inline static EditorSceneManager *instance = nullptr;
 
-    Observer<Scene> GetActiveSceneImpl() override { return activeScene; }
-    Observer<Scene> OpenSceneImpl(const Path &filePath);
-
-    Observer<Scene> activeScene;
+    int activeSceneIndex = -1;
     std::vector<Scope<Scene>> scenes;
 };
 

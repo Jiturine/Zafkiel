@@ -289,52 +289,68 @@ private:
     T* m_Instance = nullptr;
 };
 
-template<typename T>
-class Observer {
-    T* ptr = nullptr;
+template <typename T>
+class MutBorrow;
 
-public:
-    Observer() = default;
-    Observer(std::nullptr_t) : ptr(nullptr) {}
+template <typename T>
+class Borrow
+{
+  public:
+    explicit Borrow(const T& t) : ptr(&t) {}
+    explicit Borrow(const Scope<T>& p) : ptr(p.get()) {}
+    Borrow(const MutBorrow<T>& t) : ptr(t.Ptr()) {}
+    
+    template <typename U>
+    Borrow(const Borrow<U> &other) requires std::is_base_of_v<T, U> : ptr(other.get()) {}
+
+    Borrow(const Borrow<T> &) = default;
+    Borrow &operator=(const Borrow<T> &) = default;
+
+    const T *operator->() const { return ptr; }
+    const T &operator*() const { return *ptr; }
+
+    const T *get() const { return ptr; }
+
     template<typename U>
-        requires std::is_convertible_v<U*, T*>
-    Observer(U* p) : ptr(p) {}
-    
-    Observer(const Scope<T> &s) : ptr(s.get()) {} 
-    template <typename U>
-        requires std::is_base_of_v<T, U>
-    Observer(const Scope<U> &s) : ptr(s.get()) {}
+    Borrow<U> As() const { return Borrow<U>(*static_cast<const U *>(ptr)); }
 
-    Observer(Scope<T>&&) = delete;
+  private:
+    const T* ptr;
+};
 
-    template <typename U>
-        requires std::is_convertible_v<U*, T*>
-    Observer(const Observer<U> &s) : ptr(s.get()) {}
-    
-    T* get() const { return ptr; }
+template <typename T>
+class MutBorrow
+{
+  public:
+    explicit MutBorrow(T& t) : ptr(&t) {}
+    explicit MutBorrow(Scope<T>& p) : ptr(p.get()) {}
+
+    MutBorrow(const MutBorrow&) = delete;
+    MutBorrow& operator=(const MutBorrow&) = delete;
+
+    MutBorrow(MutBorrow&& other) noexcept : ptr(other.ptr) { other.ptr = nullptr; }
+    MutBorrow& operator=(MutBorrow&& other) noexcept 
+    {
+        if (this != &other) {
+            ptr = other.ptr;
+            other.ptr = nullptr;
+        }
+        return *this;
+    }
+
+    template<typename U>
+    MutBorrow<U> As() const { return MutBorrow<U>(*static_cast<U *>(ptr)); }
+
     T* operator->() { return ptr; }
     T& operator*() { return *ptr; }
 
-    const T* operator->() const { return ptr; }
-    const T& operator*() const { return *ptr; }
-    
-    template<typename U>
-    Observer<U> As() 
-    {
-        return static_cast<U*>(ptr);
-    }
-    template<typename U>
-    Observer<const U> As() const
-    {
-        return static_cast<const U*>(ptr);
-    }
+    T *Ptr() const { return ptr; }
 
-    explicit operator bool() const { return ptr != nullptr; }
+    operator bool() const { return ptr != nullptr; }
 
-    bool operator==(const Observer& other) const { return ptr == other.ptr; }
-    bool operator!=(const Observer& other) const { return ptr != other.ptr; }
+  private:
+    T *ptr;
 };
-
 }
 
 namespace std
@@ -357,8 +373,8 @@ struct hash<Zafkiel::Scope<T>> {
 };
 
 template<typename T>
-struct hash<Zafkiel::Observer<T>> {
-    size_t operator()(const Zafkiel::Observer<T>& p) const noexcept {
+struct hash<Zafkiel::Borrow<T>> {
+    size_t operator()(const Zafkiel::Borrow<T>& p) const noexcept {
         return std::hash<T*>()(p.get());
     }
 };

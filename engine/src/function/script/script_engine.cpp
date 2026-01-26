@@ -1,10 +1,10 @@
-#include "script_engine.h"
+#include "function/script/script_engine.h"
 #include "function/scene/components.h"
 #include "mono/metadata/appdomain.h"
 #include "mono/metadata/attrdefs.h"
 #include "mono/metadata/class.h"
 #include "mono/metadata/mono-gc.h"
-#include "script_glue.h"
+#include "function/script/script_glue.h"
 #include <cstring>
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/loader.h>

@@ -1,7 +1,6 @@
 #pragma once
-#include "resource/asset.h"
-#include "vertex_buffer.h"
-#include "index_buffer.h"
+#include "function/render/vertex_buffer.h"
+#include "function/render/index_buffer.h"
 
 namespace Zafkiel
 {
@@ -16,13 +15,15 @@ struct MeshVertex
 class Mesh final
 {
   public:
-    Mesh(Scope<VertexBuffer> vertexBuffer, Scope<IndexBuffer> indexBuffer);
-    const Observer<VertexBuffer> GetVertexBuffer() const { return vertexBuffer; }
-    const Observer<IndexBuffer> GetIndexBuffer() const { return indexBuffer; }
+    Mesh(RenderHandle vertexBuffer, RenderHandle indexBuffer)
+        : vertexBuffer(vertexBuffer), indexBuffer(indexBuffer) {}
+  
+    RenderHandle GetVertexBuffer() const { return vertexBuffer; }
+    RenderHandle GetIndexBuffer() const { return indexBuffer; }
 
   private:
-    Scope<VertexBuffer> vertexBuffer;
-    Scope<IndexBuffer> indexBuffer;
+    RenderHandle vertexBuffer;
+    RenderHandle indexBuffer;
 };
 
 }

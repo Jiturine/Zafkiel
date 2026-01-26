@@ -1,5 +1,5 @@
-#include "world.h"
-#include "components.h"
+#include "function/scene/world.h"
+#include "function/scene/components.h"
 #include "core/meta/serializer/custom_serialize.h"
 #include "function/render/model.h"
 #include "function/script/script_engine.h"

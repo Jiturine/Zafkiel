@@ -1,9 +1,9 @@
-#include "script_glue.h"
+#include "function/script/script_glue.h"
 #include "function/scene/components.h"
 #include "function/scene/entity.h"
 #include <entt/entity/fwd.hpp>
 #include "mono/utils/mono-publib.h"
-#include "script_engine.h"
+#include "function/script/script_engine.h"
 #include <mono/metadata/loader.h>
 #include <mono/metadata/metadata.h>
 #include <mono/metadata/object.h>
@@ -83,7 +83,7 @@ static bool Entity_HasComponent(uint64_t uuid, MonoReflectionType *componentType
     MonoType *type = mono_reflection_type_get_type(componentType);
     std::string typeName = mono_type_get_name(type);
     assert(entityHasComponentFuncs.contains(typeName));
-    Entity entity = SceneManager::GetActiveScene()->GetWorld().GetEntityByUUID(uuid);
+    Entity entity = SceneManager::Instance().Instance().GetActiveScene()->GetWorld().GetEntityByUUID(uuid);
     return entityHasComponentFuncs[typeName](entity);
 }
 
@@ -91,7 +91,7 @@ static bool Entity_HasScript(uint64_t uuid, MonoReflectionType *scriptType)
 {
     MonoType *type = mono_reflection_type_get_type(scriptType);
     std::string typeName = mono_type_get_name(type);
-    return ScriptEngine::Instance()->HasScriptInstance(uuid, typeName);
+    return ScriptEngine::HasScriptInstance(uuid, typeName);
 }
 
 static MonoObject *Entity_GetScript(uint64_t uuid, MonoReflectionType *scriptType)
@@ -103,74 +103,74 @@ static MonoObject *Entity_GetScript(uint64_t uuid, MonoReflectionType *scriptTyp
 
 static void Entity_GetPosition(uint64_t uuid, vec3 *outPosition)
 {
-    Entity entity = SceneManager::GetActiveScene()->GetWorld().GetEntityByUUID(uuid);
+    Entity entity = SceneManager::Instance().GetActiveScene()->GetWorld().GetEntityByUUID(uuid);
     *outPosition = entity.GetComponent<TransformComponent>().position;
 }
 
 static void Entity_SetPosition(uint64_t uuid, vec3 *position)
 {
-    Entity entity = SceneManager::GetActiveScene()->GetWorld().GetEntityByUUID(uuid);
+    Entity entity = SceneManager::Instance().GetActiveScene()->GetWorld().GetEntityByUUID(uuid);
     entity.GetComponent<TransformComponent>().SetPosition(*position);
 }
 
 static void Entity_GetRotation(uint64_t uuid, quat *outRotation)
 {
-    Entity entity = SceneManager::GetActiveScene()->GetWorld().GetEntityByUUID(uuid);
+    Entity entity = SceneManager::Instance().GetActiveScene()->GetWorld().GetEntityByUUID(uuid);
     *outRotation = entity.GetComponent<TransformComponent>().rotation;
 }
 
 static void Entity_SetRotation(uint64_t uuid, quat *rotation)
 {
-    Entity entity = SceneManager::GetActiveScene()->GetWorld().GetEntityByUUID(uuid);
+    Entity entity = SceneManager::Instance().GetActiveScene()->GetWorld().GetEntityByUUID(uuid);
     entity.GetComponent<TransformComponent>().SetRotation(*rotation);
 }
 
 static void Entity_GetScale(uint64_t uuid, vec3 *outScale)
 {
-    Entity entity = SceneManager::GetActiveScene()->GetWorld().GetEntityByUUID(uuid);
+    Entity entity = SceneManager::Instance().GetActiveScene()->GetWorld().GetEntityByUUID(uuid);
     *outScale = entity.GetComponent<TransformComponent>().scale;
 }
 
 static void Entity_SetScale(uint64_t uuid, vec3 *scale)
 {
-    Entity entity = SceneManager::GetActiveScene()->GetWorld().GetEntityByUUID(uuid);
+    Entity entity = SceneManager::Instance().GetActiveScene()->GetWorld().GetEntityByUUID(uuid);
     entity.GetComponent<TransformComponent>().SetScale(*scale);
 }
 
 static void Transform_GetPosition(uint64_t uuid, vec3 *outPosition)
 {
-    Entity entity = SceneManager::GetActiveScene()->GetWorld().GetEntityByUUID(uuid);
+    Entity entity = SceneManager::Instance().GetActiveScene()->GetWorld().GetEntityByUUID(uuid);
     *outPosition = entity.GetComponent<TransformComponent>().position;
 }
 
 static void Transform_SetPosition(uint64_t uuid, vec3 *position)
 {
-    Entity entity = SceneManager::GetActiveScene()->GetWorld().GetEntityByUUID(uuid);
+    Entity entity = SceneManager::Instance().GetActiveScene()->GetWorld().GetEntityByUUID(uuid);
     entity.GetComponent<TransformComponent>().SetPosition(*position);
 }
 
 static void Transform_GetRotation(uint64_t uuid, quat *outRotation)
 {
-    Entity entity = SceneManager::GetActiveScene()->GetWorld().GetEntityByUUID(uuid);
+    Entity entity = SceneManager::Instance().GetActiveScene()->GetWorld().GetEntityByUUID(uuid);
     *outRotation = entity.GetComponent<TransformComponent>().rotation;
 }
 
 static void Transform_SetRotation(uint64_t uuid, quat *rotation)
 {
-    Entity entity = SceneManager::GetActiveScene()->GetWorld().GetEntityByUUID(uuid);
+    Entity entity = SceneManager::Instance().GetActiveScene()->GetWorld().GetEntityByUUID(uuid);
 
     entity.GetComponent<TransformComponent>().SetRotation(*rotation);
 }
 
 static void Transform_GetScale(uint64_t uuid, vec3 *outScale)
 {
-    Entity entity = SceneManager::GetActiveScene()->GetWorld().GetEntityByUUID(uuid);
+    Entity entity = SceneManager::Instance().GetActiveScene()->GetWorld().GetEntityByUUID(uuid);
     *outScale = entity.GetComponent<TransformComponent>().scale;
 }
 
 static void Transform_SetScale(uint64_t uuid, vec3 *scale)
 {
-    Entity entity = SceneManager::GetActiveScene()->GetWorld().GetEntityByUUID(uuid);
+    Entity entity = SceneManager::Instance().GetActiveScene()->GetWorld().GetEntityByUUID(uuid);
     entity.GetComponent<TransformComponent>().SetScale(*scale);
 }
 

@@ -36,11 +36,13 @@ public:
 class VulkanDevice
 {
   public:
-    VulkanDevice(const Scope<VulkanPhysicalDevice>& physicalDevice);
+    VulkanDevice(Borrow<VulkanPhysicalDevice> physicalDevice);
     vk::raii::Device &GetHandle() { return device; }
     const vk::raii::Device &GetHandle() const { return device; }
     vk::raii::Queue &GetGraphicsQueue() { return graphicsQueue; }
+    const vk::raii::Queue &GetGraphicsQueue() const { return graphicsQueue; }
     vk::raii::Queue &GetPresentQueue() { return presentQueue; }
+    const vk::raii::Queue &GetPresentQueue() const { return presentQueue; }
 
     friend class VulkanSwapchain;
 

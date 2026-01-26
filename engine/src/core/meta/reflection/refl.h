@@ -1,6 +1,6 @@
 #pragma once
 
-#include "register.h"
+#include "core/meta/reflection/register.h"
 
 #ifdef __REFLECTION_ENABLE__
     #define refl clang::annotate("reflect")

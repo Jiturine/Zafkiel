@@ -9,23 +9,25 @@ namespace Zafkiel
 class ShadingPass 
 {
   public:
-    ShadingPass(Observer<GlobalRenderResource> globalRenderResource, Observer<Texture2D> positionTexture, Observer<Texture2D> normalTexture, Observer<Texture2D> albedoTexture);
+    ShadingPass(RenderHandle globalMaterial, RenderHandle positionTexture, RenderHandle normalTexture, RenderHandle albedoTexture);
 
-    Scope<GraphicsShader> shader;
-    Scope<RenderPassResource> renderPassResource;
-    Scope<GraphicsPipeline> pipeline;
-    Scope<RenderPass> renderPass;
+    RenderHandle shader;
+    RenderHandle passMaterial;
+    RenderHandle pipeline;
+    RenderHandle renderPass;
 
-    Scope<VertexBuffer> vertexBuffer;
-    Scope<IndexBuffer> indexBuffer;
+    RenderHandle vertexBuffer;
+    RenderHandle indexBuffer;
 
-    Observer<Texture2D> positionTexture;
-    Observer<Texture2D> normalTexture;
-    Observer<Texture2D> albedoTexture;
+    RenderHandle positionTexture;
+    RenderHandle normalTexture;
+    RenderHandle albedoTexture;
 
-    Scope<Texture2D> outputColorTexture;
+    RenderHandle outputColorTexture;
 
-    Scope<FrameBuffer> frameBuffer;
+    RenderHandle frameBuffer;
+    
+    RenderHandle globalMaterial;
 
     void Render(const FrameData &frameData);
     void Resize(uint32_t width, uint32_t height);

@@ -4,7 +4,7 @@
 #include "editor/resource/assimp_importer.h"
 #include "editor/resource/assimp_importer.h"
 #include "editor/resource/editor_asset.h"
-#include "function/render/material.h"
+#include "function/render/surface_material.h"
 #include "function/render/model.h"
 #include "resource/asset_manager.h"
 #include "platform/filesystem/filesystem.h"
@@ -41,16 +41,17 @@ class EditorAssetManager final : public AssetManager
 
     static void Init()
     {
-        instance.reset(new EditorAssetManager);
+        instance = new EditorAssetManager;
         AssetManager::instancePtr = instance;
     }
     static void Destroy()
     {
+        delete instance;
         instance = nullptr;
         AssetManager::instancePtr = nullptr;
     }
 
-    static Observer<EditorAssetManager> Instance() { return instance; }
+    static EditorAssetManager &Instance() { return *instance; }
     
     friend class MaterialImporter;
     friend class ModelImporter;
@@ -59,7 +60,7 @@ class EditorAssetManager final : public AssetManager
 
     inline static const AssetHandle unlitShaderHandle = 1111111111111111111;
   private:
-    inline static Scope<EditorAssetManager> instance;
+    inline static EditorAssetManager *instance = nullptr;
 
     virtual Ref<Asset> GetAssetImpl(AssetHandle handle) override;
     virtual Ref<AssetMetadata> GetAssetMetadataImpl(AssetHandle handle) override;

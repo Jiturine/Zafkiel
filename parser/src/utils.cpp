@@ -42,7 +42,7 @@ std::string GetNameWithoutContainer(std::string name)
     size_t left = name.find_first_of('<') + 1;
     size_t right = name.find_last_of('>');
     if (left > 0 && right < name.size() && left < right) { return name.substr(left, right - left); }
-    else { return nullptr; }
+    else { return {}; }
 }
 
 std::string GetStringWithoutQuot(std::string input)

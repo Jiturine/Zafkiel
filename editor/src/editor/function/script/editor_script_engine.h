@@ -18,19 +18,20 @@ class EditorScriptEngine final : public ScriptEngine
 
     static void Init()
     {
-        instance.reset(new EditorScriptEngine);
+        instance = new EditorScriptEngine;
         ScriptEngine::instancePtr = instance;
     }
 
     static void Destroy()
     {
+        delete instance;
         instance = nullptr;
         ScriptEngine::instancePtr = nullptr;
     }
 
-    static Observer<EditorScriptEngine> Instance()
+    static const EditorScriptEngine& Instance()
     {
-        return instance;
+        return *instance;
     }
 
     static void PrintAssemblyTypes(MonoImage *image) { instance->PrintAssemblyTypesImpl(image); }
@@ -68,7 +69,7 @@ class EditorScriptEngine final : public ScriptEngine
     bool isRuntime = false;
 
   private:
-    inline static Scope<EditorScriptEngine> instance;  
+    inline static EditorScriptEngine *instance = nullptr;
 
     virtual bool HasScriptInstanceImpl(UUID uuid, const std::string &scriptName) const override;
     virtual Ref<ScriptInstance> GetScriptInstanceImpl(UUID uuid, const std::string &scriptName) const override;

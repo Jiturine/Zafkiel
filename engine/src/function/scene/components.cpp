@@ -1,5 +1,5 @@
-#include "components.h"
-#include "entity.h"
+#include "function/scene/components.h"
+#include "function/scene/entity.h"
 #include "function/scene/scene.h"
 #include "function/script/script_engine.h"
 

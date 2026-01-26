@@ -1,5 +1,5 @@
 #pragma once
-#include "panel.h"
+#include "editor/panels/panel.h"
 #include "function/render/texture.h"
 
 namespace Zafkiel

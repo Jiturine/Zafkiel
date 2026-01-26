@@ -1,4 +1,4 @@
-#include "shader_module.h"
+#include "function/render/shader_module.h"
 #include <spirv_cross/spirv_cross.hpp>
 
 namespace Zafkiel
@@ -56,40 +56,6 @@ void ShaderModule::Reflect(Buffer codeBuffer)
 {
     spirv_cross::Compiler compiler(codeBuffer.Data<uint32_t>(), codeBuffer.Size<uint32_t>());
     spirv_cross::ShaderResources resources = compiler.get_shader_resources();
-
-    // for (const auto &uniformBuffer : resources.uniform_buffers)
-    // {
-    //     auto &uniformBufferType = compiler.get_type(uniformBuffer.base_type_id);
-
-    //     UniformBufferLayout uniformBufferLayout
-    //     {
-    //         .name = compiler.get_name(uniformBuffer.base_type_id),
-    //         .binding = compiler.get_decoration(uniformBuffer.id, spv::DecorationBinding),
-    //         .size = static_cast<uint32_t>(compiler.get_declared_struct_size(uniformBufferType)),
-    //     };
-
-    //     for (size_t i = 0; i < uniformBufferType.member_types.size(); i++)
-    //     {
-    //         UniformBufferMemberLayout member
-    //         {
-    //             .name = compiler.get_member_name(uniformBuffer.base_type_id, i),
-    //             .offset = compiler.type_struct_member_offset(uniformBufferType, i),
-    //             .size = static_cast<uint32_t>(compiler.get_declared_struct_member_size(uniformBufferType, i))
-    //         };
-    //         uniformBufferLayout.members.push_back(member);
-    //     }
-    //     reflection.uniformBuffers.push_back(uniformBufferLayout);
-    // }
-
-    // for (const auto &sampled_images : resources.sampled_images)
-    // {
-    //     SampledImageLayout layout
-    //     {
-    //         .name = compiler.get_name(sampled_images.id),
-    //         .binding = compiler.get_decoration(sampled_images.id, spv::DecorationBinding),
-    //     };
-    //     reflection.sampledImages.push_back(layout);
-    // }
 
     uint32_t offset = 0;
     for (const auto &input : resources.stage_inputs)

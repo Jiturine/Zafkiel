@@ -1,6 +1,6 @@
 
 #pragma once
-#include "asset_metadata_serializer.h"
+#include "editor/resource/asset_metadata_serializers/asset_metadata_serializer.h"
 #include "core/meta/serializer/yaml_serializer.h"
 
 namespace Zafkiel

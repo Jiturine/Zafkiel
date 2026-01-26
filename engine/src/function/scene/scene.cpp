@@ -1,5 +1,5 @@
-#include "scene.h"
-#include "components.h"
+#include "function/scene/scene.h"
+#include "function/scene/components.h"
 #include "function/script/script_engine.h"
 
 template <typename... T, typename Func>

@@ -1,4 +1,5 @@
 #pragma once
+#include "function/render/render_handle.h"
 
 namespace Zafkiel
 {
@@ -12,12 +13,10 @@ class IndexBufferBackend
 class IndexBuffer final
 {
   public:
-    IndexBuffer(const uint32_t* indices, uint32_t count, Scope<IndexBufferBackend> backend)
+    IndexBuffer(uint32_t count, Scope<IndexBufferBackend> backend)
         : count(count), backend(std::move(backend)) {}
-        
-    Observer<IndexBufferBackend> GetBackend() { return backend; }
-    const Observer<IndexBufferBackend> GetBackend() const { return backend; }
 
+    Borrow<IndexBufferBackend> GetBackend() const { return Borrow(backend); }
     uint32_t GetCount() const { return count; }
 
   private:

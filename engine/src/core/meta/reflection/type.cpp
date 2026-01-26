@@ -1,4 +1,4 @@
-#include "type.h"
+#include "core/meta/reflection/type.h"
 
 namespace Zafkiel::Reflection
 {
@@ -110,7 +110,7 @@ std::string Enum::GetValueName(const AnyRef &instance) const
             return item.name;
         }
     }
-    return nullptr;
+    return {};
 }
 
 void Enum::SetValue(AnyRef &instance, int value) const

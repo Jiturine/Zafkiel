@@ -1,6 +1,6 @@
 #pragma once
-#include "shader_reflection.h"
-#include "platform/filesystem/filesystem.h"
+#include "function/render/render_handle.h"
+
 namespace Zafkiel
 {
 
@@ -19,12 +19,11 @@ class ShaderBackend
 class Shader
 {
   public:
-    Shader(Scope<ShaderBackend> backend) : backend(std::move(backend)) {}
     virtual ~Shader() = default;
     virtual ShaderType GetShaderType() const = 0;
+    Shader(Scope<ShaderBackend> backend) : backend(std::move(backend)) {}
 
-    Observer<ShaderBackend> GetShaderBackend() { return backend; }
-    const Observer<ShaderBackend> GetShaderBackend() const { return backend; }
+    Borrow<ShaderBackend> GetBackend() const { return Borrow(backend); }
 
   private:
     Scope<ShaderBackend> backend;

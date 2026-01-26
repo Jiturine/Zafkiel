@@ -5,17 +5,9 @@ layout(location = 0) in vec3 a_Position;
 layout(location = 1) in vec3 a_Normal;
 layout(location = 2) in vec2 a_TexCoord;
 
-layout(std140, set = 0, binding = 0) uniform GlobalUBO {
-    vec3 viewPos;
-    mat4 viewMatrix;
-    mat4 projectionMatrix;
-    mat4 viewProjectionMatrix;
-} uGlobal;
+#include "schema/global.zss"
 
-layout(std140, set = 3, binding = 0) uniform MeshObjectUBO {
-    mat4 modelMatrix;
-    uint entityID;
-} uMeshObject;
+#include "schema/mesh_object.zss"
 
 layout(location = 0) out vec3 v_FragPos;
 layout(location = 1) out vec3 v_Normal;
@@ -44,7 +36,7 @@ layout(location = 1) in vec3 v_Normal;
 layout(location = 2) in vec2 v_TexCoord;
 layout(location = 3) flat in uint v_EntityID;
 
-layout(set = 2, binding = 0) uniform sampler2D uDiffuseTexture;
+#include "schema/blinn_phong.zss"
 
 void main()
 {

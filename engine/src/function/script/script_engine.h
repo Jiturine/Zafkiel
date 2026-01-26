@@ -24,8 +24,6 @@ class ScriptEngine
 {
   public:
     virtual ~ScriptEngine() = default;
-    
-    static Observer<ScriptEngine> Instance() { return instancePtr; }
 
     static ScriptInstanceMap &GetScriptInstances(UUID uuid) { return instancePtr->GetScriptInstancesImpl(uuid); }
     static bool HasScriptInstance(UUID uuid, const std::string &scriptName) { return instancePtr->HasScriptInstanceImpl(uuid, scriptName); }
@@ -43,7 +41,7 @@ class ScriptEngine
     virtual void RemoveScriptInstanceImpl(UUID uuid, const std::string &scriptName) = 0;
     virtual bool HasScriptImpl(const std::string &name) const = 0;
     
-    inline static Observer<ScriptEngine> instancePtr;
+    inline static ScriptEngine *instancePtr;
 };
 
 class ScriptDomain : public RefCounted

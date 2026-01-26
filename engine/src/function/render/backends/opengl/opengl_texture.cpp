@@ -1,5 +1,5 @@
-#include "opengl_texture.h"
-#include "opengl_image.h"
+#include "function/render/backends/opengl/opengl_texture.h"
+#include "function/render/backends/opengl/opengl_image.h"
 #include <glad/glad.h>
 
 namespace Zafkiel
@@ -30,91 +30,18 @@ GLenum FilterTypeToOpenGLType(TextureFilter filter)
     }
 }
 
-OpenGLTexture2DBackend::OpenGLTexture2DBackend(const Texture2DSpecification &spec)
+OpenGLTexture2DBackend::OpenGLTexture2DBackend(const Texture2DSpecification &spec, uint32_t imageRendererID)
 {
-    
-}
-
-void OpenGLTexture2DBackend::SetData(Observer<Image> image, Buffer buffer)
-{
-    OpenGLImageFormat format = ImageFormatToOpenGLType(image->GetFormat());
-    uint32_t bytes = ImageFormatToBytes(image->GetFormat());
-    if (buffer.Size<uint8_t>() != image->GetWidth() * image->GetHeight() * bytes)
-    {
-        Log::Error("Data must be entire texture! Expected: {}, Got: {}", image->GetWidth() * image->GetHeight() * bytes, buffer.Size<uint8_t>());
-        return;
-    }
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-    glTextureSubImage2D(image->GetBackend().As<OpenGLImageBackend>()->GetRendererID(), 0, 0, 0,
-        image->GetWidth(), image->GetHeight(), format.dataFormat, format.dataType, buffer.Data<uint8_t>());
-}
-
-Scope<Texture2D> OpenGLTexture2DFactory::Create(const Texture2DSpecification &spec)
-{
-    auto backend = CreateScope<OpenGLTexture2DBackend>(spec);
-
-    ImageSpecification imageSpec
-    {
-        .format = spec.format,
-        .usages = spec.usages,
-        .updateFrequency = spec.updateFrequency,
-        .width = spec.width,
-        .height = spec.height,
-        .samples = spec.samples
-    };
-    auto texture2D = CreateScope<Texture2D>(spec, std::move(backend));
-    AccessImage(texture2D) = OpenGLImageFactory::Create(imageSpec);
-    
     OpenGLImageFormat openglFormat = ImageFormatToOpenGLType(spec.format);
     GLenum wrap = TextureWrapToOpenGLType(spec.wrap);
     GLenum filter = FilterTypeToOpenGLType(spec.filter);
-    uint32_t imageID = texture2D->GetImage()->GetBackend().As<OpenGLImageBackend>()->GetRendererID();
-    
-    glBindTexture(GL_TEXTURE_2D, imageID);
-    glTextureParameteri(imageID, GL_TEXTURE_MIN_FILTER, filter);
-    glTextureParameteri(imageID, GL_TEXTURE_MAG_FILTER, filter);
 
-    glTextureParameteri(imageID, GL_TEXTURE_WRAP_S, wrap);
-    glTextureParameteri(imageID, GL_TEXTURE_WRAP_T, wrap);
-    
-    return texture2D;
-}
+    glBindTexture(GL_TEXTURE_2D, imageRendererID);
+    glTextureParameteri(imageRendererID, GL_TEXTURE_MIN_FILTER, filter);
+    glTextureParameteri(imageRendererID, GL_TEXTURE_MAG_FILTER, filter);
 
-Scope<Texture2D> OpenGLTexture2DFactory::Create(const Texture2DSpecification &spec, Buffer buffer)
-{
-    auto backend = CreateScope<OpenGLTexture2DBackend>(spec);
-
-    ImageSpecification imageSpec
-    {
-        .format = spec.format,
-        .usages = spec.usages,
-        .updateFrequency = spec.updateFrequency,
-        .width = spec.width,
-        .height = spec.height,
-        .samples = spec.samples
-    };
-    auto texture2D = CreateScope<Texture2D>(spec, std::move(backend));
-    if (std::find(imageSpec.usages.begin(), imageSpec.usages.end(), ImageUsage::Upload) == imageSpec.usages.end())
-    {
-        imageSpec.usages.push_back(ImageUsage::Upload);
-    }
-    AccessImage(texture2D) = OpenGLImageFactory::Create(imageSpec);
-    
-    OpenGLImageFormat openglFormat = ImageFormatToOpenGLType(spec.format);
-    GLenum wrap = TextureWrapToOpenGLType(spec.wrap);
-    GLenum filter = FilterTypeToOpenGLType(spec.filter);
-    uint32_t imageID = texture2D->GetImage()->GetBackend().As<OpenGLImageBackend>()->GetRendererID();
-
-    glBindTexture(GL_TEXTURE_2D, imageID);
-    glTextureParameteri(imageID, GL_TEXTURE_MIN_FILTER, filter);
-    glTextureParameteri(imageID, GL_TEXTURE_MAG_FILTER, filter);
-
-    glTextureParameteri(imageID, GL_TEXTURE_WRAP_S, wrap);
-    glTextureParameteri(imageID, GL_TEXTURE_WRAP_T, wrap);
-    
-    texture2D->GetBackend().As<OpenGLTexture2DBackend>()->SetData(texture2D->GetImage(), buffer);
-
-    return texture2D;
+    glTextureParameteri(imageRendererID, GL_TEXTURE_WRAP_S, wrap);
+    glTextureParameteri(imageRendererID, GL_TEXTURE_WRAP_T, wrap);
 }
 
 // OpenGLCubeMap::OpenGLCubeMap(const std::vector<Path> &paths)

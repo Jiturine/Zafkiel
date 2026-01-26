@@ -1,4 +1,4 @@
-#include "editor_context.h"
+#include "editor/editor_context/editor_context.h"
 
 namespace Zafkiel 
 {

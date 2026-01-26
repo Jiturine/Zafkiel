@@ -1,4 +1,4 @@
-#include "maths.h"
+#include "core/maths/maths.h"
 
 namespace Zafkiel
 {
@@ -7,6 +7,8 @@ namespace Maths
 static GraphicsAPI graphicsAPI;
 
 void SetAPI(GraphicsAPI api) { graphicsAPI = api; }
+
+GraphicsAPI GetAPI() { return graphicsAPI; }
 
 mat4 Perspective(float FOV, float aspectRatio, float perspectiveNear, float perspectiveFar)
 {
@@ -19,6 +21,10 @@ mat4 Perspective(float FOV, float aspectRatio, float perspectiveNear, float pers
 
 mat4 Ortho(float left, float right, float bottom, float top, float near, float far)
 {
+    if (graphicsAPI == GraphicsAPI::OpenGL)
+        return glm::ortho(left, right, bottom, top, near, far);
+    else if (graphicsAPI == GraphicsAPI::Vulkan)
+        return glm::orthoZO(left, right, bottom, top, near, far);
     return glm::ortho(left, right, bottom, top, near, far);
 }
 

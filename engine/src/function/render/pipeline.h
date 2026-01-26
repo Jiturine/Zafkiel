@@ -1,4 +1,5 @@
 #pragma once
+#include "function/render/render_handle.h"
 
 namespace Zafkiel 
 {
@@ -21,8 +22,8 @@ class Pipeline
     Pipeline(Scope<PipelineBackend> backend) : backend(std::move(backend)) {}
     virtual ~Pipeline() = default;
     virtual PipelineType GetPipelineType() const = 0;
-    Observer<PipelineBackend> GetPipelineBackend() { return backend; }
-    const Observer<PipelineBackend> GetPipelineBackend() const { return backend; }
+
+    Borrow<PipelineBackend> GetBackend() const { return Borrow(backend); }
     
   private:
     Scope<PipelineBackend> backend;

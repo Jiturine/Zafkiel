@@ -1,5 +1,5 @@
-#include "entity.h"
-#include "components.h"
+#include "function/scene/entity.h"
+#include "function/scene/components.h"
 #include "function/scene/scene.h"
 
 namespace Zafkiel

@@ -1,4 +1,4 @@
-#include "texture2d_loader.h"
+#include "editor/resource/asset_loaders/texture2d_loader.h"
 #include <stb_image.h>
 #include "editor/resource/editor_asset_manager.h"
 

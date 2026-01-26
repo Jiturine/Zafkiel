@@ -1,8 +1,8 @@
-#include "vulkan_command_manager.h"
+#include "function/render/backends/vulkan/vulkan_command_manager.h"
 
 namespace Zafkiel 
 {
-VulkanCommandManager::VulkanCommandManager(const Scope<VulkanDevice> &device, const Scope<VulkanPhysicalDevice> &physicalDevice)
+VulkanCommandManager::VulkanCommandManager(Borrow<VulkanDevice> device, Borrow<VulkanPhysicalDevice> physicalDevice)
     : commandPool(nullptr), device(device)
 {
     vk::CommandPoolCreateInfo createInfo;

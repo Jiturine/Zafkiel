@@ -183,9 +183,6 @@ inline static const SampledImage *GetSampledImageType(SamplerType type) { return
 
 struct UniformFieldLayout 
 {
-    std::string name;
-    const DataType *dataType;
-    
     uint32_t offset;
     uint32_t size;
 
@@ -194,8 +191,6 @@ struct UniformFieldLayout
     bool isArray = false;
 
     uint32_t matrixStride = 0; // Matrix
-
-    std::vector<UniformFieldLayout> children; // Struct 使用
 };
 
 struct UniformValuePath 
@@ -210,61 +205,32 @@ struct UniformValuePath
     std::vector<PathElem> elems;
 };
 
+using UniformBlockLayout = std::unordered_map<const DataType *, UniformFieldLayout>;
+
 class UniformBlock final : public ResourceType
 { 
   public:
-    UniformBlock(const std::string &name, LayoutRule layoutRule, const Struct *structType, UniformFieldLayout layout) 
-        : ResourceType(name, ResourceTypeCategory::UniformBlock), layoutRule(layoutRule), structType(structType), layout(layout) {}
+    UniformBlock(const std::string &name, LayoutRule layoutRule, const Struct *structType, UniformBlockLayout layout) 
+        : ResourceType(name, ResourceTypeCategory::UniformBlock), layoutRule(layoutRule), structType(structType), layout(std::move(layout)) {}
+  
+    const Struct *GetType() const { return structType; }
 
-    const UniformFieldLayout &GetLayout() const { return layout; }
+    const UniformFieldLayout &GetFieldLayout(const DataType *dataType) const { return layout.at(dataType); }
 
-    uint32_t GetStructSize(const UniformValuePath &path) const
-    {
-        auto curLayout = &layout;
-        for (auto &elem : path.elems)
-        {
-            if (elem.type == UniformValuePath::PathElemType::Indent && curLayout->dataType->GetCategory() == ShaderReflection::DataTypeCategory::Struct)
-            {
-                auto &fields = curLayout->dataType->As<ShaderReflection::Struct>()->GetFields();
-                for (auto &field : fields)
-                {
-                    if (field->GetName() == elem.name)
-                    {
-                        auto it = std::find_if(curLayout->children.begin(), curLayout->children.end(), [&elem](const ShaderReflection::UniformFieldLayout &layout) {
-                            return layout.name == elem.name;
-                        });
-                        if (it != curLayout->children.end()) 
-                        {
-                            curLayout = &(*it);
-                        }
-                        else  
-                        {
-                            Log::Error("Field and Layout don't match!");
-                            return 0;
-                        }
-                        break;
-                    }
-                }
-            }
-            else if (elem.type == UniformValuePath::PathElemType::Index && curLayout->dataType->GetCategory() == ShaderReflection::DataTypeCategory::Array)
-            {
-                // TODO: deal with array;
-                Log::Error("TODO array");
-                return 0;
-            }
-        }
-        return curLayout->size;
-    }
+    uint32_t GetSize() const { return layout.at(structType).size; }
     
   private:
     const Struct *structType;
     LayoutRule layoutRule;
-    UniformFieldLayout layout;
+    UniformBlockLayout layout;
 };
 
 }
 
 using ShaderFundamentalType = ShaderReflection::FundamentalKind;
+
+uint32_t GetSizeOfShaderFundamentalType(ShaderFundamentalType type);
+
 
 }
   

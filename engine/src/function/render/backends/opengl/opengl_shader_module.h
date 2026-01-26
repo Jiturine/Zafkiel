@@ -7,9 +7,8 @@ namespace Zafkiel
 class OpenGLShaderModuleBackend final : public ShaderModuleBackend
 {
   public:
-    OpenGLShaderModuleBackend() = default;
-    friend class OpenGLVertexModuleBackend;
-    friend class OpenGLFragmentModuleBackend;
+    OpenGLShaderModuleBackend(uint32_t rendererID) : rendererID(rendererID) {}
+    ~OpenGLShaderModuleBackend();
 
     uint32_t GetRendererID() const { return rendererID; }
 

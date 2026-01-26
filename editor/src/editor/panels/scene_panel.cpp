@@ -1,10 +1,10 @@
-#include "scene_panel.h"
+#include "editor/panels/scene_panel.h"
 #include <imgui.h>
 #include "ImGuizmo.h"
 #include "editor/editorGUI/editorGUI.h"
 #include "function/render/frame_buffer.h"
 #include "function/render/image.h"
-#include "function/render/material.h"
+#include "function/render/surface_material.h"
 #include "function/render/model.h"
 #include "function/render/renderer.h"
 #include "function/render/texture.h"
@@ -20,11 +20,11 @@ ScenePanel::ScenePanel()
 
 void ScenePanel::UnregisterSceneTexture()
 {
-    Renderer::UnregisterImGuiTexture(currentTexture);
+    Renderer::Instance().UnregisterImGuiTexture(currentTexture);
 }
-void ScenePanel::SetSceneTexture(const Scope<Texture2D> &texture)
+void ScenePanel::SetSceneTexture(RenderHandle texture)
 {
-    sceneTexRefs = Renderer::RegisterImGuiTexture(texture);
+    sceneTexRefs = Renderer::Instance().RegisterImGuiTexture(texture);
     currentTexture = texture;
 }
 

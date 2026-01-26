@@ -16,9 +16,8 @@ class ScopedBuffer
     {
     }
 
-    template <typename T>
-    ScopedBuffer(const T *data, uint32_t size)
-        : data(new T[size]), size(size * sizeof(T))
+    ScopedBuffer(const uint8_t *data, uint32_t size)
+        : data(new uint8_t[size]), size(size)
     {
         memcpy(this->data, data, this->size);
     }
@@ -80,6 +79,10 @@ class Buffer
 
     Buffer(const ScopedBuffer &scopedBuffer)
         : data(scopedBuffer.Data<uint8_t>()), size(scopedBuffer.Size<uint8_t>()) {}
+
+    template <typename T>
+    Buffer(const T &data)
+        : data((uint8_t *)&data), size(sizeof(T)) {}
     
     Buffer(ScopedBuffer &&scopedBuffer) = delete;
 

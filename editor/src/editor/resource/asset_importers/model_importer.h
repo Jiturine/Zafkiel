@@ -1,5 +1,5 @@
 #pragma once
-#include "asset_importer.h"
+#include "editor/resource/asset_importers/asset_importer.h"
 #include "editor/resource/assimp_importer.h"
 #include "resource/model_asset.h"
 

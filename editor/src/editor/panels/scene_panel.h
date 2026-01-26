@@ -1,6 +1,6 @@
 #pragma once
-#include "function/render/material.h"
-#include "panel.h"
+#include "function/render/surface_material.h"
+#include "editor/panels/panel.h"
 #include "function/scene/scene.h"
 #include "function/render/graphics_context.h"
 #include "function/render/texture.h"
@@ -22,21 +22,13 @@ class ScenePanel : public Panel
     void Render() override;
 
     void UnregisterSceneTexture();
-    void SetSceneTexture(const Scope<Texture2D> &texture);
+    void SetSceneTexture(RenderHandle texture);
     void RenderScene(Ref<Scene> scene);
     void Update(float timestep);
     bool NeedResize() const { return needResize; }
-    // Ref<FrameBuffer> gBuffer;
-    // std::unique_ptr<EditorCamera> editorCamera;
-    // Ref<Shader> invertColorShader;
-    // Ref<Shader> skyBoxShader;
-    // Ref<Shader> normalDisplayShader;
-    // Ref<Shader> gBufferShader;
-    // Ref<Shader> deferredShader;
-    // Ref<CubeMap> skyBox;
 
     std::vector<ImTextureRef> sceneTexRefs;
-    Observer<Texture2D> currentTexture;
+    RenderHandle currentTexture;
   private:
     void DrawGizmo(vec2 contentPosition, vec2 contextSize);
     int gizmoType = ImGuizmo::OPERATION::TRANSLATE;

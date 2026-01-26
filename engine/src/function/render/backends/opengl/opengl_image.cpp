@@ -1,4 +1,4 @@
-#include "opengl_image.h"
+#include "function/render/backends/opengl/opengl_image.h"
 #include <glad/glad.h>
 
 namespace Zafkiel
@@ -24,40 +24,18 @@ OpenGLImageFormat ImageFormatToOpenGLType(ImageFormat format)
     case RGBA16F: return {GL_RGBA16F, GL_RGBA, GL_FLOAT};
     case RGBA32F: return {GL_RGBA32F, GL_RGBA, GL_FLOAT};
     case R32UI: return {GL_R32UI, GL_RED_INTEGER, GL_UNSIGNED_INT};
+    case R32F: return {GL_R32F, GL_RED, GL_FLOAT};
     case DEPTH24STENCIL8: return {GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8};
+    case DEPTH32F: return {GL_DEPTH_COMPONENT32F, GL_DEPTH_COMPONENT, GL_FLOAT}; // TODO: 确认正确
     default:
         Log::Error("Unsupported Image Format!");
         return {};
     }
 };
 
-OpenGLImageBackend::OpenGLImageBackend(const ImageSpecification &spec)
-    : format(spec.format)
-{
-	glCreateTextures(GL_TEXTURE_2D, 1, &rendererID);
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-    OpenGLImageFormat format = ImageFormatToOpenGLType(spec.format);
-    glTextureStorage2D(rendererID, 1, format.internalFormat, spec.width, spec.height);
-}
-
 OpenGLImageBackend::~OpenGLImageBackend()
 {
     glDeleteTextures(1, &rendererID);
-}
-
-void OpenGLImageBackend::Resize(uint32_t width, uint32_t height)
-{
-    glDeleteTextures(1, &rendererID);
-	glCreateTextures(GL_TEXTURE_2D, 1, &rendererID);
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-    OpenGLImageFormat openglFormat = ImageFormatToOpenGLType(format);
-    glTextureStorage2D(rendererID, 1, openglFormat.internalFormat, width, height);
-}
-
-Scope<Image> OpenGLImageFactory::Create(const ImageSpecification &spec)
-{
-    auto backend = CreateScope<OpenGLImageBackend>(spec);
-    return CreateScope<Image>(spec, std::move(backend));
 }
 
 }

@@ -1,4 +1,4 @@
-#include "mesh_loader.h"
+#include "editor/resource/asset_loaders/mesh_loader.h"
 #include "resource/mesh_asset.h"
 #include "core/meta/serializer/binary_serializer.h"
 #include "editor/resource/editor_asset_manager.h"

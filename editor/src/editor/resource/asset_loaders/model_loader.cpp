@@ -1,4 +1,4 @@
-#include "model_loader.h"
+#include "editor/resource/asset_loaders/model_loader.h"
 #include "editor/resource/editor_asset_manager.h"
 
 namespace Zafkiel 

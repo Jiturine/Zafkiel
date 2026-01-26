@@ -1,4 +1,4 @@
-#include "editor_script_engine.h"
+#include "editor/function/script/editor_script_engine.h"
 #include "function/scene/components.h"
 #include "function/scene/scene.h"
 #include "mono/metadata/appdomain.h"

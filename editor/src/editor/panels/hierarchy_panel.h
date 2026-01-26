@@ -1,7 +1,7 @@
 #pragma once
 
 #include "function/scene/scene.h"
-#include "panel.h"
+#include "editor/panels/panel.h"
 
 namespace Zafkiel
 {

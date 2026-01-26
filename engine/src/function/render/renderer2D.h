@@ -1,6 +1,6 @@
 #pragma once
 #include "function/render/graphics_context.h"
-#include "glad/glad.h"
+#include <glad/glad.h>
 #include "function/scene/entity.h"
 
 namespace Zafkiel
@@ -14,6 +14,6 @@ class Renderer2D
 
   protected:
     Renderer2D() = default;
-    inline static Scope<Renderer2D> instance;
+    static Scope<Renderer2D> instance;
 };
 }

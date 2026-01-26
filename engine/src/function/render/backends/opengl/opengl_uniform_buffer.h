@@ -4,10 +4,11 @@
 namespace Zafkiel 
 {
 
-class OpenGLUniformBufferBackend : public UniformBufferBackend
+class OpenGLUniformBufferBackend final : public UniformBufferBackend
 {
   public:
-    OpenGLUniformBufferBackend(uint32_t size);
+    OpenGLUniformBufferBackend(uint32_t size, uint32_t rendererID)
+        : size(size), rendererID(rendererID) {}
     ~OpenGLUniformBufferBackend();
 
     void SetData(uint32_t offset, uint32_t size, const void *data) const; 
@@ -19,10 +20,5 @@ class OpenGLUniformBufferBackend : public UniformBufferBackend
     uint32_t rendererID;
 };
 
-class OpenGLUniformBufferFactory
-{
-  public:
-    static Scope<UniformBuffer> Create(uint32_t size);
-};
 
 }

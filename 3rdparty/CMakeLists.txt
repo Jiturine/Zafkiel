@@ -88,3 +88,7 @@ if (NOT TARGET glslang)
     set(BUILD_SHARED_LIBS off)
     add_subdirectory(glslang)
 endif()
+
+if (NOT TARGET shaderc)
+    add_subdirectory(shaderc)
+endif()

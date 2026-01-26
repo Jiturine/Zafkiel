@@ -1,4 +1,4 @@
-#include "test_layer.h"
+#include "editor/test_layer.h"
 
 #include "editor/editor_layer.h"
 #include "engine_refl_generate.h"
@@ -16,7 +16,7 @@
 #include "editor/panels/scene_panel.h"
 
 #include "function/scene/components.h"
-#include "project/project_manager.h"
+#include "editor/project/project_manager.h"
 
 #include "core/meta/serializer/binary_serializer.h"
 
@@ -45,13 +45,14 @@ void TestLayer::OnAttach()
     Application::WaitRenderThreadInitFinish();
     
     Renderer::Submit([self = Ref(this)]() mutable {
-        self->globalRenderResource = Renderer::GetGraphicsContext()->CreateGlobalRenderResource("assets/shaders/schema/global.zss");
-        self->objectRenderResource = Renderer::GetGraphicsContext()->CreateObjectRenderResource("assets/shaders/schema/mesh_object.zss");
-        self->geometryPass = CreateScope<GeometryPass>(self->globalRenderResource, self->objectRenderResource);
-        self->shadingPass = CreateScope<ShadingPass>(self->globalRenderResource,
+        self->globalMaterial = Renderer::Instance().CreateGlobalMaterial("assets/shaders/schema/global.zss");
+        self->objectShaderMaterial = Renderer::Instance().CreateObjectShaderMaterial("assets/shaders/schema/mesh_object.zss");
+        self->geometryPass = CreateScope<GeometryPass>(self->globalMaterial, self->objectShaderMaterial);
+        self->shadingPass = CreateScope<ShadingPass>(self->globalMaterial,
                                                      self->geometryPass->positionTexture,
                                                      self->geometryPass->normalTexture,
                                                      self->geometryPass->albedoTexture);
+        self->shadowPass = CreateScope<ShadowPass>(self->objectShaderMaterial);
         self->window->GetActivePanel<ScenePanel>()->SetSceneTexture(self->shadingPass->outputColorTexture);
     });
     
@@ -73,16 +74,18 @@ void TestLayer::OnAttach()
     // EditorAssetManager::ImportAsset("models/sponza_gltf_version/scene.gltf");
 
     EditorSceneManager::Init();
-    EditorSceneManager::OpenScene(projConfig.startScene);
+    EditorSceneManager::Instance().OpenScene(projConfig.startScene);
 
     editorCamera = CreateScope<EditorCamera>();
     editorCamera->SetPerspective(45, 0.3f, 1000.0f);
     editorCamera->SetViewportSize(1280, 720);
     editorCamera->SetLookAtDir(vec3(0.0f, 0.0f, 1.0f));
-    editorCamera->SetPosition(vec3(0.0f, 0.0f, -1.0f));
+    editorCamera->SetPosition(vec3(0.0f, 1.0f, -1.0f));
 
-    auto model = EditorSceneManager::GetActiveScene()->GetWorld().InstantiateModel(15573915810613239818);
+    auto model = EditorSceneManager::Instance().GetActiveSceneMut()->GetWorld().InstantiateModel(15573915810613239818);
     model.GetComponent<TransformComponent>().SetScale(vec3(0.3f, 0.3f, 0.3f));
+    
+    EditorSceneManager::Instance().GetActiveSceneMut()->GetWorld().SpawnEntity(TransformComponent(vec3(0.0f)), LightComponent{LightType::Directional, vec3(1.0f), 1.0f, vec3(0.5f, -0.5f, 0.5f)});
 
     Application::KickRenderThread();
     Application::WaitRenderThread();
@@ -99,10 +102,9 @@ void TestLayer::OnDetach()
         {
             Renderer::GetGraphicsContext().As<VulkanContext>().GetDevice()->GetHandle().waitIdle();
         }
+        self->shadowPass = nullptr;
         self->shadingPass = nullptr;
         self->geometryPass = nullptr;
-        self->objectRenderResource = nullptr;
-        self->globalRenderResource = nullptr;
     });
 
     EditorSceneManager::Destroy();
@@ -114,14 +116,14 @@ void TestLayer::OnDetach()
     Renderer::Destroy();
 }
 
-FrameData TestLayer::PrepareFrameData(Observer<EditorCamera> camera)
+FrameData TestLayer::PrepareFrameData(Borrow<EditorCamera> camera)
 {
     FrameData frameData;
     frameData.cameraPos = camera->GetPosition();
     frameData.viewMatrix = camera->GetViewMatrix();
     frameData.projectionMatrix = camera->GetProjectionMatrix();
     uint32_t index = 0;
-    for (auto entity : SceneManager::GetActiveScene()->GetWorld().Query<TransformComponent, MeshComponent, MaterialComponent>())
+    for (auto entity : SceneManager::Instance().GetActiveScene()->GetWorld().Query<TransformComponent, MeshComponent, MaterialComponent>())
     {
         Renderable renderable
         {
@@ -133,6 +135,15 @@ FrameData TestLayer::PrepareFrameData(Observer<EditorCamera> camera)
         };
         frameData.renderables.push_back(renderable);
         index++;
+    }
+    for (auto entity : SceneManager::Instance().GetActiveScene()->GetWorld().Query<LightComponent>())
+    {
+        auto lightComponent = entity.GetComponent<LightComponent>();
+        if (lightComponent.type == LightType::Directional)
+        {
+            frameData.directionalLight = {lightComponent.direction, lightComponent.color, lightComponent.intensity};
+            break;
+        }
     }
     return frameData;
 }
@@ -152,27 +163,29 @@ void TestLayer::OnUpdate(float timestep)
 
     editorCamera->Update(timestep);
 
-    auto frameData = PrepareFrameData(editorCamera);
+    auto frameData = PrepareFrameData(Borrow(editorCamera));
 
     Renderer::Submit([this, frameData]() {
-        Renderer::BeginFrame();
+        Renderer::Instance().BeginFrame();
 
-        globalRenderResource->GetRenderResource()->SetUniform("ViewPosition", frameData.cameraPos);
-        globalRenderResource->GetRenderResource()->SetUniform("ViewMatrix", frameData.viewMatrix);
-        globalRenderResource->GetRenderResource()->SetUniform("ProjectionMatrix", frameData.projectionMatrix);
-        globalRenderResource->GetRenderResource()->SetUniform<mat4>("ViewProjectionMatrix", frameData.projectionMatrix * frameData.viewMatrix);
-        RenderCommand::BindGlobalRenderResource(globalRenderResource);
+        mat4 viewProjMat = frameData.projectionMatrix * frameData.viewMatrix;
+        Renderer::Instance().SetUniformFromGlobalMaterial(globalMaterial, "ViewPosition", ShaderFundamentalType::Float3, frameData.cameraPos);
+        Renderer::Instance().SetUniformFromGlobalMaterial(globalMaterial, "ViewMatrix", ShaderFundamentalType::Mat4, frameData.viewMatrix);
+        Renderer::Instance().SetUniformFromGlobalMaterial(globalMaterial, "ProjectionMatrix", ShaderFundamentalType::Mat4, frameData.projectionMatrix);
+        Renderer::Instance().SetUniformFromGlobalMaterial(globalMaterial, "ViewProjectionMatrix", ShaderFundamentalType::Mat4, viewProjMat);
+        Renderer::Instance().CmdBindGlobalMaterial(globalMaterial);
 
         for (auto &renderable : frameData.renderables)
         {
-            objectRenderResource->SetUniform(renderable.index, "ModelMatrix", renderable.modelMatrix);
-            objectRenderResource->SetUniform(renderable.index, "EntityID", (uint32_t)renderable.entityID);
+            Renderer::Instance().SetUniformFromObjectShaderMaterial(objectShaderMaterial, renderable.index, "ModelMatrix", ShaderFundamentalType::Mat4, renderable.modelMatrix);
+            Renderer::Instance().SetUniformFromObjectShaderMaterial(objectShaderMaterial, renderable.index, "EntityID", ShaderFundamentalType::UInt, (uint32_t)renderable.entityID);
         }
-        objectRenderResource->UploadUniform();
+        Renderer::Instance().UploadObjectShaderMaterialUniform(objectShaderMaterial);
         
         if (auto scenePanel = window->GetActivePanel<ScenePanel>())
         {
             geometryPass->Render(frameData);
+            shadowPass->Render(frameData);
             shadingPass->Render(frameData);
         }
         EditorGUI::BeginFrame(); 
@@ -190,7 +203,7 @@ void TestLayer::OnUpdate(float timestep)
             }
         }
         EditorGUI::EndFrame();
-        Renderer::EndFrame();
+        Renderer::Instance().EndFrame();
     });
 
     if (auto scenePanel = window->GetActivePanel<ScenePanel>())

@@ -1,7 +1,7 @@
 #pragma once
 #include "function/render/frame_data.h"
 #include "function/render/graphics_context.h"
-#include "function/render/material.h"
+#include "function/render/surface_material.h"
 #include "editor/function/render/editor_camera.h"
 
 namespace Zafkiel
@@ -10,20 +10,20 @@ namespace Zafkiel
 class GeometryPass
 {
   public:
-    GeometryPass(Observer<GlobalRenderResource> globalRenderResource, Observer<ObjectRenderResource> objectRenderResource);
+    GeometryPass(RenderHandle globalMaterial, RenderHandle objectShaderMaterial);
 
-    Scope<GraphicsShader> blinnPhongShader;
-    Scope<GraphicsPipeline> blinnPhongPipeline;
-    Scope<RenderPass> renderPass;
-    Observer<ObjectRenderResource> objectRenderResource;
+    RenderHandle blinnPhongShader;
+    RenderHandle blinnPhongPipeline;
+    RenderHandle renderPass;
+    RenderHandle objectShaderMaterial;
 
-    Scope<Texture2D> positionTexture;
-    Scope<Texture2D> normalTexture;
-    Scope<Texture2D> albedoTexture;
-    Scope<Texture2D> entityIDTexture;
-    Scope<Image> depthImage;
+    RenderHandle positionTexture;
+    RenderHandle normalTexture;
+    RenderHandle albedoTexture;
+    RenderHandle entityIDTexture;
+    RenderHandle depthImage;
 
-    Scope<FrameBuffer> frameBuffer;
+    RenderHandle frameBuffer;
 
     void Render(const FrameData &frameData);
     void Resize(uint32_t width, uint32_t height);

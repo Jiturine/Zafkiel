@@ -1,8 +1,8 @@
-#include "editorGUI.h"
-#include "function/render/backends/vulkan/vulkan_command.h"
+#include "editor/editorGUI/editorGUI.h"
 #include "function/render/backends/vulkan/vulkan_context.h"
 #include "function/render/backends/vulkan/vulkan_render_pass.h"
 #include "function/render/renderer.h"
+#include <glad/glad.h>
 
 namespace Zafkiel 
 {
@@ -32,15 +32,15 @@ void EditorGUI::EndFrame()
             ImGui::RenderPlatformWindowsDefault();
             SDL_GL_MakeCurrent(backup_current_window, backup_current_context);
         }
-        
+
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
     }
     else if (Renderer::GetGraphicsContext()->GetAPI() == GraphicsAPI::Vulkan)
-    { 
+    {
         auto &vulkanContext = Renderer::GetGraphicsContext().As<VulkanContext>();
         ImDrawData* drawData = ImGui::GetDrawData();
         vulkanContext.RenderToScreen([&]() {
-            ImGui_ImplVulkan_RenderDrawData(drawData, RenderCommand::GetHandle().As<VulkanCommand>().GetCommandBuffer());
+            ImGui_ImplVulkan_RenderDrawData(drawData, Renderer::Instance().GetGraphicsContext().As<VulkanContext>().GetCommandBuffer());
         });
         ImGuiIO &io = ImGui::GetIO();
         if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)

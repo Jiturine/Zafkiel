@@ -1,8 +1,9 @@
-#include "application.h"
+#include "core/application/application.h"
 #include "core/time/time.h"
 
 namespace Zafkiel
 {
+Scope<Application> Application::instance = nullptr;
 void Application::PushLayer(Ref<Layer> layer)
 {
     layers.push_back(layer);

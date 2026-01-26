@@ -6,6 +6,11 @@ namespace Zafkiel::Reflection
 {
 inline void Register_function_render_renderer() 
 {
+    ::Zafkiel::Reflection::Register<::Zafkiel::ShaderFamily>("ShaderFamily")
+    .Add(::Zafkiel::ShaderFamily::Unlit, "Unlit")
+    .Add(::Zafkiel::ShaderFamily::BlinnPhong, "BlinnPhong")
+    ;
+ 
     ::Zafkiel::Reflection::Register<::Zafkiel::ShaderReflection::FundamentalKind>("FundamentalKind")
     .Add(::Zafkiel::ShaderReflection::FundamentalKind::None, "None")
     .Add(::Zafkiel::ShaderReflection::FundamentalKind::Float, "Float")
@@ -23,11 +28,6 @@ inline void Register_function_render_renderer()
     .Add(::Zafkiel::ShaderReflection::FundamentalKind::UInt3, "UInt3")
     .Add(::Zafkiel::ShaderReflection::FundamentalKind::UInt4, "UInt4")
     .Add(::Zafkiel::ShaderReflection::FundamentalKind::Bool, "Bool")
-    ;
- 
-    ::Zafkiel::Reflection::Register<::Zafkiel::ShaderFamily>("ShaderFamily")
-    .Add(::Zafkiel::ShaderFamily::Unlit, "Unlit")
-    .Add(::Zafkiel::ShaderFamily::BlinnPhong, "BlinnPhong")
     ;
  
 

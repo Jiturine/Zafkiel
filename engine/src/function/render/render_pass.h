@@ -1,6 +1,6 @@
 #pragma once
-#include "pipeline.h"
-#include "image.h"
+#include "function/render/pipeline.h"
+#include "function/render/image.h"
 
 namespace Zafkiel
 {
@@ -43,6 +43,33 @@ struct RenderPassSpecification
     std::vector<SubpassSpecification> subpasses;
 };
 
+struct ClearValue
+{
+    AttachmentType type;
+    ImageFormat format;
+    union
+    {
+        float floatValue;
+        vec2 vec2Value;
+        vec3 vec3Value;
+        vec4 vec4Value;
+    };
+    union
+    {
+        uint32_t uintValue;
+        uvec2 uvec2Value;
+        uvec3 uvec3Value;
+        uvec4 uvec4Value;
+    };
+};
+
+struct RenderPassBeginInfo
+{
+    RenderHandle renderPass;
+    RenderHandle frameBuffer;
+    std::vector<ClearValue> clearValues;
+};
+
 class RenderPassBackend
 {
   public:
@@ -53,13 +80,12 @@ class RenderPass final
 {
   public:
     RenderPass(const RenderPassSpecification &spec, Scope<RenderPassBackend> backend)
-        : backend(std::move(backend)) {}
-    void AddPipeline(const Scope<Pipeline> &pipeline) { pipelines.push_back(pipeline); }
-    Observer<RenderPassBackend> GetBackend() { return backend; }
-    const Observer<RenderPassBackend> GetBackend() const { return backend; }
+        : spec(spec), backend(std::move(backend)) {}
+
+    Borrow<RenderPassBackend> GetBackend() const { return Borrow(backend); }
 
   private:
-    std::vector<Observer<Pipeline>> pipelines;
+    RenderPassSpecification spec;
     Scope<RenderPassBackend> backend;
 };
 }

@@ -1,5 +1,5 @@
 #pragma once
-#include "scene.h"
+#include "function/scene/scene.h"
 
 namespace Zafkiel 
 {
@@ -8,13 +8,14 @@ class SceneManager
 {
   public:
     virtual ~SceneManager() = default;
-    static Observer<SceneManager> Instance() { return instancePtr; }
-    static Observer<Scene> GetActiveScene() { return instancePtr->GetActiveSceneImpl(); }
+
+    virtual Borrow<Scene> GetActiveScene() const = 0;
+    virtual MutBorrow<Scene> GetActiveSceneMut() = 0;
+  
+    static SceneManager &Instance() { return *instancePtr; }
 
   protected:
-    inline static Observer<SceneManager> instancePtr;
-
-    virtual Observer<Scene> GetActiveSceneImpl() = 0;
+    inline static SceneManager *instancePtr = nullptr;
 };
 
 }

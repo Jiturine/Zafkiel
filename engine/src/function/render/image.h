@@ -1,4 +1,5 @@
 #pragma once
+#include "function/render/render_handle.h"
 
 namespace Zafkiel
 {
@@ -22,7 +23,9 @@ enum class ImageFormat
     RGBA16F,
     RGBA32F,
     R32UI,
-    DEPTH24STENCIL8
+    R32F,
+    DEPTH24STENCIL8,
+    DEPTH32F,
 };
 
 uint32_t ImageFormatToBytes(ImageFormat format);
@@ -67,33 +70,23 @@ class ImageBackend
 {
   public:
     virtual ~ImageBackend() = default;
-    virtual void Resize(uint32_t width, uint32_t height) = 0;
 };
 
 class Image final
 {
   public:
     Image(const ImageSpecification &spec, Scope<ImageBackend> backend)
-        : backend(std::move(backend)), width(spec.width), height(spec.height), format(spec.format)
-    {
-    }
-    uint32_t GetWidth() const { return width; }
-    uint32_t GetHeight() const { return height; }
-    ImageFormat GetFormat() const { return format; }
-    Observer<ImageBackend> GetBackend() { return backend; }
-    const Observer<ImageBackend> GetBackend() const { return backend; }
+        : backend(std::move(backend)), spec(spec) {}
 
-    void Resize(uint32_t width, uint32_t height)
-    {
-        this->width = width;
-        this->height = height;
-        backend->Resize(width, height);
-    }
+    uint32_t GetWidth() const { return spec.width; }
+    uint32_t GetHeight() const { return spec.height; }
+    ImageFormat GetFormat() const { return spec.format; }
+    Borrow<ImageBackend> GetBackend() const { return Borrow(backend); }
+
+    const ImageSpecification &GetSpecification() const { return spec; }
 
   private:
-    uint32_t width;
-    uint32_t height;
-    ImageFormat format;
+    ImageSpecification spec;
     Scope<ImageBackend> backend;
 
 };

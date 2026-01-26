@@ -1,9 +1,9 @@
-#include "vulkan_buffer.h"
-#include "vulkan_device.h"
+#include "function/render/backends/vulkan/vulkan_buffer.h"
+#include "function/render/backends/vulkan/vulkan_device.h"
 
 namespace Zafkiel 
 {
-VulkanBuffer::VulkanBuffer(const VulkanBufferSpecification& spec, const Scope<VulkanDevice> &device, const Scope<VulkanPhysicalDevice> &physicalDevice)
+VulkanBuffer::VulkanBuffer(const VulkanBufferSpecification& spec, Borrow<VulkanDevice> device, Borrow<VulkanPhysicalDevice> physicalDevice)
     : buffer(nullptr), memory(nullptr), size(spec.size)
 {
     // 创建 Buffer

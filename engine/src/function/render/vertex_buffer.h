@@ -1,5 +1,7 @@
 #pragma once
-#include "shader.h"
+#include "function/render/shader.h"
+#include "function/render/render_handle.h"
+#include "function/render/shader_reflection.h"
 
 namespace Zafkiel
 {
@@ -28,13 +30,14 @@ class VertexBufferBackend
 class VertexBuffer final
 {
   public:
-    VertexBuffer(const float *vertices, uint32_t size, Scope<VertexBufferBackend> backend)
-        : backend(std::move(backend)) {}
+    VertexBuffer(uint32_t size, Scope<VertexBufferBackend> backend)
+        : size(size), backend(std::move(backend)) {}
 
-    Observer<VertexBufferBackend> GetBackend() { return backend; }
-    const Observer<VertexBufferBackend> GetBackend() const { return backend; }
+    Borrow<VertexBufferBackend> GetBackend() const { return Borrow(backend); }
+    uint32_t GetSize() const { return size; }
 
   private:
+    uint32_t size;
     Scope<VertexBufferBackend> backend;
 };
 }

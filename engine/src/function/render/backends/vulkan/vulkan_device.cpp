@@ -1,6 +1,4 @@
-#include "vulkan_device.h"
-#include "vulkan/vulkan.hpp"
-#include <vulkan/vulkan.hpp>
+#include "function/render/backends/vulkan/vulkan_device.h"
 
 namespace Zafkiel 
 {
@@ -27,7 +25,7 @@ VulkanPhysicalDevice::VulkanPhysicalDevice(const vk::raii::PhysicalDevice &devic
 }
 
 
-VulkanDevice::VulkanDevice(const Scope<VulkanPhysicalDevice>& physicalDevice)
+VulkanDevice::VulkanDevice(Borrow<VulkanPhysicalDevice> physicalDevice)
     : device(nullptr), graphicsQueue(nullptr), presentQueue(nullptr)
 {
     vk::StructureChain<vk::DeviceCreateInfo, 

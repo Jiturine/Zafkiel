@@ -1,6 +1,6 @@
 #pragma once
 #include <vulkan/vulkan.hpp>
-#include "vulkan_render_pass.h"
+#include "function/render/backends/vulkan/vulkan_render_pass.h"
 
 namespace Zafkiel 
 {
@@ -9,9 +9,9 @@ class VulkanPhysicalDevice;
 
 struct VulkanSwapchainSpecification
 {
-    const Scope<VulkanDevice> &device;
-    const Scope<VulkanPhysicalDevice> &physicalDevice;
-    const Scope<RenderPass> &renderPass;
+    Borrow<VulkanDevice> device;
+    Borrow<VulkanPhysicalDevice> physicalDevice;
+    Borrow<RenderPass> renderPass;
     vk::raii::SurfaceKHR &surface;
     uint32_t width;
     uint32_t height;
@@ -32,10 +32,10 @@ class VulkanSwapchain final
     void Invalidate();
 
   private:
-    const Scope<VulkanDevice> &device;
-    const Scope<VulkanPhysicalDevice> &physicalDevice;
+    Borrow<VulkanDevice> device;
+    Borrow<VulkanPhysicalDevice> physicalDevice;
     const vk::raii::SurfaceKHR &surface;
-    Observer<RenderPass> renderPass;
+    Borrow<RenderPass> renderPass;
 
     uint32_t width, height;
     uint32_t frameCount;

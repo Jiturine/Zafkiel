@@ -1,5 +1,5 @@
 #pragma once
-#include "type.h"
+#include "core/meta/reflection/type.h"
 #include "core/base/singleton.h"
 
 namespace Zafkiel::Reflection
@@ -158,4 +158,4 @@ Ptr GetPropertyAddress(Ptr accessor)
 
 };
 
-#include "register.tpp"
+#include "core/meta/reflection/register.tpp"

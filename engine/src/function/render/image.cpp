@@ -1,4 +1,4 @@
-#include "image.h"
+#include "function/render/image.h"
 
 namespace Zafkiel
 {
@@ -24,7 +24,9 @@ uint32_t ImageFormatToBytes(ImageFormat format)
     case RGBA16F: return 4 * 2;
     case RGBA32F: return 4 * 4;
     case R32UI: return 4;
+    case R32F: return 4;
     case DEPTH24STENCIL8: return 3 + 1;
+    case DEPTH32F: return 4;
     default:
         Log::Error("Unsupported Image Format!");
         return 0;

@@ -2,7 +2,7 @@
 #include "core/meta/reflection/refl.h"
 #include "core/meta/serializer/custom_serialize.h"
 #include "core/base/uuid.h"
-#include "entity.h"
+#include "function/scene/entity.h"
 #include "resource/asset.h"
 
 namespace Zafkiel

@@ -1,4 +1,4 @@
-#include "properties_panel.h"
+#include "editor/panels/properties_panel.h"
 #include "function/scene/components.h"
 #include "function/script/script_engine.h"
 #include "editor/function/script/editor_script_engine.h"
@@ -17,7 +17,7 @@ void PropertiesPanel::Render()
 {
     GUIWindow propertiesPanel("Properties");
 
-    auto scene = SceneManager::GetActiveScene();
+    auto scene = SceneManager::Instance().GetActiveScene();
     auto &selectionContext = EditorContext::GetSelectionContext();
     if (selectionContext.type != SelectionContext::Type::Entity) return;
     Entity entity = selectionContext.entity;

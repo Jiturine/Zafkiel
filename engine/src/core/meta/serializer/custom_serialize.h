@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../reflection/type.h"
+#include "core/meta/reflection/type.h"
 #include <yaml-cpp/yaml.h>
 #include "core/meta/serializer/serializer_base.h"
 

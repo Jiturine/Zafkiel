@@ -1,8 +1,8 @@
-#include "vulkan_frame_in_flight.h"
+#include "function/render/backends/vulkan/vulkan_frame_in_flight.h"
 
 namespace Zafkiel 
 {
-VulkanFrameInFlight::VulkanFrameInFlight(const Scope<VulkanCommandManager> &commandManager, const Scope<VulkanDevice> &device)
+VulkanFrameInFlight::VulkanFrameInFlight(Borrow<VulkanCommandManager> commandManager, Borrow<VulkanDevice> device)
     : cmdBuf(nullptr), imageAvailableSem(nullptr), renderFinishedSem(nullptr), fence(nullptr), device(device)
 {
     cmdBuf = commandManager->CreateOneCommandBuffer();

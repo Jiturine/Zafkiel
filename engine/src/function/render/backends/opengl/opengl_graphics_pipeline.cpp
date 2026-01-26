@@ -1,5 +1,4 @@
-#include "opengl_graphics_pipeline.h"
-#include "opengl_pipeline.h"
+#include "function/render/backends/opengl/opengl_graphics_pipeline.h"
 
 namespace Zafkiel
 {
@@ -51,39 +50,6 @@ GLenum PolygonModeToOpenGLType(PolygonMode mode)
         Log::Error("Unsupported Polygon Mode!");
         return GL_FILL;
     }
-}
-
-OpenGLGraphicsPipelineBackend::OpenGLGraphicsPipelineBackend(const GraphicsPipelineSpecification &spec)
-    : primitiveTopology(spec.primitiveTopology), shader(spec.shader),
-      renderPass(spec.renderPass), cullMode(spec.cullMode), frontFace(spec.frontFace),
-      polygonMode(spec.polygonMode), depthTest(spec.depthTest) {}
-
-GLenum OpenGLGraphicsPipelineBackend::GetPrimitiveTopology() const
-{
-    return PrimitiveTopologyToOpenGLType(primitiveTopology);
-}
-GLenum OpenGLGraphicsPipelineBackend::GetCullMode() const
-{
-    return CullModeToOpenGLType(cullMode);
-}
-GLenum OpenGLGraphicsPipelineBackend::GetFrontFace() const
-{
-    return FrontFaceToOpenGLType(frontFace);
-}
-GLenum OpenGLGraphicsPipelineBackend::GetPolygonMode() const
-{
-    return PolygonModeToOpenGLType(polygonMode);
-}
-bool OpenGLGraphicsPipelineBackend::GetDepthTest() const
-{
-    return depthTest;
-}
-
-Scope<GraphicsPipeline> OpenGLGraphicsPipelineFactory::Create(const GraphicsPipelineSpecification &spec)
-{
-    auto pipelineBackend = CreateScope<OpenGLPipelineBackend>();
-    auto graphicsPipelineBackend = CreateScope<OpenGLGraphicsPipelineBackend>(spec);
-    return CreateScope<GraphicsPipeline>(spec, std::move(pipelineBackend), std::move(graphicsPipelineBackend));
 }
 
 }

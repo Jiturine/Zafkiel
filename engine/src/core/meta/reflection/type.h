@@ -1,6 +1,6 @@
 #pragma once
-#include "any.h"
-#include "type_traits.h"
+#include "core/meta/reflection/any.h"
+#include "core/meta/reflection/type_traits.h"
 
 namespace Zafkiel::Reflection
 {
@@ -280,4 +280,4 @@ struct CreateInstanceOperations
 
 }
 
-#include "type.tpp"
+#include "core/meta/reflection/type.tpp"

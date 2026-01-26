@@ -1,4 +1,4 @@
-#include "material_loader.h"
+#include "editor/resource/asset_loaders/material_loader.h"
 #include "core/meta/serializer/yaml_serializer.h"
 #include "editor/resource/editor_asset_manager.h"
 

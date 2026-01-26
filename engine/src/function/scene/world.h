@@ -1,6 +1,6 @@
 #pragma once
 
-#include "entity.h"
+#include "function/scene/entity.h"
 #include "core/meta/reflection/refl.h"
 #include "function/render/model.h"
 #include "resource/asset.h"

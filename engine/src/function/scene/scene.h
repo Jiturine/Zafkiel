@@ -1,7 +1,7 @@
 #pragma once
 #include "core/meta/serializer/yaml_serializer.h"
 #include "platform/filesystem/filesystem.h"
-#include "world.h"
+#include "function/scene/world.h"
 #include "resource/asset.h"
 
 namespace Zafkiel

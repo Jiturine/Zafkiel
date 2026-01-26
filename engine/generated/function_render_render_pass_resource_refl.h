@@ -1,10 +1,10 @@
 #pragma once
 #include "core/meta/reflection/refl.h"
-#include "function/render/render_pass_resource.h"
+#include "function/render/pass_material.h"
 
 namespace Zafkiel::Reflection 
 {
-inline void Register_function_render_render_pass_resource() 
+inline void Register_function_render_pass_material() 
 {
     ::Zafkiel::Reflection::Register<::Zafkiel::ShaderReflection::FundamentalKind>("FundamentalKind")
     .Add(::Zafkiel::ShaderReflection::FundamentalKind::None, "None")

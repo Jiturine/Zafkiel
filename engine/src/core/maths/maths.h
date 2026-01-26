@@ -311,6 +311,8 @@ namespace Maths
 {
 void SetAPI(GraphicsAPI api);
 
+GraphicsAPI GetAPI();
+
 mat4 Perspective(float FOV, float aspectRatio, float perspectiveNear, float perspectiveFar);
 
 mat4 Ortho(float left, float right, float bottom, float top, float near, float far);

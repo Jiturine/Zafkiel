@@ -11,19 +11,13 @@ uint32_t ShaderDataTypeCount(ShaderFundamentalType type);
 class OpenGLVertexBufferBackend final : public VertexBufferBackend
 {
   public:
-    OpenGLVertexBufferBackend(const float *vertices, uint32_t size);
+    OpenGLVertexBufferBackend(uint32_t rendererID) : rendererID(rendererID) {}
     ~OpenGLVertexBufferBackend();
 
     uint32_t GetRendererID() const { return rendererID; }
 
   private:
     uint32_t rendererID;
-};
-
-class OpenGLVertexBufferFactory
-{
-  public:
-    static Scope<VertexBuffer> Create(const float *vertices, uint32_t size);
 };
 
 }

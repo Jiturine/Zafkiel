@@ -1,6 +1,6 @@
 #pragma once
 #include "core/base/task.h"
-#include "layer.h"
+#include "core/application/layer.h"
 
 namespace Zafkiel
 {
@@ -172,7 +172,7 @@ class Application
     }
     void ExecuteRenderThreadQueueImpl();
 
-    inline static Scope<Application> instance;
+    static Scope<Application> instance;
     std::vector<Ref<Layer>> layers;
     std::mutex mainThreadMutex;
     std::vector<Scope<TaskBase>> mainThreadSubmitQueue;

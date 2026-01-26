@@ -1,13 +1,12 @@
 #pragma once
-#include <vulkan/vulkan.hpp>
-#include "vulkan_device.h"
+#include "function/render/backends/vulkan/vulkan_device.h"
 
 namespace Zafkiel 
 {
 class VulkanCommandManager final
 {
   public:
-    VulkanCommandManager(const Scope<VulkanDevice> &device, const Scope<VulkanPhysicalDevice> &physicalDevice);
+    VulkanCommandManager(Borrow<VulkanDevice> device, Borrow<VulkanPhysicalDevice> physicalDevice);
 
     vk::raii::CommandPool &GetCommandPool() { return commandPool; }
 
@@ -16,6 +15,6 @@ class VulkanCommandManager final
 
   private:
     vk::raii::CommandPool commandPool;
-    const Scope<VulkanDevice>& device;
+    Borrow<VulkanDevice> device;
 };
 }

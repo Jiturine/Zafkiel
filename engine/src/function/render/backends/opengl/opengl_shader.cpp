@@ -1,11 +1,11 @@
-#include "opengl_shader.h"
+#include "function/render/backends/opengl/opengl_shader.h"
 #include "platform/filesystem/filesystem.h"
 #include <glad/glad.h>
 
 namespace Zafkiel
 {
-OpenGLShaderBackend::OpenGLShaderBackend()
+OpenGLShaderBackend::~OpenGLShaderBackend()
 {
-    rendererID = glCreateProgram();
+    glDeleteProgram(rendererID);
 }
 }

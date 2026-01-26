@@ -1,6 +1,7 @@
 #pragma once
-#include "uniform_buffer.h"
-#include "shader.h"
+#include "function/render/uniform_buffer.h"
+#include "function/render/shader.h"
+#include "function/render/render_handle.h"
 
 namespace Zafkiel
 {
@@ -43,16 +44,16 @@ class ShaderModuleBackend
 class ShaderModule
 {
   public:
+    virtual ~ShaderModule() = default;
+    virtual ShaderStage GetShaderStage() const = 0;
+
     ShaderModule(Buffer codeBuffer, Scope<ShaderModuleBackend> backend)
         : backend(std::move(backend))
     {
         Reflect(codeBuffer);
     }
-    virtual ~ShaderModule() = default;
-    virtual ShaderStage GetShaderStage() const = 0;
 
-    Observer<ShaderModuleBackend> GetShaderModuleBackend() { return backend; }
-    const Observer<ShaderModuleBackend> GetShaderModuleBackend() const { return backend; }
+    Borrow<ShaderModuleBackend> GetBackend() const { return Borrow(backend); }
 
     ShaderModuleReflection &GetReflection() { return reflection; }
     const ShaderModuleReflection &GetReflection() const { return reflection; }
