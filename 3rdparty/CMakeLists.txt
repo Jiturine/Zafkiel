@@ -83,12 +83,17 @@ if (NOT TARGET vulkan)
     add_subdirectory(vulkanSDK)
 endif()
 
-if (NOT TARGET glslang)
-    set(ENABLE_OPT off)
-    set(BUILD_SHARED_LIBS off)
-    add_subdirectory(glslang)
-endif()
-
 if (NOT TARGET shaderc)
     add_subdirectory(shaderc)
+endif()
+
+if (NOT TARGET msdf-atlas-gen)
+    set(MSDF_ATLAS_USE_VCPKG off)
+    set(MSDF_ATLAS_USE_SKIA OFF CACHE BOOL "" FORCE)
+    add_subdirectory(msdf-atlas-gen)
+endif()
+
+if (NOT TARGET peglib)
+    set(BUILD_TESTS OFF CACHE BOOL "" FORCE)
+    add_subdirectory(cpp-peglib)
 endif()

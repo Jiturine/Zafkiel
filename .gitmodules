@@ -25,6 +25,12 @@
 [submodule "3rdparty/assimp"]
 	path = 3rdparty/assimp
 	url = https://github.com/assimp/assimp
+[submodule "3rdparty/msdf-atlas-gen"]
+	path = 3rdparty/msdf-atlas-gen
+	url = https://github.com/Chlumsky/msdf-atlas-gen
 [submodule "3rdparty/glslang"]
 	path = 3rdparty/glslang
 	url = https://github.com/KhronosGroup/glslang
+[submodule "3rdparty/cpp-peglib"]
+	path = 3rdparty/cpp-peglib
+	url = https://github.com/yhirose/cpp-peglib

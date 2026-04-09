@@ -1,0 +1,8 @@
+/home/jiturine/Workspace/Zafkiel/build/bin/ScriptCore.dll/ScriptCore.dll
+/home/jiturine/Workspace/Zafkiel/engine/ScriptCore/obj/Debug/net472/script_core.GeneratedMSBuildEditorConfig.editorconfig
+/home/jiturine/Workspace/Zafkiel/engine/ScriptCore/obj/Debug/net472/script_core.AssemblyInfoInputs.cache
+/home/jiturine/Workspace/Zafkiel/engine/ScriptCore/obj/Debug/net472/script_core.AssemblyInfo.cs
+/home/jiturine/Workspace/Zafkiel/engine/ScriptCore/obj/Debug/net472/script_core.csproj.CoreCompileInputs.cache
+/home/jiturine/Workspace/Zafkiel/engine/ScriptCore/obj/Debug/net472/script_core.sourcelink.json
+/home/jiturine/Workspace/Zafkiel/engine/ScriptCore/obj/Debug/net472/ScriptCore.dll
+/home/jiturine/Workspace/Zafkiel/engine/ScriptCore/obj/Debug/net472/ScriptCore.pdb

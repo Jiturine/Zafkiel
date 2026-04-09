@@ -1,6 +1,6 @@
 #include <catch2/catch_test_macros.hpp>
-#include "core/meta/reflection/refl.h"
-#include "core/meta/serializer/binary_serializer.h"
+#include "Core/Meta/Reflection/Refl.h"
+#include "Core/Meta/Serializer/BinarySerializer.h"
 
 using namespace Zafkiel;
 using namespace Zafkiel::Reflection;

@@ -18,21 +18,21 @@ include(${CMAKE_SOURCE_DIR}/parser/parse.cmake)
 parse_module(
     Editor 
     ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_SOURCE_DIR}/engine/src/core/meta/reflection/refl.h
+    ${CMAKE_SOURCE_DIR}/engine/src/Core/Meta/Reflection/Refl.h
 )
 
 # generated文件为parser自动生成
 set_source_files_properties(
-    ${CMAKE_CURRENT_SOURCE_DIR}/generated/editor_refl_generate.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/generated/editor_refl_generate.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/generated/EditorReflGenerate.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/generated/EditorReflGenerate.cpp
     PROPERTIES GENERATED TRUE
 )
 
 add_executable(editor 
     ${HEADER_FILES} 
     ${SOURCE_FILES}
-    ${CMAKE_CURRENT_SOURCE_DIR}/generated/editor_refl_generate.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/generated/editor_refl_generate.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/generated/EditorReflGenerate.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/generated/EditorReflGenerate.cpp
 )
 
 set_target_properties(editor PROPERTIES
@@ -48,7 +48,7 @@ target_include_directories(editor PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/generated
 )
 
-target_precompile_headers(engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../engine/precompile/pch.h )
+target_precompile_headers(editor PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../engine/precompile/pch.h )
 
 target_link_libraries(editor PUBLIC engine imguizmo filewatch)
 

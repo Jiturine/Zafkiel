@@ -1,0 +1,59 @@
+{
+  "format": 1,
+  "restore": {
+    "/home/jiturine/Workspace/Zafkiel/engine/ScriptCore/script_core.csproj": {}
+  },
+  "projects": {
+    "/home/jiturine/Workspace/Zafkiel/engine/ScriptCore/script_core.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/home/jiturine/Workspace/Zafkiel/engine/ScriptCore/script_core.csproj",
+        "projectName": "ScriptCore",
+        "projectPath": "/home/jiturine/Workspace/Zafkiel/engine/ScriptCore/script_core.csproj",
+        "packagesPath": "/home/jiturine/.nuget/packages/",
+        "outputPath": "/home/jiturine/Workspace/Zafkiel/engine/ScriptCore/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/home/jiturine/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net472"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net472": {
+            "targetAlias": "net472",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.300"
+      },
+      "frameworks": {
+        "net472": {
+          "targetAlias": "net472",
+          "dependencies": {
+            "Microsoft.NETFramework.ReferenceAssemblies": {
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[1.0.3, )",
+              "autoReferenced": true
+            }
+          },
+          "runtimeIdentifierGraphPath": "/home/jiturine/.dotnet/sdk/9.0.305/RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}

@@ -18,21 +18,21 @@ include(${CMAKE_SOURCE_DIR}/parser/parse.cmake)
 parse_module(
     Engine 
     ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/core/meta/reflection/refl.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Core/Meta/Reflection/Refl.h
 )
 
 # generated文件为parser自动生成
 set_source_files_properties(
-    ${CMAKE_CURRENT_SOURCE_DIR}/generated/engine_refl_generate.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/generated/engine_refl_generate.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/generated/EngineReflGenerate.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/generated/EngineReflGenerate.cpp
     PROPERTIES GENERATED TRUE
 )
 
 add_library(engine STATIC 
     ${HEADER_FILES}
     ${SOURCE_FILES} 
-    ${CMAKE_CURRENT_SOURCE_DIR}/generated/engine_refl_generate.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/generated/engine_refl_generate.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/generated/EngineReflGenerate.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/generated/EngineReflGenerate.cpp
 )
 
 set_target_properties(engine PROPERTIES 
@@ -47,7 +47,7 @@ target_include_directories(engine PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/generated)
 
 # 链接第三方库
-target_link_libraries(engine PUBLIC spdlog mono z EnTT SDL3::SDL3 glad glm yaml-cpp stb_image assimp vulkan shaderc_shared spirv_cross imgui glslang glslang-default-resource-limits shaderc_util)
+target_link_libraries(engine PUBLIC spdlog mono z EnTT SDL3::SDL3 glad glm yaml-cpp stb_image assimp vulkan shaderc_shared spirv_cross imgui shaderc_util msdf-atlas-gen peglib)
 if(WIN32)
     target_link_libraries(engine PUBLIC opengl32)
 elseif(UNIX)
@@ -56,7 +56,7 @@ endif()
 
 add_custom_target(
     engine_refl_dependency
-    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/generated/engine_refl_generate.cpp
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/generated/EngineReflGenerate.cpp
 )
 
 # 让engine目标依赖反射代码生成

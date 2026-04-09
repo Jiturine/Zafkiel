@@ -1,9 +1,0 @@
-#parameters
-Position = uPosition;
-Normal = uNormal;
-Albedo = uAlbedo;
-
-#version 450
-layout(set = 1, binding = 0) uniform sampler2D uPosition;
-layout(set = 1, binding = 1) uniform sampler2D uNormal;
-layout(set = 1, binding = 2) uniform sampler2D uAlbedo;

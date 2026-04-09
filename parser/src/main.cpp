@@ -94,8 +94,8 @@ void ParseModule(const ParseConfig &config, const std::vector<const char *> &ext
         fs::create_directory(config.output_dir);
     }
 
-    fs::path output_header_file = config.output_dir / std::format("{}_refl_generate.h", Utils::ToLower(config.module_name));
-    fs::path output_impl_file = config.output_dir / std::format("{}_refl_generate.cpp", Utils::ToLower(config.module_name));
+    fs::path output_header_file = config.output_dir / std::format("{}ReflGenerate.h", config.module_name);
+    fs::path output_impl_file = config.output_dir / std::format("{}ReflGenerate.cpp", config.module_name);
 
     HeaderMustacheFormat header_format;
     ImplMustacheFormat impl_format;

@@ -1,6 +1,6 @@
 #include <catch2/catch_test_macros.hpp>
-#include "core/meta/reflection/refl.h"
-#include "core/meta/serializer/binary_serializer.h"
+#include "Core/Meta/Reflection/Refl.h"
+#include "Core/Meta/Serializer/BinarySerializer.h"
 
 using namespace Zafkiel::Reflection;
 using namespace Zafkiel;
@@ -175,19 +175,19 @@ TEST_CASE("Binary Serializer/Deserializer Works correctly", "[reflection]")
     SECTION("Packed Data (e.g. Mesh Vertices & Indices")
     {
         BinarySerializer serializer;
-        std::vector<uint32_t> indices;
-        for (uint32_t i = 0; i < 10000; i++)
+        std::vector<uint32> indices;
+        for (uint32 i = 0; i < 10000; i++)
         {
             indices.push_back(i);
         }
-        serializer.WritePack(indices.data(), indices.size() * sizeof (uint32_t));
+        serializer.WritePack(indices.data(), indices.size() * sizeof (uint32));
         
         auto data = serializer.GetOutput();
         BinaryDeserializer deserializer(data.data(), data.size());
         
         auto [dataPtr, size] = deserializer.Unpack();
-        std::vector<uint32_t> unpackedIndices(reinterpret_cast<const uint32_t *>(dataPtr), 
-            reinterpret_cast<const uint32_t *>(dataPtr + size));
+        std::vector<uint32> unpackedIndices(reinterpret_cast<const uint32 *>(dataPtr), 
+            reinterpret_cast<const uint32 *>(dataPtr + size));
 
         REQUIRE(unpackedIndices[2000] == 2000);
     }

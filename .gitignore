@@ -7,8 +7,8 @@ engine/runtime/src/precompile/refl_files.txt
 CLAUDE.md
 /.idea
 /sandbox/library
-/engine/script_core/.idea
-/engine/script_core/obj
+/engine/ScriptCore/.idea
+/engine/ScriptCore/obj
 /sandbox/assets/scripts/obj
 /sandbox/assets/scripts/.idea
 /sandbox/assets/models
