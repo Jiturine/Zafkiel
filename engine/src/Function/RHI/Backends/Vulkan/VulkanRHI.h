@@ -6,12 +6,12 @@
 namespace Zafkiel 
 {
 
-class Window;
+class PlatformWindow;
 
 class VulkanRHI final : public RHI
 {
   public:
-    VulkanRHI(Window &window);
+    VulkanRHI();
 
     virtual GraphicsAPI GetAPI() const override { return GraphicsAPI::Vulkan; }
 
@@ -32,6 +32,8 @@ class VulkanRHI final : public RHI
     virtual Ref<RHIVertexShader> CreateVertexShader(const Path &path) override;
 
     virtual Ref<RHIFragmentShader> CreateFragmentShader(const Path &path) override;
+  
+    virtual Ref<RHIViewport> CreateViewport(PlatformWindow *window) override;
 
     virtual Ref<DynamicUniformBufferContent> CreateDynamicUniformBufferContent(uint32 maxSize, const ShaderReflection::UniformBlock *uniformBlock) override;
   
@@ -43,9 +45,6 @@ class VulkanRHI final : public RHI
     vk::raii::Context context;
 
     vk::raii::Instance instance;
-
-    vk::raii::SurfaceKHR surface;
-
     Scope<VulkanDevice> device;
 
     std::unordered_map<RHITexture *, VkDescriptorSet> registeredImGuiTextures;

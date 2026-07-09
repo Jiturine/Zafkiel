@@ -31,6 +31,8 @@ struct OpenGLRenderTargetInfo
     uint32 sampleCount;
 };
 
+class OpenGLTexture;
+
 class OpenGLFrameBuffer
 {
   public:
@@ -39,6 +41,8 @@ class OpenGLFrameBuffer
     ~OpenGLFrameBuffer();
 
     bool Matches(const RHIRenderPassInfo &renderPassInfo);
+
+    bool ContainTexture(OpenGLTexture *texture) const;
     
     GLuint GetHandle() const { return handle; }
 
@@ -46,9 +50,11 @@ class OpenGLFrameBuffer
 
     uint32 GetHeight() const { return height; }
 
+    bool IsValid() const;
+
   private:
-    std::vector<GLuint> colorAttachments;
-    std::optional<GLuint> depthStencilAttachment;
+    std::vector<OpenGLTexture *> colorAttachments;
+    std::optional<OpenGLTexture *> depthStencilAttachment;
 
     uint32 width;
     uint32 height;
@@ -62,7 +68,9 @@ class OpenGLFrameBufferManager
     OpenGLFrameBufferManager() = default;
 
     OpenGLFrameBuffer *GetOrCreateFramebuffer(const OpenGLRenderTargetInfo &renderTargetInfo, const RHIRenderPassInfo &renderPassInfo);
-  
+
+    void OnDestroyTexture(OpenGLTexture *texture);
+
   private:
     using FrameBufferList = std::vector<Scope<OpenGLFrameBuffer>>; // 同个RenderTargetLayout的所有FrameBuffer
     std::unordered_map<uint32, FrameBufferList> frameBuffers;

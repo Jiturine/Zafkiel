@@ -33,13 +33,11 @@ class RHIGraphicsContext : public RHICommandContext
 
     virtual void SetStaticUniformBuffer(const std::string &name, RHIBuffer *uniformBuffer) = 0;
 
-    virtual void Present() = 0;
+    virtual void Present(RHIViewport *viewport) = 0;
 
     virtual void Finalize() = 0;
 
     virtual void Submit() = 0;
-
-    virtual void Resize(uint32 width, uint32 height) = 0;
 };
 
 class RHICommandList
@@ -112,7 +110,7 @@ class RHICommandListImmediate : public RHICommandList
 
     void SetStaticUniformBuffer(const std::string &name, RHIBuffer *uniformBuffer);
 
-    void Present();
+    void Present(RHIViewport *viewport);
 
     void FinalizeContext();
 };

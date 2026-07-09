@@ -1,12 +1,32 @@
 #pragma once
 #include "Function/RHI/RHIResources.h"
+#include "Function/Render/Font.h"
+#include "Function/UI/DrawElementList.h"
+#include "Function/UI/Window.h"
 
 namespace Zafkiel
 {
 
 class PostProcessingPass;
 
-class QuadPipeline
+class DrawElementPipeline
+{
+  public:
+    virtual void StartBatch() = 0;
+
+    void EndBatch() { Flush(); }
+
+  protected:
+    virtual void Flush() = 0;
+
+    void FlushAndReset()
+    {
+        Flush();
+        StartBatch();
+    }
+};
+
+class QuadPipeline : public DrawElementPipeline
 {
   public:
     QuadPipeline();
@@ -19,20 +39,20 @@ class QuadPipeline
         vec2 size = vec2(1.0f);
         vec4 color = vec4(1.0f);
         mat4 transform = mat4(1.0f);
-        Ref<RHITexture> texture = nullptr;
+        RHITexture *texture = nullptr;
         float rotation = 0.0f;
         float tilingFactor = 1.0f;
     };
-    void Render(uint32 width, uint32 height);
-    void BeginScene(const mat4 &viewProjectionMatrix);
-    void EndScene();
-    void Flush();
-    void StartBatch();
-    void FlushAndReset();
+    virtual void Flush() override;
+
+    virtual void StartBatch() override;
+
     void DrawQuad(const QuadProps &props);
+
     void Resize(uint32 width, uint32 height);
+
+    void ResetVertexBuffers();
     
-  private:
     // 批处理绘制矩形
     struct QuadVertex
     {
@@ -43,7 +63,10 @@ class QuadPipeline
         uint32 entityID;
     };
 
-    Ref<RHIBuffer> quadVertexBuffer;
+    static constexpr uint32 maxVertexBuffers = 16; // TODO: 应该用fence/RDG 管理VBO同步
+    Ref<RHIBuffer> quadVertexBuffer[maxVertexBuffers];
+    uint32 currentVertexBufferIndex;
+
     Ref<RHIBuffer> quadIndexBuffer;
   
     Ref<RHIVertexShader> quadVertexShader;
@@ -52,7 +75,6 @@ class QuadPipeline
     Ref<RHITexture> whiteTexture;
     Ref<RHIGraphicsPipeline> pipeline;
 
-    Ref<RHIBuffer> quadUniformBuffer;
     Ref<UniformBufferContent> quadUniformBufferContent;
 
     static constexpr uint32 maxQuads = 10000;
@@ -80,87 +102,66 @@ class QuadPipeline
         {0.0f, 1.0f},
     };
 };
-#if 0
-class TextPipeline
+class TextPipeline : public DrawElementPipeline
 {
   public:
     TextPipeline();
     ~TextPipeline();
-    // void DrawString(const std::string &str, Ref<FontAsset> font, const mat4 &transform, const vec3 &color);
-    
+    void DrawString(const std::wstring &str, Ref<Font> font, float fontSize, const vec2 &pos, const vec3 &color);
+    virtual void Flush();
+    virtual void StartBatch();
+
   private:
     struct TextVertex
     {
         vec3 position;
         vec4 color;
         vec2 texCoord;
+        int texIndex;
         uint32 entityID;
     };
     Ref<RHIBuffer> textVertexBuffer;
     Ref<RHIBuffer> textIndexBuffer;
-    Ref<RHIGraphicsShader> textShader;
+
+    Ref<RHIBuffer> textUniformBuffer;
+    Ref<UniformBufferContent> textUniformBufferContent;
+
+    Ref<RHITexture> whiteTexture;
+  
+    Ref<RHIVertexShader> vertexShader;
+    Ref<RHIFragmentShader> fragmentShader;
+
     Ref<RHIGraphicsPipeline> pipeline;
     static constexpr uint32 maxChars = 10000;  // TODO: 优化，弹性大小，起始大小较小，超出时再分配内存
     static constexpr uint32 maxVertices = maxChars * 4;
     static constexpr uint32 maxIndices = maxChars * 6;
-    Ref<RHITexture> textureSlot;
+    static constexpr uint32 maxTextureSlots = 8;
+    Ref<RHITexture> textureSlots[maxTextureSlots];
+
+    Ref<Font> currentFont;
 
     uint32 textureSlotIndex = 1;
     TextVertex *textVertexBufferBase = nullptr;
     TextVertex *textVertexBufferPtr = nullptr;
     uint32 textIndexCount = 0;
-    static constexpr vec4 textVertexPositions[]
-    {
-        {-0.5f, -0.5f, 0.0f, 1.0f},
-        {0.5f, -0.5f, 0.0f, 1.0f},
-        {0.5f, 0.5f, 0.0f, 1.0f},
-        {-0.5f, 0.5f, 0.0f, 1.0f},
-    };
-    static constexpr vec2 textTexCoords[]
-    {
-        {0.0f, 0.0f},
-        {1.0f, 0.0f},
-        {1.0f, 1.0f},
-        {0.0f, 1.0f},
-    };
-    
-};
-#endif 
-
-class UICompositePipeline
-{
-  public:
-    UICompositePipeline(PostProcessingPass *postProcessingPass);
-    void Render();
-    void Resize();
-    Ref<RHIBuffer> vertexBuffer;
-    Ref<RHIBuffer> indexBuffer;
-  
-    Ref<RHIGraphicsShader> vertexShader;
-    Ref<RHIGraphicsShader> fragmentShader;
-    
-    Ref<RHIGraphicsPipeline> pipeline;
-
-    PostProcessingPass *postProcessingPass;
 };
 
 class UIPass
 {
   public:
-    UIPass(PostProcessingPass *postProcessingPass);
-    void Render();
-    void Resize(uint32 width, uint32 height);
+    UIPass();
 
-    Ref<RHITexture> outputTexture;
-  
-    mat4 lightViewProj;
+    void Render(const std::vector<Ref<Window>> &windows);
+
+    void RenderSingleWindow(Ref<Window> window);
+
     Scope<QuadPipeline> quadPipeline;
-    Scope<UICompositePipeline> uiCompositePipeline;
+    Scope<TextPipeline> textPipeline;
 
-    PostProcessingPass *postProcessingPass;
+    Scope<DrawElementList> drawElementList;
 
-    uint32 currentWidth = 1;
-    uint32 currentHeight = 1;
+    Ref<RHIBuffer> uiUniformBuffer;
+    Ref<UniformBufferContent> uiUniformBufferContent;
 
 }; 
 

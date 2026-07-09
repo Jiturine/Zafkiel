@@ -13,17 +13,21 @@ struct OpenGLImageFormat
 };
 
 OpenGLImageFormat ImageFormatToOpenGLType(ImageFormat format);
+
+class OpenGLRHI;
   
 class OpenGLTexture final : public RHITexture
 {
   public:
-    OpenGLTexture(const RHITextureDesc &desc, Buffer data = nullptr);
+    OpenGLTexture(OpenGLRHI &rhi, const RHITextureDesc &desc, Buffer data = nullptr);
 
     ~OpenGLTexture();
 
     GLuint GetHandle() const { return handle; }
   
   private:
+    OpenGLRHI &rhi;
+
     GLuint handle;
 };
 

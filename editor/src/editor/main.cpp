@@ -1,14 +1,13 @@
 #include "editor/EditorLayer.h"
 #include "editor/Resource/EditorAssetManager.h"
-#include "editor/TestLayer.h"
-#include "editor/FontLayer.h"
+#include "editor/UILayer.h"
 #include "Core/Application/Application.h"
 using namespace Zafkiel;
 
 int main()
 {
-    auto& app = Application::Create();
-    app.PushLayer(CreateRef<TestLayer>());
+    auto &app = Application::Instance();
+    app.PushLayer(CreateRef<UILayer>());
     app.Run();
     return 0;
 }

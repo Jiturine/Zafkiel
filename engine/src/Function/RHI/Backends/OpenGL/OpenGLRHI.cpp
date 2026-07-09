@@ -4,6 +4,7 @@
 #include "Function/RHI/Backends/OpenGL/OpenGLBuffer.h"
 #include "Function/RHI/Backends/OpenGL/OpenGLShader.h"
 #include "Function/RHI/Backends/OpenGL/OpenGLPipeline.h"
+#include "Function/RHI/Backends/OpenGL/OpenGLViewport.h"
 #include "Function/RHI/ShaderCompiler/GlslCompiler.h"
 #include "Function/RHI/ShaderCompiler/SpirvReflection.h"
 
@@ -18,14 +19,16 @@ static constexpr uint32 PipelineMaterialBindingBase = 16;
 static constexpr uint32 SurfaceMaterialBindingBase = 32;
 static constexpr uint32 ObjectShaderMaterialBindingBase = 48;
 
-OpenGLRHI::OpenGLRHI(Window &window)
-    : window(window.GetHandle())
+OpenGLRHI::OpenGLRHI()
 {
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 6);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
-    glContext = SDL_GL_CreateContext(window.GetHandle());
+    dummyWindow = SDL_CreateWindow("Dummy Window", 1, 1, SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN);
+
+    glContext = SDL_GL_CreateContext(dummyWindow);
+
     if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress))
     {
         Log::Critical("Failed to initialize glad!");
@@ -55,7 +58,7 @@ OpenGLRHI::OpenGLRHI(Window &window)
         }, nullptr);
     }
 
-    SDL_GL_MakeCurrent(window.GetHandle(), glContext);
+    SDL_GL_MakeCurrent(dummyWindow, glContext);
 
     frameBufferManager = CreateScope<OpenGLFrameBufferManager>();
 
@@ -67,7 +70,6 @@ OpenGLRHI::~OpenGLRHI()
     SDL_GL_DestroyContext(glContext);
 }
 
-
 Ref<RHIBuffer> OpenGLRHI::CreateBuffer(RHICommandList &RHICmdList, const RHIBufferDesc &desc, const void *data) 
 {
     return CreateRef<OpenGLBuffer>(desc, data);
@@ -75,7 +77,7 @@ Ref<RHIBuffer> OpenGLRHI::CreateBuffer(RHICommandList &RHICmdList, const RHIBuff
 
 Ref<RHITexture> OpenGLRHI::CreateTexture(RHICommandList &RHICmdList, const RHITextureDesc &desc, Buffer data) 
 {
-    return CreateRef<OpenGLTexture>(desc, data);
+    return CreateRef<OpenGLTexture>(*this, desc, data);
 }
 
 Ref<RHIGraphicsPipeline> OpenGLRHI::CreateGraphicsPipeline(const RHIGraphicsPipelineDesc &desc)
@@ -111,6 +113,11 @@ Ref<RHIFragmentShader> OpenGLRHI::CreateFragmentShader(const Path &path)
     auto shaderResourceTable = reflection->GetShaderResourceTable();
 
     return CreateRef<OpenGLFragmentShader>(code, MoveTemp(shaderResourceTable));
+}
+
+Ref<RHIViewport> OpenGLRHI::CreateViewport(PlatformWindow *window)
+{
+    return CreateRef<OpenGLViewport>(*this, window);
 }
 
 Ref<DynamicUniformBufferContent> OpenGLRHI::CreateDynamicUniformBufferContent(uint32 maxSize, const ShaderReflection::UniformBlock *uniformBlock) 

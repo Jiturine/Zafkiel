@@ -4,6 +4,7 @@
 #include "Function/RHI/Backends/Vulkan/VulkanRenderPass.h"
 #include "Function/RHI/Backends/Vulkan/VulkanPipeline.h"
 #include "Function/RHI/Backends/Vulkan/VulkanBuffer.h"
+#include "Function/RHI/Backends/Vulkan/VulkanViewport.h"
 
 namespace Zafkiel
 {
@@ -117,7 +118,7 @@ void VulkanCommandContext::PrepareNewCommandBuffer(VulkanPayload *payload)
     newCommandBuffer->Begin();
 }
 
-static vk::PipelineStageFlags ImageLayoutToPipelineStage(ImageLayout layout)
+vk::PipelineStageFlags ImageLayoutToPipelineStage(ImageLayout layout)
 {
     switch (layout)
     {
@@ -134,7 +135,7 @@ static vk::PipelineStageFlags ImageLayoutToPipelineStage(ImageLayout layout)
     }
 }
 
-static vk::AccessFlags ImageLayoutToAccessMask(ImageLayout layout)
+vk::AccessFlags ImageLayoutToAccessMask(ImageLayout layout)
 {
     switch (layout)
     {
@@ -309,9 +310,11 @@ void VulkanGraphicsContext::SetStaticUniformBuffer(const std::string &name, RHIB
     staticUniformBuffers[name] = uniformBuffer;
 }
 
-void VulkanGraphicsContext::Present() 
+void VulkanGraphicsContext::Present(RHIViewport *viewport) 
 {
-    device.GetSwapchain().Present();
+    auto vkViewport = static_cast<VulkanViewport *>(viewport);
+
+    vkViewport->GetSwapchain()->Present();
 }
 
 void VulkanGraphicsContext::Finalize()
@@ -328,11 +331,6 @@ void VulkanGraphicsContext::Submit()
     }
     payloads.clear();
     queue.SubmitPayloads();
-}
-
-void VulkanGraphicsContext::Resize(uint32 width, uint32 height)
-{
-    device.GetSwapchain().Resize(width, height);
 }
 
 }

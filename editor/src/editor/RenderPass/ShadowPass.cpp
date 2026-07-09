@@ -40,6 +40,7 @@ ShadowPass::ShadowPass()
         .height = shadowMapSize,
         .format = ImageFormat::DEPTH32F,
         .usages = ImageUsageFlags::DepthAttachment | ImageUsageFlags::Sampled,
+        .initialLayout = ImageLayout::ShaderReadOnly,
         .filter = TextureFilter::Nearest,
         .sampleCount = 1,
     };
@@ -67,7 +68,7 @@ void ShadowPass::Render(const FrameData &frameData)
         {
             .texture = shadowMap.get(),
             .clearValue = {.floatValue = 1.0f },
-            .initialLayout = ImageLayout::Undefined,
+            .initialLayout = ImageLayout::ShaderReadOnly,
             .finalLayout = ImageLayout::ShaderReadOnly,
         }
     };

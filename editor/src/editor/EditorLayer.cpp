@@ -1,3 +1,4 @@
+#if 0
 #include "editor/EditorLayer.h"
 #include "editor/Function/Scene/EditorSceneManager.h"
 #include "editor/Resource/EditorAssetManager.h"
@@ -5,8 +6,6 @@
 #include "editor/EditorGUI/EditorGUI.h"
 #include "editor/EditorGUI/EditorWindow.h"
 #include "Function/Render/Renderer.h"
-#include "editor/Panels/ContentBrowserPanel.h"
-#include "editor/Panels/ScenePanel.h"
 
 #include "Function/Scene/Components.h"
 
@@ -16,7 +15,7 @@
 #include "EngineReflGenerate.h"
 #include "EditorReflGenerate.h"
 
-#include "Function/Input/Input.h"
+#include "Platform/Input/Input.h"
 #include "editor/Function/Script/EditorScriptEngine.h"
 #include "Function/Script/ScriptGlue.h"
 
@@ -34,7 +33,7 @@ void EditorLayer::OnAttach()
     ScriptGlue::RegisterComponents();
 
     // window只与渲染相关
-    WindowSpecification spec
+    PlatformWindowSpecification spec
     {
         .graphicsAPI = GraphicsAPI::Vulkan,
         .title = "Zafkiel Editor",
@@ -43,7 +42,7 @@ void EditorLayer::OnAttach()
     };
     window = CreateScope<EditorWindow>(spec);
 
-    Renderer::Init(GraphicsAPI::Vulkan, *window);
+    Renderer::Init(GraphicsAPI::Vulkan);
 
     // 从文件读取项目
     const std::string &editorConfigText = FileSystem::ReadText("editor_config.yaml");
@@ -95,13 +94,13 @@ void EditorLayer::OnDetach()
 
 void EditorLayer::OnUpdate(float timestep)
 {
-    if(window->ShouldClose()) Application::Instance().Exit();
+    if(window->ShouldClose()) Application::Instance().Instance().Exit();
 
     Input::ClearState();
     window->PollEvents();
 
     // 逻辑更新
-    Application::ExecuteMainThreadQueue();
+    Application::Instance().ExecuteMainThreadQueue();
 
     if (EditorScriptEngine::IsRuntime())
     {
@@ -143,10 +142,11 @@ void EditorLayer::OnUpdate(float timestep)
     EditorGUI::EndFrame();
 
     // 渲染后更新，用到imgui的事件
-    if (auto scenePanel = window->GetActivePanel<ScenePanel>())
-    {
-        scenePanel->Update(timestep);
-    }
+    // if (auto scenePanel = window->GetActivePanel<ScenePanel>())
+    // {
+    //     scenePanel->Update(timestep);
+    // }
 }
 
 }
+#endif

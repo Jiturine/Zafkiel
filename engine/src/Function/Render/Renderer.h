@@ -15,35 +15,24 @@
 
 namespace Zafkiel
 {
-class Window;
+class PlatformWindow;
 class MaterialAsset;
 class MeshAsset;
 class Texture2DAsset;
 class FontAsset;
 
-class Renderer
+class Renderer : public Singleton<Renderer, true>
 {
   public:
-    static Renderer& Instance() { return *instance; }
+    Renderer(GraphicsAPI API);
+
     ~Renderer();
-
-    static void Init(GraphicsAPI API, Window &window);
-
-    static void Destroy();
-
-    void InitImGui(SDL_Window* window);
 
     std::vector<ImTextureRef> RegisterImGuiTexture(RHITexture *texture);
 
     void UnregisterImGuiTexture(RHITexture *texture);
 
     void DestroyImGui();
-
-    template <typename Fn>
-    static void Submit(Fn &&func)
-    {
-        Application::SubmitToRenderThread(std::forward<Fn>(func));
-    }
 
     RenderTargetPool &GetRenderTargetPool() { return *renderTargetPool.get(); }
 
@@ -52,10 +41,6 @@ class Renderer
     Ref<Material> GetOrCreateMaterial(AssetHandle materialAssetHandle, const MaterialDesc &desc);
 
   private:
-    Renderer(GraphicsAPI API, Window &window);
-
-    inline static Renderer *instance = nullptr;
-
     Scope<RenderTargetPool> renderTargetPool;
 
     std::unordered_map<AssetHandle, Ref<Mesh>> meshes;

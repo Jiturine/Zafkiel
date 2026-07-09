@@ -60,9 +60,9 @@ void RHICommandListImmediate::SetStaticUniformBuffer(const std::string &name, RH
     graphicsContext->SetStaticUniformBuffer(name, uniformBuffer);
 }
 
-void RHICommandListImmediate::Present()
+void RHICommandListImmediate::Present(RHIViewport *viewport)
 {
-    graphicsContext->Present();
+    graphicsContext->Present(viewport);
 }
   
 void RHICommandListImmediate::FinalizeContext()

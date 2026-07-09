@@ -20,8 +20,6 @@ namespace Zafkiel
 class EditorAssetManager final : public AssetManager
 {
   public:
-    // AssetHandle GetBuiltinShader(BuiltinShaderType type);
-
     static void Init()
     {
         instance = new EditorAssetManager;

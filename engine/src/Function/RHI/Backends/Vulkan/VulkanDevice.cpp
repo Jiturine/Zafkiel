@@ -4,7 +4,7 @@
 namespace Zafkiel 
 {
 
-VulkanDevice::VulkanDevice(vk::raii::PhysicalDevice tmpPhysicalDevice, vk::raii::SurfaceKHR &surface, VulkanRHI &rhi)
+VulkanDevice::VulkanDevice(vk::raii::PhysicalDevice tmpPhysicalDevice, VulkanRHI &rhi)
     : physicalDevice(MoveTemp(tmpPhysicalDevice)), device(nullptr), graphicsQueue(nullptr), rhi(rhi)
 {
     // 选择队列族
@@ -55,22 +55,14 @@ VulkanDevice::VulkanDevice(vk::raii::PhysicalDevice tmpPhysicalDevice, vk::raii:
     
     graphicsQueue = CreateScope<VulkanQueue>(*this, optGraphicsQueueIndex.value());
     
-    if (physicalDevice.getSurfaceSupportKHR(graphicsQueue->GetQueueFamilyIndex(), surface))
-    {
-        presentQueue = graphicsQueue.get();
-    }
-    else 
-    {
-        Log::Error("Cannot support present!");
-    }
+    // TODO: 检测graphicsQueue是否支持present (需要surface)
+    presentQueue = graphicsQueue.get();
     
     renderPassManager = CreateScope<VulkanRenderPassManager>(*this);
 
     descriptorManager = CreateScope<VulkanDescriptorManager>(*this);
 
     graphicsContext = CreateScope<VulkanGraphicsContext>(*graphicsQueue.get(), *this);
-
-    swapchain = CreateScope<VulkanSwapchain>(*this, surface, 1280, 720);
 
     shaderRegistry = CreateScope<VulkanShaderRegistry>();
 }

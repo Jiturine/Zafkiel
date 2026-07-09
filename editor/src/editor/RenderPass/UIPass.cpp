@@ -13,7 +13,8 @@ QuadPipeline::QuadPipeline()
         .size = maxVertices * sizeof(QuadVertex),
         .usages = BufferUsageFlags::VertexBuffer | BufferUsageFlags::CPUAccessible | BufferUsageFlags::Dynamic,
     };
-    quadVertexBuffer = GlobalRHICmdList->CreateBuffer(quadVertexBufferDesc);
+    for (uint32 i = 0; i < maxVertexBuffers; i++)
+        quadVertexBuffer[i] = GlobalRHICmdList->CreateBuffer(quadVertexBufferDesc);
     
     std::vector<uint32> indices(maxIndices);
     for (uint32 i = 0, offset = 0; i < maxIndices; i += 6, offset += 4)
@@ -39,6 +40,7 @@ QuadPipeline::QuadPipeline()
         .height = 1,
         .format = ImageFormat::RGBA8,
         .usages = ImageUsageFlags::Sampled | ImageUsageFlags::Upload,
+        .initialLayout = ImageLayout::ShaderReadOnly,
     };
     uint32 whiteTextureData = 0xffffffff;
     Buffer buffer(whiteTextureData);
@@ -60,25 +62,14 @@ QuadPipeline::QuadPipeline()
             {
                 {
                     .format = ImageFormat::RGBA8,
+                    .blendEnable = true,
+                    .blendFunc = BlendFunc::Normal,
                     .sampleCount = 1,
                 }
             }
         }
     };
     pipeline = GlobalRHI->CreateGraphicsPipeline(pipelineDesc);
-
-    RHIBufferDesc quadUniformBufferDesc 
-    {
-        .size = maxIndices * sizeof(uint32),
-        .usages = BufferUsageFlags::UniformBuffer | BufferUsageFlags::CPUAccessible | BufferUsageFlags::Dynamic,
-    };
-    quadUniformBuffer = GlobalRHICmdList->CreateBuffer(quadUniformBufferDesc);
-    
-    pipeline->SetUniformBuffer(ShaderStage::Vertex, "uQuad", quadUniformBuffer.get());
-
-    quadUniformBufferContent = CreateRef<UniformBufferContent>(quadVertexShader->GetResourceTable().GetResourceType("UIQuadUBO")->As<ShaderReflection::UniformBlock>());
-
-    textureSlots[0] = whiteTexture;
 }
 
 QuadPipeline::~QuadPipeline()
@@ -88,44 +79,9 @@ QuadPipeline::~QuadPipeline()
     quadVertexBufferPtr = nullptr;
 }
 
-void QuadPipeline::Render(uint32 width, uint32 height)
+void QuadPipeline::ResetVertexBuffers()
 {
-    mat4 viewMatrix = Maths::LookAt(vec3(0, 0, 1), vec3(0, 0, 0), vec3(0, 1, 0));
-    mat4 orthoProjMatrix = Maths::Ortho(0, width, 0, height, 0.1f, 100.0f);
-    mat4 viewProj = orthoProjMatrix * viewMatrix;
-    BeginScene(viewProj);
-    QuadProps quadProps 
-    {
-        .position = vec3(200, 200, 0.0), // 中心点
-        .size = vec2(100, 100),
-        .texture = whiteTexture,
-    };
-    DrawQuad(quadProps);
-    quadProps.position.x += 400;
-    DrawQuad(quadProps);
-    EndScene();
-}
-
-void QuadPipeline::BeginScene(const mat4 &viewProjectionMatrix)
-{
-    quadUniformBufferContent->SetParameter("viewProjection", viewProjectionMatrix, ShaderFundamentalType::Mat4);
-
-    GlobalRHICmdList->UpdateUniformBuffer(quadUniformBuffer.get(), quadUniformBufferContent->GetData());
-
-    for (auto index = 0; index < maxTextureSlots; index++)
-    {
-        textureSlots[index] = whiteTexture;
-    }
-
-    StartBatch();
-}
-
-void QuadPipeline::EndScene()
-{
-    if (quadIndexCount == 0)
-        return;
-
-    Flush();
+    currentVertexBufferIndex = 0;
 }
 
 void QuadPipeline::Flush()
@@ -134,8 +90,7 @@ void QuadPipeline::Flush()
         return;
 
     uint32 size = (quadVertexBufferPtr - quadVertexBufferBase) * sizeof(QuadVertex);
-
-    GlobalRHICmdList->WriteBuffer(quadVertexBuffer.get(), Buffer(reinterpret_cast<uint8 *>(quadVertexBufferBase), size));
+    GlobalRHICmdList->WriteBuffer(quadVertexBuffer[currentVertexBufferIndex].get(), Buffer(reinterpret_cast<uint8 *>(quadVertexBufferBase), size));
 
     for (uint32 index = 0; index < maxTextureSlots; index++)
     {
@@ -144,20 +99,24 @@ void QuadPipeline::Flush()
 
     GlobalRHICmdList->BindGraphicsPipeline(pipeline.get());
 
-    GlobalRHICmdList->DrawIndexed(quadVertexBuffer.get(), quadIndexBuffer.get(), quadIndexCount);
+    GlobalRHICmdList->DrawIndexed(quadVertexBuffer[currentVertexBufferIndex].get(), quadIndexBuffer.get(), quadIndexCount);
+
+    currentVertexBufferIndex++;
+    if (currentVertexBufferIndex >= maxVertexBuffers)
+    {
+        Log::Warn("VBO Overflow!");
+    }
 }
 
 void QuadPipeline::StartBatch()
 {
+    for (auto index = 0; index < maxTextureSlots; index++)
+    {
+        textureSlots[index] = whiteTexture;
+    }
     quadVertexBufferPtr = quadVertexBufferBase;
     quadIndexCount = 0;
     textureSlotIndex = 1;
-}
-
-void QuadPipeline::FlushAndReset()
-{
-    EndScene();
-    StartBatch();
 }
 
 void QuadPipeline::DrawQuad(const QuadProps &props)
@@ -165,10 +124,10 @@ void QuadPipeline::DrawQuad(const QuadProps &props)
     if (quadIndexCount >= maxIndices)
         FlushAndReset();
 
-    uint32 textureIndex = -1;
+    uint32 textureIndex = 0;
     if (props.texture)
     {
-        for (uint32 i = 0; i < textureSlotIndex; ++i)
+        for (uint32 i = 1; i < textureSlotIndex; ++i)
         {
             if (textureSlots[i] == props.texture)
             {
@@ -177,7 +136,7 @@ void QuadPipeline::DrawQuad(const QuadProps &props)
             }
         }
 
-        if (textureIndex == -1)
+        if (textureIndex == 0)
         {
             if (textureSlotIndex >= maxTextureSlots)
             {
@@ -213,103 +172,49 @@ void QuadPipeline::DrawQuad(const QuadProps &props)
     quadIndexCount += 6;
 } 
 
-void QuadPipeline::Resize(uint32 width, uint32 height)
+TextPipeline::TextPipeline()
 {
-    // if (Renderer::Instance().GetGraphicsContext()->GetAPI() == GraphicsAPI::Vulkan)
-    // {
-    //     auto shaderMaterialHandle = Renderer::Instance().GetPipelineMaterial(pipelineMaterial)->GetShaderMaterial();
-    //     auto shaderMaterial = Renderer::Instance().GetShaderMaterial(shaderMaterialHandle);
-    //     auto backend = shaderMaterial->GetBackend().As<VulkanShaderMaterialBackend>();
-    //     backend->SetDirty(0);
-    // }
-}
+    textVertexBufferBase = new TextVertex[maxVertices];
 
-UIPass::UIPass(PostProcessingPass *postProcessingPass)
-{
-    RHITextureDesc outputColorTextureDesc
+    RHIBufferDesc textVertexBufferDesc
     {
-        .width = 1280,
-        .height = 720,
-        .format = ImageFormat::RGBA8,
-        .usages = ImageUsageFlags::Sampled | ImageUsageFlags::ColorAttachment,
-        .wrap = TextureWrap::Repeat,
-        .filter = TextureFilter::Nearest
+        .size = maxVertices * sizeof(TextVertex),
+        .usages = BufferUsageFlags::VertexBuffer | BufferUsageFlags::CPUAccessible | BufferUsageFlags::Dynamic,
     };
-    outputTexture = GlobalRHICmdList->CreateTexture(outputColorTextureDesc);
+    textVertexBuffer = GlobalRHICmdList->CreateBuffer(textVertexBufferDesc);
     
-    uiCompositePipeline = CreateScope<UICompositePipeline>(postProcessingPass);
-
-    quadPipeline = CreateScope<QuadPipeline>();
-}
-
-void UIPass::Render()
-{
-    RHIRenderPassInfo beginInfo
+    std::vector<uint32> indices(maxIndices);
+    for (uint32 i = 0, offset = 0; i < maxIndices; i += 6, offset += 4)
     {
-        .colorAttachments
-        {
-            {
-                .texture = outputTexture.get(),
-                .clearValue = { .vec4Value = vec4(0, 0, 0, 1) },
-                .initialLayout = ImageLayout::Undefined,
-                .finalLayout = ImageLayout::ShaderReadOnly
-            }
-        }
-    };
-    GlobalRHICmdList->BeginRenderPass(beginInfo);
+        indices[i] = offset;
+        indices[i + 1] = offset + 1;
+        indices[i + 2] = offset + 2;
+        indices[i + 3] = offset + 2;
+        indices[i + 4] = offset + 3;
+        indices[i + 5] = offset;
+    }
 
-    uiCompositePipeline->Render();
-    
-    quadPipeline->Render(currentWidth, currentHeight);
-
-    GlobalRHICmdList->EndRenderPass();
-}
-
-void UIPass::Resize(uint32 width, uint32 height)
-{
-    currentWidth = width;
-    currentHeight = height;
-
-    Renderer::Instance().GetRenderTargetPool().UpdateTexture(outputTexture, width, height);
-
-    // uiCompositePipeline->Resize();
-
-    quadPipeline->Resize(width, height);
-}
-
-
-UICompositePipeline::UICompositePipeline(PostProcessingPass *postProcessingPass)
-    : postProcessingPass(postProcessingPass)
-{
-    const float vertices[] =
+    RHIBufferDesc textIndexBufferDesc
     {
-        -1.0f, -1.0f, 0.0f, 0.0f,  
-        -1.0f,  1.0f, 0.0f, 1.0f,  
-        1.0f,  1.0f, 1.0f, 1.0f,
-        1.0f, -1.0f, 1.0f, 0.0f  
-    };
-    RHIBufferDesc vertexBufferDesc 
-    {
-        .size = sizeof(vertices),
-        .usages = BufferUsageFlags::VertexBuffer | BufferUsageFlags::CPUAccessible | BufferUsageFlags::Static,
-    };
-    vertexBuffer = GlobalRHICmdList->CreateBuffer(vertexBufferDesc, vertices);
-
-    const uint32 indices[] = 
-    {
-        0, 1, 2, 
-        2, 3, 0
-    };
-    RHIBufferDesc indexBufferDesc
-    {
-        .size = sizeof(indices),
+        .size = maxIndices * sizeof(uint32),
         .usages = BufferUsageFlags::IndexBuffer | BufferUsageFlags::CPUAccessible | BufferUsageFlags::Static,
     };
-    indexBuffer = GlobalRHICmdList->CreateBuffer(indexBufferDesc, indices);
+    textIndexBuffer = GlobalRHICmdList->CreateBuffer(textIndexBufferDesc, indices.data());
 
-    vertexShader = GlobalRHI->CreateVertexShader("assets/shaders/UICompositeVS.glsl");
+    vertexShader = GlobalRHI->CreateVertexShader("assets/shaders/TextVS.glsl");
+    fragmentShader = GlobalRHI->CreateFragmentShader("assets/shaders/TextFS.glsl");
 
-    fragmentShader = GlobalRHI->CreateFragmentShader("assets/shaders/UICompositeFS.glsl");
+    RHITextureDesc desc
+    {
+        .width = 1,
+        .height = 1,
+        .format = ImageFormat::RGBA8,
+        .usages = ImageUsageFlags::Sampled | ImageUsageFlags::Upload,
+        .initialLayout = ImageLayout::ShaderReadOnly,
+    };
+    uint32 whiteTextureData = 0xffffffff;
+    Buffer buffer(whiteTextureData);
+    whiteTexture = GlobalRHICmdList->CreateTexture(desc, buffer);
 
     RHIGraphicsPipelineDesc pipelineDesc
     {
@@ -324,71 +229,25 @@ UICompositePipeline::UICompositePipeline(PostProcessingPass *postProcessingPass)
             {
                 {
                     .format = ImageFormat::RGBA8,
+                    .blendEnable = true,
+                    .blendFunc = BlendFunc::Normal,
                     .sampleCount = 1,
                 }
             }
         }
     };
     pipeline = GlobalRHI->CreateGraphicsPipeline(pipelineDesc);
-}
 
-void UICompositePipeline::Render()
-{
-    GlobalRHICmdList->BindGraphicsPipeline(pipeline.get());
-
-    pipeline->SetTexture(ShaderStage::Fragment, "uScreenTexture", postProcessingPass->outputColorTexture.get());
-
-    GlobalRHICmdList->DrawIndexed(vertexBuffer.get(), indexBuffer.get());
-}
-
-void UICompositePipeline::Resize()
-{
-    // if (Renderer::Instance().GetGraphicsContext()->GetAPI() == GraphicsAPI::Vulkan)
-    // {
-    //     auto shaderMaterialHandle = Renderer::Instance().GetPipelineMaterial(pipelineMaterial)->GetShaderMaterial();
-    //     auto shaderMaterial = Renderer::Instance().GetShaderMaterial(shaderMaterialHandle);
-    //     auto backend = shaderMaterial->GetBackend().As<VulkanShaderMaterialBackend>();
-    //     backend->SetDirty(0);
-    // }
-}
-
-#if 0
-
-TextPipeline::TextPipeline(RenderHandle uiPass)
-{
-    textVertexBufferBase = new TextVertex[maxVertices];
-
-    Texture2DSpecification spec
+    auto textUBOType = fragmentShader->GetResourceTable().GetResourceType("TextUBO")->As<ShaderReflection::UniformBlock>();
+    RHIBufferDesc textUniformBufferDesc
     {
-        .width = 1,
-        .height = 1,
-        .format = ImageFormat::RGBA8,
-        .usages = { ImageUsage::Sampled, ImageUsage::Upload },
-        .updateFrequency = ImageUpdateFrequency::Static
+        .size = textUBOType->GetSize(),
+        .usages = BufferUsageFlags::UniformBuffer | BufferUsageFlags::CPUAccessible | BufferUsageFlags::Dynamic,
     };
+    textUniformBuffer = GlobalRHICmdList->CreateBuffer(textUniformBufferDesc);
+    textUniformBufferContent = CreateRef<UniformBufferContent>(textUBOType);
 
-    textShader = Renderer::Instance().CreateGraphicsShader("assets/shaders/text_shader.glsl");
-    pipelineMaterial = Renderer::Instance().CreatePipelineMaterial("assets/shaders/schema/ui_text_pipeline.zss");
-    auto shaderMaterial = Renderer::Instance().GetPipelineMaterial(pipelineMaterial)->GetShaderMaterial();
-
-    GraphicsPipelineSpecification pipelineSpec
-    {
-        .primitiveTopology = PrimitiveTopology::Triangles,
-        .shader = textShader,
-        .shaderMaterialTemplates
-        {
-            {},
-            Renderer::Instance().GetPipelineMaterial(pipelineMaterial)->GetTemplate(),
-            {},
-            {}
-        },
-        .renderPass = uiPass,
-        .cullMode = CullMode::None,
-        .frontFace = FrontFace::CounterClockWise,
-        .depthTest = false,
-        .colorAttachmentCount = 1
-    };
-    pipeline = Renderer::Instance().CreateGraphicsPipeline(pipelineSpec);
+    pipeline->SetUniformBuffer(ShaderStage::Fragment, "uText", textUniformBuffer.get());
 }
 
 TextPipeline::~TextPipeline()
@@ -397,6 +256,225 @@ TextPipeline::~TextPipeline()
     textVertexBufferBase = nullptr;
     textVertexBufferPtr = nullptr;
 }
-#endif
+
+void TextPipeline::DrawString(const std::wstring &str, Ref<Font> font, float fontSize, const vec2 &pos, const vec3 &color)
+{
+    Ref<RHITexture> altas = font->GetFontAtlasTexture(0);
+
+    float xOffset = 0.0f;
+    
+    float fsScale = 1.0f / font->GetLineHeight();
+
+    float baselineY = pos.y + font->GetAscender() * fontSize;
+
+    for (uint32 i = 0; i < str.length(); i++)
+    {
+        wchar ch = str[i];
+        auto glyphData = font->GetGlyphData(ch);
+        if (!glyphData)
+            glyphData = font->GetGlyphData('?');
+        if (!glyphData)
+        {
+            Log::Error("Invalid Character in Font!");
+            return;
+        }
+
+        if (font != currentFont)
+        {
+            FlushAndReset();
+            currentFont = font;
+        }
+
+        textureSlots[glyphData->altasIndex] = font->GetFontAtlasTexture(glyphData->altasIndex);
+
+        vec4 charVertexPositions[4] =
+        {
+            vec4(glyphData->planeCoordMin, 0.0f, 1.0f), 
+            vec4(glyphData->planeCoordMax.x, glyphData->planeCoordMin.y, 0.0f, 1.0f),
+            vec4(glyphData->planeCoordMax, 0.0f, 1.0f),
+            vec4(glyphData->planeCoordMin.x, glyphData->planeCoordMax.y, 0.0f, 1.0f), 
+        };
+
+        vec2 charTexCoords[4] =
+        {
+            glyphData->atlasCoordMin,
+            vec2(glyphData->atlasCoordMax.x, glyphData->atlasCoordMin.y),
+            glyphData->atlasCoordMax,
+            vec2(glyphData->atlasCoordMin.x, glyphData->atlasCoordMax.y),
+        };
+
+        for (int i = 0; i < 4; i++)
+        {
+            vec3 planeCoordPos = glm::scale(mat4(1.0f), vec3(fontSize, fontSize, 1.0f)) * charVertexPositions[i];
+            textVertexBufferPtr->position = vec3(pos.x + xOffset + planeCoordPos.x, baselineY - planeCoordPos.y, 0.0f);
+            textVertexBufferPtr->color = vec4(color, 1.0f);
+            textVertexBufferPtr->texCoord = charTexCoords[i];
+            textVertexBufferPtr->texIndex = glyphData->altasIndex;
+            textVertexBufferPtr->entityID = 0;
+            textVertexBufferPtr++;
+        }
+        textIndexCount += 6;
+
+        if (i != str.length() - 1)
+        {
+            wchar nextCh = str[i + 1];
+            float advance = font->GetGlyphData(ch)->advance + font->GetKerning(ch, nextCh);
+            xOffset += advance * fontSize;
+        }
+        else
+        {
+            float charWidth = font->GetGlyphData(ch)->planeCoordMax.x - font->GetGlyphData(ch)->planeCoordMin.x;
+            xOffset += charWidth * fontSize;
+        }
+    }
+}
+
+void TextPipeline::Flush()
+{
+    if (textIndexCount == 0)
+    {
+        return;
+    }
+
+    uint32 size = (textVertexBufferPtr - textVertexBufferBase) * sizeof(TextVertex);
+
+    GlobalRHICmdList->WriteBuffer(textVertexBuffer.get(), Buffer(reinterpret_cast<uint8 *>(textVertexBufferBase), size));
+
+    if (currentFont)
+    {
+        textUniformBufferContent->SetParameter("pxRange", currentFont->GetPixelRange(), ShaderFundamentalType::Float);
+    }
+
+    GlobalRHICmdList->UpdateUniformBuffer(textUniformBuffer.get(), textUniformBufferContent->GetData());
+
+    for (uint32 index = 0; index < maxTextureSlots; index++)
+    {
+        pipeline->SetTexture(ShaderStage::Fragment, std::format("uTexture{}", index), textureSlots[index].get());
+    }
+
+    GlobalRHICmdList->BindGraphicsPipeline(pipeline.get());
+
+    GlobalRHICmdList->DrawIndexed(textVertexBuffer.get(), textIndexBuffer.get(), textIndexCount);
+}
+
+void TextPipeline::StartBatch()
+{
+    currentFont = nullptr;  // 重置当前字体，避免使用失效指针
+    for (auto index = 0; index < maxTextureSlots; index++)
+    {
+        textureSlots[index] = whiteTexture;
+    }
+    textVertexBufferPtr = textVertexBufferBase;
+    textIndexCount = 0;
+}
+
+UIPass::UIPass()
+{
+    quadPipeline = CreateScope<QuadPipeline>();
+
+    textPipeline = CreateScope<TextPipeline>();
+
+    auto uiuboType = quadPipeline->quadVertexShader->GetResourceTable().GetResourceType("UIUBO")->As<ShaderReflection::UniformBlock>();
+
+    RHIBufferDesc quadUniformBufferDesc 
+    {
+        .size = uiuboType->GetSize(),
+        .usages = BufferUsageFlags::UniformBuffer | BufferUsageFlags::CPUAccessible | BufferUsageFlags::Dynamic,
+    };
+    uiUniformBuffer = GlobalRHICmdList->CreateBuffer(quadUniformBufferDesc);
+
+    GlobalRHICmdList->SetStaticUniformBuffer("uUIUBO", uiUniformBuffer.get());
+
+    uiUniformBufferContent = CreateRef<UniformBufferContent>(uiuboType);
+
+    drawElementList = CreateScope<DrawElementList>();
+}
+
+void UIPass::Render(const std::vector<Ref<Window>> &windows)
+{
+    quadPipeline->ResetVertexBuffers();
+
+    for (auto window : windows)
+    {
+        RenderSingleWindow(window);
+
+        GlobalRHICmdList->Present(window->GetViewport());
+    }
+}
+
+void UIPass::RenderSingleWindow(Ref<Window> window)
+{
+    RHIRenderPassInfo beginInfo
+    {
+        .colorAttachments
+        {
+            {
+                .texture = window->GetViewport()->GetBackendTexture(),
+                .clearValue = { .vec4Value = vec4(0, 0, 0, 1) },
+                .initialLayout = ImageLayout::Undefined,
+                .finalLayout = ImageLayout::PresentSrc
+            }
+        }
+    };
+    GlobalRHICmdList->BeginRenderPass(beginInfo);
+
+    mat4 viewMatrix = Maths::LookAt(vec3(0, 0, 1), vec3(0, 0, 0), vec3(0, 1, 0));
+    mat4 orthoProjMatrix = Maths::Ortho(0, window->GetWidth(), 0, window->GetHeight(), 0.1f, 100.0f);
+    mat4 viewProj = orthoProjMatrix * viewMatrix;
+
+    uiUniformBufferContent->SetParameter("viewProjection", viewProj, ShaderFundamentalType::Mat4);
+
+    GlobalRHICmdList->UpdateUniformBuffer(uiUniformBuffer.get(), uiUniformBufferContent->GetData());
+    
+    std::vector<DrawElementList> lists;
+    window->DrawWindow(lists);
+    
+    for (auto &drawElementList : lists)
+    {
+        drawElementList.GenerateBatches();
+
+        for (auto &batch : drawElementList.GetBatches())
+        {
+            switch (batch.type)
+            {
+                using enum DrawElementList::DrawElementType;
+            case Quad:
+            {
+                quadPipeline->StartBatch();
+                for (auto &element : batch.elements)
+                {
+                    auto &quadElement = element.As<DrawElementList::QuadElement>();
+                    quadPipeline->DrawQuad({
+                        .position = vec3((quadElement.quadPosMin + quadElement.quadPosMax) / 2.0f, 0.0f),
+                        .size = (quadElement.quadPosMax - quadElement.quadPosMin),
+                        .color = quadElement.color,
+                        .texture = quadElement.texture,
+                    });
+                }
+                quadPipeline->EndBatch();
+                break;
+            }
+            case Text:
+            {
+                textPipeline->StartBatch();
+                for (auto &element : batch.elements)
+                {
+                    auto &textElement = element.As<DrawElementList::TextElement>();
+                    textPipeline->DrawString(
+                        textElement.str,
+                        textElement.font,
+                        textElement.fontSize,
+                        textElement.pos,
+                        textElement.color
+                    );
+                }
+                textPipeline->EndBatch();
+                break;
+            }
+            }
+        }
+    }
+    GlobalRHICmdList->EndRenderPass();
+}
 
 }

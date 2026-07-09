@@ -45,7 +45,7 @@ OpenGLFrameBuffer::OpenGLFrameBuffer(const RHIRenderPassInfo &renderPassInfo)
         width = renderPassInfo.depthStencilAttachment.value().texture->GetWidth();
         height = renderPassInfo.depthStencilAttachment.value().texture->GetHeight();
     }
-    else 
+    else
     {
         Log::Error("FrameBuffer has no attachments!");
         return;
@@ -57,8 +57,7 @@ OpenGLFrameBuffer::OpenGLFrameBuffer(const RHIRenderPassInfo &renderPassInfo)
     for (auto &colotAttachmentInfo : renderPassInfo.colorAttachments)
     {
         auto colorAttachment = static_cast<OpenGLTexture *>(colotAttachmentInfo.texture);
-        
-        colorAttachments.push_back(colorAttachment->GetHandle());
+        colorAttachments.push_back(colorAttachment);
 
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + colorAttachmentIndex, GL_TEXTURE_2D, colorAttachment->GetHandle(), 0);
 
@@ -71,7 +70,7 @@ OpenGLFrameBuffer::OpenGLFrameBuffer(const RHIRenderPassInfo &renderPassInfo)
     {
         auto depthStencilAttachment = static_cast<OpenGLTexture *>(renderPassInfo.depthStencilAttachment.value().texture);
 
-        this->depthStencilAttachment = depthStencilAttachment->GetHandle();
+        this->depthStencilAttachment = depthStencilAttachment;
 
         GLenum attachmentType;
         switch (depthStencilAttachment->GetFormat())
@@ -134,23 +133,40 @@ bool OpenGLFrameBuffer::Matches(const RHIRenderPassInfo &renderPassInfo)
     {
         return false;
     }
-    if (renderPassInfo.depthStencilAttachment.has_value())
-    {
-        auto glTexture = static_cast<OpenGLTexture *>(renderPassInfo.depthStencilAttachment.value().texture);
-        if (glTexture->GetHandle() != depthStencilAttachment.value())
-        {
-            return false;
-        }
-    }
+
     for (auto [index, colorAttachmentInfo] : std::views::enumerate(renderPassInfo.colorAttachments))
     {
         auto glTexture = static_cast<OpenGLTexture *>(colorAttachmentInfo.texture);
-        if (glTexture->GetHandle() != colorAttachments[index])
+
+        if (glTexture != colorAttachments[index])
         {
             return false;
         }
     }
+
+    if (renderPassInfo.depthStencilAttachment.has_value())
+    {
+        auto glTexture = static_cast<OpenGLTexture *>(renderPassInfo.depthStencilAttachment.value().texture);
+        if (glTexture != depthStencilAttachment)
+        {
+            return false;
+        }
+    }
+
     return true;
+}
+
+bool OpenGLFrameBuffer::ContainTexture(OpenGLTexture *texture) const
+{
+    for (auto &colorAttachment : colorAttachments)
+    {
+        if (texture == colorAttachment) return true;
+    }
+    if (depthStencilAttachment.has_value())
+    {
+        if (texture == depthStencilAttachment.value()) return true;
+    }
+    return false;
 }
 
 OpenGLFrameBuffer *OpenGLFrameBufferManager::GetOrCreateFramebuffer(const OpenGLRenderTargetInfo &renderTargetInfo, const RHIRenderPassInfo &renderPassInfo)
@@ -192,6 +208,16 @@ OpenGLFrameBuffer *OpenGLFrameBufferManager::GetOrCreateFramebuffer(const OpenGL
     frameBufferList->push_back(MoveTemp(newFrameBuffer));
 
     return frameBufferList->back().get();
+}
+
+void OpenGLFrameBufferManager::OnDestroyTexture(OpenGLTexture *texture)
+{
+    for (auto &[hash, frameBufferList] : frameBuffers)
+    {
+        frameBufferList.erase(
+            std::remove_if(frameBufferList.begin(), frameBufferList.end(), [texture](auto &fb) { return fb->ContainTexture(texture); }),
+             frameBufferList.end());
+    }
 }
 
 }

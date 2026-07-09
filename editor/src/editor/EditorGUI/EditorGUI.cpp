@@ -7,7 +7,7 @@
 
 namespace Zafkiel 
 {
-
+#if 0
 void EditorGUI::BeginFrame()
 {
     GraphicsAPI API = GlobalRHI->GetAPI();
@@ -73,5 +73,5 @@ void EditorGUI::EndFrame()
         }
     }
 }
-
+#endif
 }

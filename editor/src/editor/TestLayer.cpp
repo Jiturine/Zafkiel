@@ -1,3 +1,4 @@
+#if 0
 #include "editor/TestLayer.h"
 
 #include "editor/EditorLayer.h"
@@ -5,13 +6,12 @@
 #include "EditorReflGenerate.h"
 #include "editor/EditorGUI/EditorGUI.h"
 
-#include "Function/Input/Input.h"
+#include "Platform/Input/Input.h"
 
 #include "Core/Application/Application.h"
 
 #include "Function/RHI/Backends/Vulkan/VulkanRenderPass.h"
 #include "Function/Render/Renderer.h"
-#include "editor/Panels/ScenePanel.h"
 
 #include "Function/Scene/Components.h"
 #include "editor/Project/ProjectManager.h"
@@ -27,9 +27,9 @@ void TestLayer::OnAttach()
     Reflection::RegisterEditor();
     Reflection::RegisterEngine();
 
-    WindowSpecification spec
+    PlatformWindowSpecification spec
     {
-        .graphicsAPI = GraphicsAPI::OpenGL,
+        .graphicsAPI = GraphicsAPI::Vulkan,
         .title = "Zafkiel Editor",
         .width = 1920,
         .height = 1080
@@ -37,18 +37,18 @@ void TestLayer::OnAttach()
     window = CreateScope<EditorWindow>(spec);
     window->CreatePanels();
 
-    Renderer::Init(GraphicsAPI::OpenGL, *window); 
+    Renderer::Init(GraphicsAPI::Vulkan); 
 
-    Application::KickRenderThread();
-    Application::WaitRenderThreadInitFinish();
+    Application::Instance().KickRenderThread();
+    Application::Instance().WaitRenderThreadInitFinish();
     
     Renderer::Submit([self = Ref(this)]() mutable {
         self->geometryPass = CreateScope<GeometryPass>();
         self->shadowPass = CreateScope<ShadowPass>();
         self->shadingPass = CreateScope<ShadingPass>(self->geometryPass.get(), self->shadowPass.get());
         self->postProcessingPass = CreateScope<PostProcessingPass>(self->shadingPass.get());
-        self->uiPass = CreateScope<UIPass>(self->postProcessingPass.get());
-        self->window->GetActivePanel<ScenePanel>()->SetSceneTexture(self->uiPass->outputTexture);
+        self->uiPass = CreateScope<UIPass>();
+        // self->window->GetActivePanel<ScenePanel>()->SetSceneTexture(self->uiPass->outputTexture);
 
         auto globalUniformBlock = static_cast<ShaderReflection::UniformBlock *>(self->geometryPass->pbrPipeline->GetShaders()[ShaderStage::Vertex]->GetResourceTable().GetResourceType("GlobalUBO")); // TODO: 单独的保存ResourceType类型，可能有问题
 
@@ -71,8 +71,8 @@ void TestLayer::OnAttach()
         self->objectUniformBuffer = GlobalRHICmdList->CreateBuffer(objectUBODesc);
     });
     
-    Application::KickRenderThread();
-    Application::WaitRenderThread();
+    Application::Instance().KickRenderThread();
+    Application::Instance().WaitRenderThread();
 
     ProjectManager::Init();
     const std::string editorConfigStr = FileSystem::ReadText("editor_config.yaml");
@@ -104,16 +104,16 @@ void TestLayer::OnAttach()
     
     EditorSceneManager::Instance().GetActiveScene().GetWorld().SpawnEntity(TransformComponent(vec3(0.0f)), LightComponent{LightType::Directional, vec3(1.0f), 1.0f, vec3(0.5f, -0.5f, 0.5f)});
 
-    Application::KickRenderThread();
-    Application::WaitRenderThread();
+    Application::Instance().KickRenderThread();
+    Application::Instance().WaitRenderThread();
 }
 
 void TestLayer::OnDetach()
 {
     // 等待渲染线程最后一次Update中的渲染完成
-    Application::KickRenderThread();
-    Application::WaitRenderThread();
-    Application::ClearRenderThreadSubmitQueue();
+    Application::Instance().KickRenderThread();
+    Application::Instance().WaitRenderThread();
+    Application::Instance().ClearRenderThreadSubmitQueue();
     Renderer::Submit([self = Ref(this)]() mutable {
         GlobalRHICmdList->SubmitAndWaitIdle();
         self->uiPass = nullptr;
@@ -173,12 +173,12 @@ void TestLayer::OnUpdate(float timestep)
 {
     if(window->ShouldClose())
     {
-        Application::Instance().Exit();
+        Application::Instance().Instance().Exit();
         return;
     }
 
-    Application::WaitRenderThread();
-    Application::KickRenderThread();
+    Application::Instance().WaitRenderThread();
+    Application::Instance().KickRenderThread();
 
     window->PollEvents();
 
@@ -232,52 +232,53 @@ void TestLayer::OnUpdate(float timestep)
 
         GlobalRHICmdList->SetStaticUniformBuffer("uMeshObject", objectUniformBuffer.get());
 
-        if (auto scenePanel = window->GetActivePanel<ScenePanel>())
-        {
-            geometryPass->Render(frameData);
-            shadowPass->Render(frameData);
-            shadingPass->Render();
-            postProcessingPass->Render();
-            uiPass->Render();
-        }
-        EditorGUI::BeginFrame(); 
-        {
-            GUIDockSpace dockspace("Hello DockSpace!");
-            {
-                for (auto &panel : window->panels)
-                {
-                    panel->Render();
-                }
-                GUIWindow testWindow("Test");
-                EditorGUI().Button("Hello", []() {
-                    Log::Info("Hello World!");
-                });
-            }
-        }
-        EditorGUI::EndFrame();
+        // if (auto scenePanel = window->GetActivePanel<ScenePanel>())
+        // {
+        //     geometryPass->Render(frameData);
+        //     shadowPass->Render(frameData);
+        //     shadingPass->Render();
+        //     postProcessingPass->Render();
+        //     uiPass->Render();
+        // }
+        // EditorGUI::BeginFrame(); 
+        // {
+        //     GUIDockSpace dockspace("Hello DockSpace!");
+        //     {
+        //         for (auto &panel : window->panels)
+        //         {
+        //             panel->Render();
+        //         }
+        //         GUIWindow testWindow("Test");
+        //         EditorGUI().Button("Hello", []() {
+        //             Log::Info("Hello World!");
+        //         });
+        //     }
+        // }
+        // EditorGUI::EndFrame();
         
-        GlobalRHICmdList->Present();
+        // GlobalRHICmdList->Present();
 
         GlobalRHICmdList->FinalizeContext();
 
         GlobalRHICmdList->Submit();
     });
 
-    if (auto scenePanel = window->GetActivePanel<ScenePanel>())
-    {
-        if (scenePanel->NeedResize())
-        {
-            Renderer::Submit([this, scenePanel]() mutable {
-                scenePanel->UnregisterSceneTexture();
-                geometryPass->Resize(scenePanel->size.x, scenePanel->size.y);
-                shadingPass->Resize(scenePanel->size.x, scenePanel->size.y);
-                postProcessingPass->Resize(scenePanel->size.x, scenePanel->size.y);
-                uiPass->Resize(scenePanel->size.x, scenePanel->size.y);
-                scenePanel->SetSceneTexture(uiPass->outputTexture);
-            });
-            editorCamera->SetViewportSize(scenePanel->size.x, scenePanel->size.y);
-        }
-    }
+    // if (auto scenePanel = window->GetActivePanel<ScenePanel>())
+    // {
+    //     if (scenePanel->NeedResize())
+    //     {
+    //         Renderer::Submit([this, scenePanel]() mutable {
+    //             scenePanel->UnregisterSceneTexture();
+    //             geometryPass->Resize(scenePanel->size.x, scenePanel->size.y);
+    //             shadingPass->Resize(scenePanel->size.x, scenePanel->size.y);
+    //             postProcessingPass->Resize(scenePanel->size.x, scenePanel->size.y);
+    //             uiPass->Resize(scenePanel->size.x, scenePanel->size.y);
+    //             scenePanel->SetSceneTexture(uiPass->outputTexture);
+    //         });
+    //         editorCamera->SetViewportSize(scenePanel->size.x, scenePanel->size.y);
+    //     }
+    // }
 }
 
 }
+#endif 

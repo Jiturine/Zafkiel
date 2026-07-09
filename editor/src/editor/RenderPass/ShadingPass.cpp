@@ -40,6 +40,7 @@ ShadingPass::ShadingPass(GeometryPass *geometryPass, ShadowPass *shadowPass)
         .height = 720,
         .format = ImageFormat::RGBA16F,
         .usages = ImageUsageFlags::Sampled | ImageUsageFlags::ColorAttachment,
+        .initialLayout = ImageLayout::ShaderReadOnly,
         .wrap = TextureWrap::Repeat,
         .filter = TextureFilter::Nearest,
         .sampleCount = 1,
@@ -83,7 +84,7 @@ void ShadingPass::Render()
         {
                 .texture = outputColorTexture.get(),
                 .clearValue = { .vec4Value = vec4(0, 0, 0, 1) },
-                .initialLayout = ImageLayout::Undefined,
+                .initialLayout = ImageLayout::ShaderReadOnly,
                 .finalLayout = ImageLayout::ShaderReadOnly,
             },
         },

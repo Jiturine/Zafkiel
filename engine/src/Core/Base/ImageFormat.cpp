@@ -21,6 +21,7 @@ uint32 ImageFormatToBytes(ImageFormat format)
     case BGR8_sRGB: return 3;
     case BGRA8_sRGB: return 4;
     case RGB16F: return 3 * 2;
+    case RGB32F: return 3 * 4;
     case RGBA16F: return 4 * 2;
     case RGBA32F: return 4 * 4;
     case R32UI: return 4;
@@ -51,6 +52,7 @@ uint32 ImageFormatToChannels(ImageFormat format)
     case BGR8_sRGB: return 3;
     case BGRA8_sRGB: return 4;
     case RGB16F: return 3;
+    case RGB32F: return 3;
     case RGBA16F: return 4;
     case RGBA32F: return 4;
     case R32UI: return 4;

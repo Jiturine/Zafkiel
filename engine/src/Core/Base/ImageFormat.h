@@ -18,6 +18,7 @@ enum class [[refl]] ImageFormat
     BGR8_sRGB,
     BGRA8_sRGB,
     RGB16F,
+    RGB32F,
     RGBA16F,
     RGBA32F,
     R32UI,

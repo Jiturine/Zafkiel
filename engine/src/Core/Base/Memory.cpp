@@ -1,6 +1,12 @@
 #include "Core/Base/Memory.h"
 
-static std::unordered_set<void *> liveReferences;
+struct LiveEntry
+{
+    bool alive = false;
+    uint32 generation = 0;
+};
+
+static std::unordered_map<void *, LiveEntry> liveReferences;
 static std::mutex liveReferenceMutex;
 
 namespace Zafkiel
@@ -14,8 +20,11 @@ void AddToLiveReferences(void *instance)
     if (!instance)
     {
         Log::Error("instance is nullptr");
+        return;
     }
-    liveReferences.insert(instance);
+    auto &entry = liveReferences[instance];
+    entry.alive = true;
+    entry.generation++;
 }
 
 void RemoveFromLiveReferences(void *instance)
@@ -24,18 +33,29 @@ void RemoveFromLiveReferences(void *instance)
     if (!instance)
     {
         Log::Error("instance is nullptr");
+        return;
     }
-    liveReferences.erase(instance);
+    auto it = liveReferences.find(instance);
+    if (it != liveReferences.end())
+        it->second.alive = false;
 }
 
-bool IsLive(void *instance)
+uint32 GetGeneration(void *instance)
 {
-
     if (!instance)
-    {
-        Log::Error("instance is nullptr");
-    }
-    return liveReferences.contains(instance);
+        return 0;
+    auto it = liveReferences.find(instance);
+    if (it != liveReferences.end())
+        return it->second.generation;
+    return 0;
+}
+
+bool Check(void *instance, uint32 generation)
+{
+    if (!instance)
+        return false;
+    auto it = liveReferences.find(instance);
+    return it != liveReferences.end() && it->second.alive && it->second.generation == generation;
 }
 
 }

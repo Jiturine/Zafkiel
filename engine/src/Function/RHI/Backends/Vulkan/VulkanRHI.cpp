@@ -4,10 +4,11 @@
 #include "Function/RHI/Backends/Vulkan/VulkanPipeline.h"
 #include "Function/RHI/Backends/Vulkan/VulkanShader.h"
 #include "Function/RHI/Backends/Vulkan/VulkanDevice.h"
+#include "Function/RHI/Backends/Vulkan/VulkanViewport.h"
 #include "Function/RHI/ShaderCompiler/GlslCompiler.h"
 #include "Function/RHI/ShaderCompiler/SpirvReflection.h"
 
-#include "Function/Window/Window.h"
+#include "Platform/PlatformWindow/PlatformWindow.h"
 
 #include <imgui_impl_vulkan.h>
 #include <SDL3/SDL_vulkan.h>
@@ -15,8 +16,8 @@
 namespace Zafkiel 
 {
 
-VulkanRHI::VulkanRHI(Window &window)
-    : instance(nullptr), surface(nullptr)
+VulkanRHI::VulkanRHI()
+    : instance(nullptr)
 {
     // 创建 vk::Instance
     vk::InstanceCreateInfo createInfo;
@@ -44,19 +45,10 @@ VulkanRHI::VulkanRHI(Window &window)
 
     instance = context.createInstance(createInfo);
 
-    // 从SDL获取surface
-    VkSurfaceKHR cStyleSurface;
-    bool success = SDL_Vulkan_CreateSurface(window.GetHandle(), *instance, nullptr, &cStyleSurface);
-    if (!success)
-    {
-        Log::Error("Error when Create Surface: {}", SDL_GetError());
-    }
-    surface = { instance, cStyleSurface };
-
     // 选择物理设备
     auto physicalDevices = instance.enumeratePhysicalDevices();
         
-    device = CreateScope<VulkanDevice>(physicalDevices[0], surface, *this);
+    device = CreateScope<VulkanDevice>(physicalDevices[0], *this);
 }
 
 void VulkanRHI::WaitIdle()
@@ -99,6 +91,11 @@ Ref<RHIFragmentShader> VulkanRHI::CreateFragmentShader(const Path &path)
     ScopedBuffer code = compiler.Compile(source, GraphicsAPI::Vulkan, ShaderType::Fragment, path.filename().stem().string());
 
     return device->GetShaderRegistry().CreateShader<VulkanFragmentShader>(code, *device.get(), compiler.GetReflection());
+}
+
+Ref<RHIViewport> VulkanRHI::CreateViewport(PlatformWindow *window) 
+{
+    return CreateRef<VulkanViewport>(window, instance, *device.get());
 }
 
 Ref<DynamicUniformBufferContent> VulkanRHI::CreateDynamicUniformBufferContent(uint32 maxSize, const ShaderReflection::UniformBlock *uniformBlock) 

@@ -27,6 +27,7 @@ vk::ClearValue ClearValueToVulkanType(ClearValue value, AttachmentType attachTyp
         case RGB8_sRGB:
         case BGR8_sRGB:
         case RGB16F:
+        case RGB32F:
             result.setColor(vk::ClearColorValue(std::array<float, 4>{value.vec3Value.x, value.vec3Value.y, value.vec3Value.z, 0}));
             break;
         case BGRA8:
@@ -260,6 +261,16 @@ VulkanRenderPass* VulkanRenderPassManager::GetOrCreateRenderPass(const VulkanRen
 
     return renderPasses[renderTargetInfo.fullHash].get();
 }
+
+void VulkanRenderPassManager::OnDestroyTexture(VulkanTexture *texture)
+{
+    for (auto &[hash, frameBufferList] : frameBuffers)
+    {
+        frameBufferList.erase(
+            std::remove_if(frameBufferList.begin(), frameBufferList.end(), [texture](auto &fb) { return fb->ContainTexture(texture); }),
+             frameBufferList.end());
+    }
+}
     
 VulkanFrameBuffer::VulkanFrameBuffer(const RHIRenderPassInfo &renderPassInfo, const VulkanRenderTargetInfo &renderTargetInfo, VulkanRenderPass &renderPass, VulkanDevice &device)
     : handle(nullptr)
@@ -333,6 +344,19 @@ bool VulkanFrameBuffer::Matches(const RHIRenderPassInfo &renderPassInfo)
         }
     }
     return true;
+}
+
+bool VulkanFrameBuffer::ContainTexture(VulkanTexture *texture) const
+{
+    for (auto &colorAttachment : colorAttachments)
+    {
+        if (*texture->GetImage() == colorAttachment) return true;
+    }
+    if (depthStencilAttachment.has_value())
+    {
+        if (*texture->GetImage() == depthStencilAttachment.value()) return true;
+    }
+    return false;
 }
 
 VulkanFrameBuffer *VulkanRenderPassManager::GetOrCreateFrameBuffer(const VulkanRenderTargetInfo &renderTargetInfo, const RHIRenderPassInfo &renderPassInfo, VulkanRenderPass &renderPass)

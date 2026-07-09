@@ -62,6 +62,7 @@ Material::Material(AssetHandle materialAssetHandle, const MaterialDesc &desc)
             .height = textureAsset->GetHeight(),
             .format = textureAsset->GetFormat(),
             .usages = ImageUsageFlags::Sampled | ImageUsageFlags::Upload,
+            .initialLayout = ImageLayout::ShaderReadOnly,
             // TODO: 其他参数也应该在TextureAsset中
         };
 

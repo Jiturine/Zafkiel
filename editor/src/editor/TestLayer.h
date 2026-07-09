@@ -1,6 +1,6 @@
+#if 0
 #pragma once
 #include "Core/Application/Layer.h"
-#include "editor/EditorGUI/EditorWindow.h"
 #include "editor/RenderPass/GeometryPass.h"
 #include "editor/RenderPass/ShadingPass.h"
 #include "editor/RenderPass/ShadowPass.h"
@@ -35,7 +35,10 @@ class TestLayer : public Layer
     Scope<UIPass> uiPass;
     Scope<EditorCamera> editorCamera;
 
+    std::vector<Ref<Window>> windows;
+
     static constexpr uint32 maxObjectSize = 500;
 };
 
 }
+#endif 

@@ -15,6 +15,7 @@ enum class RHIResourceType
     VertexShader,
     FragmentShader,
     GeometryShader,
+    Viewport,
 };
 
 class RHIResource : public RefCounted
@@ -116,6 +117,7 @@ struct RHITextureDesc
     uint32 height = 1;
     ImageFormat format;
     ImageUsageFlags usages;
+    ImageLayout initialLayout;
     TextureWrap wrap = TextureWrap::Repeat;
     TextureFilter filter = TextureFilter::Nearest;
     uint32 sampleCount = 1;
@@ -137,7 +139,7 @@ class RHITexture : public RHIResource
 
     uint32 GetHeight() const { return desc.height; }
 
-    RHITextureDesc &GetDesc() { return desc; } 
+    const RHITextureDesc &GetDesc() const { return desc; } 
   
   protected:
     RHITextureDesc desc;
@@ -307,6 +309,12 @@ enum class PolygonMode
     Wireframe
 };
 
+enum class BlendFunc
+{
+    None,
+    Normal,
+};
+
 using ShaderKey = uint64;
 
 ShaderKey CalcShaderKey(Buffer shaderCode);
@@ -320,6 +328,8 @@ struct RenderTargetDesc
     struct ColorAttachmentDesc
     {
         ImageFormat format;
+        bool blendEnable = false;
+        BlendFunc blendFunc = BlendFunc::None;
         uint32 sampleCount = 1;
     };
 
@@ -360,6 +370,8 @@ class RHIGraphicsPipeline : public RHIResource
     virtual void SetTexture(ShaderStage::Stage stage, const std::string &name, RHITexture *texture) = 0;
 
     virtual void ClearResources() = 0;
+
+    RHIGraphicsPipelineDesc &GetDesc() { return desc; }
 
     PrimitiveTopology GetPrimitiveTopology() const { return desc.primitiveTopology; }
     
@@ -475,6 +487,16 @@ class DynamicUniformBufferContent : public RefCounted
 
     ScopedBuffer buffer;
     
+};
+
+class RHIViewport : public RHIResource
+{
+  public:
+    RHIViewport() : RHIResource(RHIResourceType::Viewport) {}
+
+    virtual void Resize(uint32 width, uint32 height) = 0;
+
+    virtual RHITexture *GetBackendTexture() = 0;
 };
 
 }

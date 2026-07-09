@@ -2,6 +2,7 @@
 #include "Function/RHI/Backends/OpenGL/OpenGLBuffer.h"
 #include "Function/RHI/Backends/OpenGL/OpenGLPipeline.h"
 #include "Function/RHI/Backends/OpenGL/OpenGLRHI.h"
+#include "Function/RHI/Backends/OpenGL/OpenGLViewport.h"
 #include <glad/glad.h>
 
 namespace Zafkiel
@@ -25,6 +26,7 @@ static void ClearColor(uint32 attachmentIndex, ImageFormat format, ClearValue va
     case RGB8_sRGB:
     case BGR8_sRGB:
     case RGB16F:
+    case RGB32F:
         glClearBufferfv(GL_COLOR, attachmentIndex, (float*)&value.vec3Value);
         break;
     case BGRA8:
@@ -124,6 +126,28 @@ void OpenGLGraphicsContext::BindGraphicsPipeline(RHIGraphicsPipeline *pipeline)
         glDisable(GL_DEPTH_TEST);
     }
 
+    auto &renderTargetDesc = pipeline->GetDesc().renderTargetDesc;
+    for (int i = 0; i < renderTargetDesc.colorAttachmentDescs.size(); i++)
+    {
+        auto &colorAttachmentDesc = renderTargetDesc.colorAttachmentDescs[i];
+        if (colorAttachmentDesc.blendEnable)
+        {
+            if (colorAttachmentDesc.blendFunc == BlendFunc::Normal)
+            {
+                glEnablei(GL_BLEND, i);
+                glBlendFunci(i, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            }
+            else 
+            {
+                Log::Error("Unsupported Blend Func!");
+            }
+        }
+        else
+        {
+            glDisablei(GL_BLEND, i);
+        }
+    }
+
     glUseProgram(static_cast<OpenGLGraphicsPipeline *>(pipeline)->GetShaderProgram());
 
     currentPipeline = static_cast<OpenGLGraphicsPipeline *>(pipeline);
@@ -212,9 +236,66 @@ void OpenGLGraphicsContext::SetStaticUniformBuffer(const std::string &name, RHIB
     staticUniformBuffers[name] = uniformBuffer;
 }
 
-void OpenGLGraphicsContext::Present()
+void OpenGLGraphicsContext::Present(RHIViewport *viewport)
 {
-    SDL_GL_SwapWindow(rhi.GetWindow());
+    auto openGLViewport = static_cast<OpenGLViewport *>(viewport);
+
+    if (currentViewport != openGLViewport)
+    {
+        SDL_GL_MakeCurrent(openGLViewport->GetPlatformWindow()->GetHandle(), rhi.GetGLContext());
+        currentViewport = openGLViewport;
+    }
+
+    auto backendTexture = openGLViewport->GetBackendTexture();
+    if (backendTexture)
+    {
+        auto glTexture = static_cast<OpenGLTexture *>(backendTexture);
+
+        // 获取纹理的尺寸
+        uint32 textureWidth = backendTexture->GetWidth();
+        uint32 textureHeight = backendTexture->GetHeight();
+
+        // 创建临时FBO并附加backendTexture
+        GLuint tempFBO;
+        glCreateFramebuffers(1, &tempFBO);
+        glNamedFramebufferTexture(tempFBO, GL_COLOR_ATTACHMENT0, glTexture->GetHandle(), 0);
+
+        // 检查FBO完整性
+        GLenum fboStatus = glCheckNamedFramebufferStatus(tempFBO, GL_FRAMEBUFFER);
+        if (fboStatus != GL_FRAMEBUFFER_COMPLETE)
+        {
+            const char* statusStr = nullptr;
+            switch (fboStatus)
+            {
+                case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT: statusStr = "INCOMPLETE_ATTACHMENT"; break;
+                case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT: statusStr = "MISSING_ATTACHMENT"; break;
+                case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER: statusStr = "INCOMPLETE_DRAW_BUFFER"; break;
+                case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER: statusStr = "INCOMPLETE_READ_BUFFER"; break;
+                case GL_FRAMEBUFFER_UNSUPPORTED: statusStr = "UNSUPPORTED"; break;
+                case GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE: statusStr = "INCOMPLETE_MULTISAMPLE"; break;
+                default: statusStr = "UNKNOWN"; break;
+            }
+            Log::Error("Present: Framebuffer is incomplete: {} ({}x{})", statusStr, textureWidth, textureHeight);
+            glDeleteFramebuffers(1, &tempFBO);
+            SDL_GL_SwapWindow(openGLViewport->GetPlatformWindow()->GetHandle());
+            return;
+        }
+
+        // 使用glBlitFramebuffer将backendTexture绘制到屏幕
+        glBlitNamedFramebuffer(
+            tempFBO,  // 读FBO
+            0,        // 写FBO（0表示默认帧缓冲区/屏幕）
+            0, 0, textureWidth, textureHeight,  // 源矩形
+            0, 0, textureWidth, textureHeight,  // 目标矩形
+            GL_COLOR_BUFFER_BIT,        // 复制颜色缓冲
+            GL_NEAREST                  // 过滤方式
+        );
+
+        // 删除临时FBO
+        glDeleteFramebuffers(1, &tempFBO);
+    }
+
+    SDL_GL_SwapWindow(openGLViewport->GetPlatformWindow()->GetHandle());
 }
 
 void OpenGLGraphicsContext::ApplyStaticUniformBuffers(RHIShader *shader)

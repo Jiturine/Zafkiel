@@ -2,8 +2,8 @@
 #include <glad/glad.h>
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_opengl.h>
+#include "Platform/PlatformWindow/PlatformWindow.h"
 #include "Function/RHI/RHI.h"
-#include "Function/Window/Window.h"
 #include "Function/RHI/Backends/OpenGL/OpenGLCommandList.h"
 #include "Function/RHI/Backends/OpenGL/OpenGLFrameBuffer.h"
 
@@ -13,7 +13,7 @@ namespace Zafkiel
 class OpenGLRHI final : public RHI
 {
   public:
-    OpenGLRHI(Window &window);
+    OpenGLRHI();
 
     ~OpenGLRHI();
 
@@ -31,13 +31,13 @@ class OpenGLRHI final : public RHI
 
     virtual Ref<RHIFragmentShader> CreateFragmentShader(const Path &path) override;
 
+    virtual Ref<RHIViewport> CreateViewport(PlatformWindow *window) override;
+
     virtual Ref<DynamicUniformBufferContent> CreateDynamicUniformBufferContent(uint32 maxSize, const ShaderReflection::UniformBlock *uniformBlock) override;
   
     virtual void WaitIdle() override {}
 
     const SDL_GLContext &GetGLContext() const { return glContext; }
-
-    SDL_Window *GetWindow() { return window; }
 
     OpenGLFrameBufferManager &GetFrameBufferManager() { return *frameBufferManager.get(); }
 
@@ -46,9 +46,9 @@ class OpenGLRHI final : public RHI
     virtual void UnregisterImGuiTexture(RHITexture *texture) override;
 
   private:
-    SDL_Window *window;
-  
-    SDL_GLContext glContext;
+    SDL_Window *dummyWindow;
+
+    SDL_GLContext glContext; // 主 context
 
     Scope<OpenGLGraphicsContext> graphicsContext; 
 

@@ -66,6 +66,7 @@ GeometryPass::GeometryPass()
         .height = 720,
         .format = ImageFormat::RGBA16F,
         .usages = ImageUsageFlags::Sampled | ImageUsageFlags::ColorAttachment,
+        .initialLayout = ImageLayout::ShaderReadOnly,
         .wrap = TextureWrap::Repeat,
         .filter = TextureFilter::Nearest
     };
@@ -76,6 +77,7 @@ GeometryPass::GeometryPass()
         .height = 720,
         .format = ImageFormat::RGBA16F,
         .usages = ImageUsageFlags::Sampled | ImageUsageFlags::ColorAttachment,
+        .initialLayout = ImageLayout::ShaderReadOnly,
         .wrap = TextureWrap::Repeat,
         .filter = TextureFilter::Nearest
     };
@@ -86,6 +88,7 @@ GeometryPass::GeometryPass()
         .height = 720,
         .format = ImageFormat::RGBA8,
         .usages = ImageUsageFlags::Sampled | ImageUsageFlags::ColorAttachment,
+        .initialLayout = ImageLayout::ShaderReadOnly,
         .wrap = TextureWrap::Repeat,
         .filter = TextureFilter::Nearest
     };
@@ -96,6 +99,7 @@ GeometryPass::GeometryPass()
         .height = 720,
         .format = ImageFormat::R8,
         .usages = ImageUsageFlags::Sampled | ImageUsageFlags::ColorAttachment,
+        .initialLayout = ImageLayout::ShaderReadOnly,
         .wrap = TextureWrap::Repeat,
         .filter = TextureFilter::Nearest
     };
@@ -106,6 +110,7 @@ GeometryPass::GeometryPass()
         .height = 720,
         .format = ImageFormat::R8,
         .usages = ImageUsageFlags::Sampled | ImageUsageFlags::ColorAttachment,
+        .initialLayout = ImageLayout::ShaderReadOnly,
         .wrap = TextureWrap::Repeat,
         .filter = TextureFilter::Nearest
     };
@@ -116,6 +121,7 @@ GeometryPass::GeometryPass()
         .height = 720,
         .format = ImageFormat::R32UI,
         .usages = ImageUsageFlags::Sampled | ImageUsageFlags::ColorAttachment,
+        .initialLayout = ImageLayout::ShaderReadOnly,
         .wrap = TextureWrap::Repeat,
         .filter = TextureFilter::Nearest
     };
@@ -127,6 +133,7 @@ GeometryPass::GeometryPass()
         .height = 720,
         .format = ImageFormat::DEPTH32F,
         .usages = ImageUsageFlags::DepthAttachment,
+        .initialLayout = ImageLayout::DepthStencilAttachment,
         .sampleCount = 1,
     };
     depthTexture = GlobalRHICmdList->CreateTexture(depthTextureDesc);
@@ -141,37 +148,37 @@ void GeometryPass::Render(const FrameData &frameData)
             {
                 .texture = positionTexture.get(),
                 .clearValue = { .vec4Value = vec4(0, 0, 0, 1) },
-                .initialLayout = ImageLayout::Undefined,
+                .initialLayout = ImageLayout::ShaderReadOnly,
                 .finalLayout = ImageLayout::ShaderReadOnly,
             },
             {
                 .texture = normalTexture.get(),
                 .clearValue = { .vec4Value = vec4(0, 0, 0, 1) },
-                .initialLayout = ImageLayout::Undefined,
+                .initialLayout = ImageLayout::ShaderReadOnly,
                 .finalLayout = ImageLayout::ShaderReadOnly,
             },
             {
                 .texture = albedoTexture.get(),
                 .clearValue = { .vec4Value = vec4(0, 0, 0, 1) },
-                .initialLayout = ImageLayout::Undefined,
+                .initialLayout = ImageLayout::ShaderReadOnly,
                 .finalLayout = ImageLayout::ShaderReadOnly,
             },
             {
                 .texture = metalnessTexture.get(),
                 .clearValue = { .floatValue = 0 },
-                .initialLayout = ImageLayout::Undefined,
+                .initialLayout = ImageLayout::ShaderReadOnly,
                 .finalLayout = ImageLayout::ShaderReadOnly,
             },
             { 
                 .texture = roughnessTexture.get(),
                 .clearValue = { .floatValue = 0 },
-                .initialLayout = ImageLayout::Undefined,
+                .initialLayout = ImageLayout::ShaderReadOnly,
                 .finalLayout = ImageLayout::ShaderReadOnly,
             },
             {
                 .texture = entityIDTexture.get(),
                 .clearValue = { .uintValue = (uint32)entt::null },
-                .initialLayout = ImageLayout::Undefined,
+                .initialLayout = ImageLayout::ShaderReadOnly,
                 .finalLayout = ImageLayout::ShaderReadOnly,
             },
         },
@@ -179,7 +186,7 @@ void GeometryPass::Render(const FrameData &frameData)
         {
             .texture = depthTexture.get(),
             .clearValue = { .floatValue = 1.0f },
-            .initialLayout = ImageLayout::Undefined,
+            .initialLayout = ImageLayout::DepthStencilAttachment,
             .finalLayout = ImageLayout::DepthStencilAttachment,
         }
     };

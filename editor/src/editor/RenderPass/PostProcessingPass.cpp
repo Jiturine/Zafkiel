@@ -39,6 +39,7 @@ PostProcessingPass::PostProcessingPass(ShadingPass *shadingPass)
         .height = 720,
         .format = ImageFormat::RGBA8,
         .usages = ImageUsageFlags::Sampled | ImageUsageFlags::ColorAttachment,
+        .initialLayout = ImageLayout::ShaderReadOnly,
         .wrap = TextureWrap::Repeat,
         .filter = TextureFilter::Nearest,
     };
@@ -79,7 +80,7 @@ void PostProcessingPass::Render()
             {
                 .texture = outputColorTexture.get(),
                 .clearValue = { .vec4Value = vec4(0, 0, 0, 1) },
-                .initialLayout = ImageLayout::Undefined,
+                .initialLayout = ImageLayout::ShaderReadOnly,
                 .finalLayout = ImageLayout::ShaderReadOnly,
             },
         },

@@ -15,7 +15,7 @@ class VulkanRHI;
 class VulkanDevice
 {
   public:
-    VulkanDevice(vk::raii::PhysicalDevice physicalDevice, vk::raii::SurfaceKHR &surface, VulkanRHI &rhi);
+    VulkanDevice(vk::raii::PhysicalDevice physicalDevice, VulkanRHI &rhi);
   
     vk::raii::PhysicalDevice &GetPhysicalHandle() { return physicalDevice; }
     
@@ -30,8 +30,6 @@ class VulkanDevice
     VulkanDescriptorManager &GetDescriptorManager() { return *descriptorManager.get(); }
   
     VulkanRenderPassManager &GetRenderPassManager() { return *renderPassManager.get(); }
-
-    VulkanSwapchain &GetSwapchain() { return *swapchain.get(); }
 
     uint32 GetMinUniformBufferOffsetAlignment() const { return minUniformBufferOffsetAlignment; }
 
@@ -51,8 +49,6 @@ class VulkanDevice
     Scope<VulkanDescriptorManager> descriptorManager;
 
     Scope<VulkanRenderPassManager> renderPassManager;
-
-    Scope<VulkanSwapchain> swapchain;
 
     VulkanQueue *presentQueue;
   

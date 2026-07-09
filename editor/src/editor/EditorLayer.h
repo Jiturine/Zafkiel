@@ -1,3 +1,4 @@
+#if 0
 #pragma once
 #include "Core/Application/Application.h"
 #include "editor/EditorGUI/EditorWindow.h"
@@ -22,3 +23,4 @@ class EditorLayer : public Layer
 };
 
 }
+#endif

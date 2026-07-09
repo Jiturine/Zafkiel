@@ -75,12 +75,16 @@ class VulkanRenderPass
     vk::raii::RenderPass handle;
 };
 
+class VulkanTexture;
+
 class VulkanFrameBuffer 
 {
   public:
     VulkanFrameBuffer(const RHIRenderPassInfo &renderPassInfo, const VulkanRenderTargetInfo &renderTargetInfo, VulkanRenderPass &renderPass, VulkanDevice &device);
   
     bool Matches(const RHIRenderPassInfo &renderPassInfo);
+
+    bool ContainTexture(VulkanTexture *texture) const;
   
     vk::raii::Framebuffer &GetHandle() { return handle; }
   
@@ -106,6 +110,8 @@ class VulkanRenderPassManager
     VulkanFrameBuffer *GetOrCreateFrameBuffer(const VulkanRenderTargetInfo &renderTargetInfo, const RHIRenderPassInfo &renderPassInfo, VulkanRenderPass &renderPass);
 
     VulkanRenderPass *GetOrCreateRenderPass(const VulkanRenderTargetInfo &renderTargetInfo);
+
+    void OnDestroyTexture(VulkanTexture *texture);
   
   private:
     VulkanDevice &device;

@@ -1,13 +1,14 @@
 #pragma once
 #include "Function/RHI/RHIResources.h"
 #include "Function/RHI/RHICommandList.h"
-#include "Function/RHI/GraphicsAPI.h"
+#include "Core/Base/GraphicsAPI.h"
 #include "Platform/Filesystem/Filesystem.h"
 
 #include <imgui.h>
 
 namespace Zafkiel
 {
+class PlatformWindow;
 
 class RHI
 {
@@ -29,6 +30,8 @@ class RHI
     virtual Ref<RHIVertexShader> CreateVertexShader(const Path &path) = 0;
 
     virtual Ref<RHIFragmentShader> CreateFragmentShader(const Path &path) = 0;
+
+    virtual Ref<RHIViewport> CreateViewport(PlatformWindow *window) = 0;
 
     virtual Ref<DynamicUniformBufferContent> CreateDynamicUniformBufferContent(uint32 maxSize, const ShaderReflection::UniformBlock *uniformBlock) = 0;
 

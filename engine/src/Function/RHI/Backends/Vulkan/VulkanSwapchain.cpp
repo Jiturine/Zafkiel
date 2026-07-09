@@ -2,6 +2,8 @@
 #include "Function/RHI/Backends/Vulkan/VulkanDevice.h"
 #include "Function/RHI/Backends/Vulkan/VulkanQueue.h"
 #include "Function/RHI/Backends/Vulkan/VulkanTexture.h"
+#include "Platform/PlatformWindow/PlatformWindow.h"
+#include <SDL3/SDL_vulkan.h>
 
 namespace Zafkiel 
 {
@@ -11,6 +13,7 @@ VulkanSwapchainTexture::VulkanSwapchainTexture(uint32 width, uint32 height, vk::
         .width = width,
         .height = height,
         .format = VulkanFormatToImageFormat(surfaceFormat.format),
+        .initialLayout = ImageLayout::PresentSrc,
         .sampleCount = 1,
     }), imageView(nullptr), image(image)
 {
@@ -30,11 +33,24 @@ VulkanSwapchainTexture::VulkanSwapchainTexture(uint32 width, uint32 height, vk::
                 .setSubresourceRange(range);
     
     imageView = device.GetHandle().createImageView(createInfo);
+
+    device.GetGraphicsContext()->ImageMemoryBarrier(this, 
+        vk::AccessFlagBits::eNone, vk::AccessFlagBits::eMemoryRead,
+        vk::ImageLayout::eUndefined, vk::ImageLayout::ePresentSrcKHR,
+        vk::PipelineStageFlagBits::eBottomOfPipe, vk::PipelineStageFlagBits::eBottomOfPipe);
 }
 
-VulkanSwapchain::VulkanSwapchain(VulkanDevice &device, vk::raii::SurfaceKHR &surface, uint32 width, uint32 height)
-    : width(width), height(height), handle(nullptr), device(device), surface(surface)
+VulkanSwapchain::VulkanSwapchain(PlatformWindow *window, vk::raii::Instance &instance, VulkanDevice &device, uint32 width, uint32 height)
+    : width(width), height(height), handle(nullptr), device(device), surface(nullptr)
 {
+    VkSurfaceKHR cStyleSurface;
+    bool success = SDL_Vulkan_CreateSurface(window->GetHandle(), *instance, nullptr, &cStyleSurface);
+    if (!success)
+    {
+        Log::Error("Error when Create Surface: {}", SDL_GetError());
+    }
+    surface = vk::raii::SurfaceKHR(instance, cStyleSurface);
+    
     auto formats = device.GetPhysicalHandle().getSurfaceFormatsKHR(surface);
     surfaceFormat = formats[0];
     for (const auto &format : formats)
@@ -70,9 +86,7 @@ VulkanSwapchain::VulkanSwapchain(VulkanDevice &device, vk::raii::SurfaceKHR &sur
 
 void VulkanSwapchain::Invalidate()
 {
-    Log::Info("Swapchain Invalidate!");
     device.GetHandle().waitIdle();
-    handle = nullptr;
 
     vk::SwapchainCreateInfoKHR createInfo;
     createInfo.setClipped(true)
@@ -89,6 +103,11 @@ void VulkanSwapchain::Invalidate()
     auto queueFamilyIndex = device.graphicsQueue->GetQueueFamilyIndex();
     createInfo.setQueueFamilyIndices(queueFamilyIndex)
               .setImageSharingMode(vk::SharingMode::eExclusive);
+
+    if (*handle)
+    {
+        createInfo.setOldSwapchain(*handle);
+    }
 
     handle = device.GetHandle().createSwapchainKHR(createInfo);
 
@@ -152,6 +171,12 @@ uint32 VulkanSwapchain::AcquireNextImageIndex()
         Invalidate();
         return 0;
     }
+}
+
+VulkanSwapchainTexture *VulkanSwapchain::GetCurrentAvailableTexture()
+{
+    uint32 index = AcquireNextImageIndex();
+    return swapchainTextures[index].get();
 }
 
 void VulkanSwapchain::Present()

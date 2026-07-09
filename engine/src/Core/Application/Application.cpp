@@ -3,7 +3,6 @@
 
 namespace Zafkiel
 {
-Scope<Application> Application::instance = nullptr;
 void Application::PushLayer(Ref<Layer> layer)
 {
     layers.push_back(layer);
@@ -14,23 +13,27 @@ void Application::Run()
 {
     running = true;
     float time = Time::Now();
+
     while (running)
     {
         float timestep = Time::Now() - time;
         time = Time::Now();
+
         for (auto& layer : layers)
         {
             layer->OnUpdate(timestep);
         }
+
     }
+
     for (auto &layer : layers)
     {
         layer->OnDetach();
         layer = nullptr;
     }
 }
-
-void Application::ExecuteMainThreadQueueImpl()
+#if 0
+void Application::ExecuteMainThreadQueue()
 {
     {
         std::scoped_lock lock(mainThreadMutex);
@@ -42,7 +45,7 @@ void Application::ExecuteMainThreadQueueImpl()
     mainThreadExecuteQueue.clear();
 }
 
-void Application::ExecuteRenderThreadQueueImpl()
+void Application::ExecuteRenderThreadQueue()
 {
     {
         std::scoped_lock lock(renderThreadMutex);
@@ -53,4 +56,5 @@ void Application::ExecuteRenderThreadQueueImpl()
         fn->Run();
     renderThreadExecuteQueue.clear();
 }
+#endif
 }

@@ -39,6 +39,8 @@ class VulkanTexture : public VulkanTextureBase
   public:
     VulkanTexture(const RHITextureDesc &desc, RHICommandList &cmdList, VulkanDevice &device, Buffer data = nullptr);
 
+    ~VulkanTexture();
+
     vk::raii::Image &GetImage() { return image; }
 
     virtual const vk::Image &GetLowLevelImage() override { return *image; }
@@ -48,6 +50,8 @@ class VulkanTexture : public VulkanTextureBase
     vk::raii::Sampler &GetSampler() { return sampler; }
 
   private:
+    VulkanDevice &device;
+
     vk::raii::Image image;
     vk::raii::ImageView imageView;
     vk::raii::Sampler sampler;

@@ -1,6 +1,5 @@
 #pragma once
 #include "Core/Meta/Reflection/Type.h"
-#include "Core/Base/Singleton.h"
 
 namespace Zafkiel::Reflection
 {
@@ -55,7 +54,7 @@ class DictTypeInfo
 
 // 存储类类型信息的TypeInfo
 template <typename T>
-class ClassTypeInfo : public Singleton<ClassTypeInfo<T>>
+class ClassTypeInfo : Singleton<ClassTypeInfo<T>, false>
 {
   public:
     static ClassTypeInfo &Register(const std::string &name);
@@ -131,7 +130,7 @@ class Property_Impl : public Property
 };
 
 template <typename T>
-class PropertyTypeInfo
+class PropertyTypeInfo : Singleton<PropertyTypeInfo<T>, false>
 {
   public:
     static PropertyTypeInfo &Register(const std::string &name, T accessor);

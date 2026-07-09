@@ -23,6 +23,7 @@ vk::Format ImageFormatToVulkanType(ImageFormat format)
     case BGR8_sRGB: return vk::Format::eB8G8R8Srgb;
     case BGRA8_sRGB: return vk::Format::eB8G8R8A8Srgb;
     case RGB16F: return vk::Format::eR16G16B16Sfloat;
+    case RGB32F: return vk::Format::eR32G32B32Sfloat;
     case RGBA16F: return vk::Format::eR16G16B16A16Sfloat;
     case RGBA32F: return vk::Format::eR32G32B32A32Sfloat;
     case R32UI: return vk::Format::eR32Uint;
@@ -53,6 +54,7 @@ ImageFormat VulkanFormatToImageFormat(vk::Format format)
     case eB8G8R8Srgb: return ImageFormat::BGR8_sRGB;
     case eB8G8R8A8Srgb: return ImageFormat::BGRA8_sRGB;
     case eR16G16B16Sfloat: return ImageFormat::RGB16F;
+    case eR32G32B32Sfloat: return ImageFormat::RGB32F;
     case eR16G16B16A16Sfloat: return ImageFormat::RGBA16F;
     case eR32G32B32A32Sfloat: return ImageFormat::RGBA32F;
     case eR32Uint: return ImageFormat::R32UI;
@@ -151,7 +153,7 @@ vk::Filter FilterTypeToVulkanType(TextureFilter filter)
 }
 
 VulkanTexture::VulkanTexture(const RHITextureDesc &desc, RHICommandList &cmdList, VulkanDevice &device, Buffer data)
-    : VulkanTextureBase(desc), image(nullptr), imageView(nullptr), sampler(nullptr), memory(nullptr)
+    : VulkanTextureBase(desc), image(nullptr), imageView(nullptr), sampler(nullptr), memory(nullptr), device(device)
 {
     uint32 imageCount = 1;
     vk::ImageUsageFlags usages = ImageUsageFlagsToVulkanType(desc.usages);
@@ -219,7 +221,7 @@ VulkanTexture::VulkanTexture(const RHITextureDesc &desc, RHICommandList &cmdList
         .setBorderColor(vk::BorderColor::eFloatOpaqueBlack)
         .setUnnormalizedCoordinates(false)
         .setCompareEnable(false)
-        .setMipmapMode(vk::SamplerMipmapMode::eLinear);
+        .setMipmapMode(desc.filter == TextureFilter::Nearest ? vk::SamplerMipmapMode::eNearest : vk::SamplerMipmapMode::eLinear);
 
     sampler = device.GetHandle().createSampler(createInfo);
 
@@ -261,13 +263,18 @@ VulkanTexture::VulkanTexture(const RHITextureDesc &desc, RHICommandList &cmdList
 
         cmdBuf->GetHandle().copyBufferToImage(vkBuffer->buffer, image, vk::ImageLayout::eTransferDstOptimal, region);
 
-        // 转换image layout从TRANSFER_DST_OPTIMAL到SHADER_READ_ONLY_OPTIMAL
-        gfxContext->ImageMemoryBarrier(this, vk::AccessFlagBits::eTransferWrite, vk::AccessFlagBits::eShaderRead,
-                                              vk::ImageLayout::eTransferDstOptimal, vk::ImageLayout::eShaderReadOnlyOptimal,
-                                              vk::PipelineStageFlagBits::eTransfer, vk::PipelineStageFlagBits::eFragmentShader);
+        gfxContext->ImageMemoryBarrier(this, 
+            vk::AccessFlagBits::eTransferWrite, ImageLayoutToAccessMask(desc.initialLayout),
+            vk::ImageLayout::eTransferDstOptimal, ImageLayoutToVulkanType(desc.initialLayout),
+            vk::PipelineStageFlagBits::eTransfer, ImageLayoutToPipelineStage(desc.initialLayout));
 
         cmdList.SubmitAndWaitIdle();
     }
+}
+
+VulkanTexture::~VulkanTexture()
+{
+    device.GetRenderPassManager().OnDestroyTexture(this);
 }
 
 }

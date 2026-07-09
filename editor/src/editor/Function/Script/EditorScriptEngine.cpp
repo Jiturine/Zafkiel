@@ -13,6 +13,7 @@
 #include <filewatch.hpp>
 #include "Core/Meta/Serializer/YamlSerializer.h"
 #include "Core/Application/Application.h"
+#include "Core/Async/TaskGraph.h"
 #include "editor/Project/ProjectManager.h"
 
 namespace Zafkiel
@@ -250,7 +251,7 @@ void EditorScriptEngine::WatchScriptFilesImpl(const Path &scriptDir)
                 using namespace std::chrono_literals;
                 std::this_thread::sleep_for(100ms);
 
-                Application::Instance().SubmitToMainThread([&]() {
+                TaskGraph::Instance().EnqueueTask(NamedThreadType::GameThread, [&]{
                     ReloadEditorDomain();
                 });
             } });

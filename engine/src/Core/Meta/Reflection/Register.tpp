@@ -22,7 +22,7 @@ ClassTypeInfo<T> &ClassTypeInfo<T>::Register(const std::string &name)
     Class &info = GetInfo();
     info.name = name;
     typeDict[info.name] = &info;
-    return Singleton<ClassTypeInfo<T>>::Instance();
+    return ClassTypeInfo<T>::Instance();
 }
 
 // 核心的GetType函数,后面属性的具体实现要用到
@@ -81,7 +81,7 @@ PropertyTypeInfo<T> &PropertyTypeInfo<T>::Register(const std::string &name, T ac
 {
     using ClassType = property_traits<T>::ClassType;
     info = std::make_shared<Property_Impl<T>>(name, &ClassTypeInfo<ClassType>::GetInfo(), accessor);
-    return Singleton<PropertyTypeInfo<T>>::Instance();
+    return PropertyTypeInfo<T>::Instance();
 }
 
 // 最后实现类添加属性的方法，在内部就完成对属性子类型的注册
@@ -92,7 +92,7 @@ ClassTypeInfo<T> &ClassTypeInfo<T>::AddProperty(Ptr accessor, const std::string 
 {
     Class &info = GetInfo();
     info.AddProperty(PropertyTypeInfo<Ptr>::Register(name, accessor).GetInfo());
-    return Singleton<ClassTypeInfo<T>>::Instance();
+    return ClassTypeInfo<T>::Instance();
 }
 
 // 简化用户接口

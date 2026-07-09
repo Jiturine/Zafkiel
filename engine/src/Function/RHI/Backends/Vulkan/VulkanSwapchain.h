@@ -5,6 +5,7 @@
 namespace Zafkiel 
 {
 class VulkanDevice;
+class PlatformWindow;
 
 class VulkanSwapchainTexture : public VulkanTextureBase
 {
@@ -23,11 +24,13 @@ class VulkanSwapchainTexture : public VulkanTextureBase
 class VulkanSwapchain final
 {
   public:
-    VulkanSwapchain(VulkanDevice &device, vk::raii::SurfaceKHR &surface, uint32 width, uint32 height);
+    VulkanSwapchain(PlatformWindow *window, vk::raii::Instance &instance, VulkanDevice &device, uint32 width, uint32 height);
 
     vk::raii::SwapchainKHR &GetHandle() { return handle; }
 
     uint32 AcquireNextImageIndex();
+
+    VulkanSwapchainTexture *GetCurrentAvailableTexture();
 
     VulkanSwapchainTexture *GetTexture(uint32 index)
     {
@@ -45,7 +48,7 @@ class VulkanSwapchain final
 
   private:
     VulkanDevice &device;
-    vk::raii::SurfaceKHR &surface;
+    vk::raii::SurfaceKHR surface;
 
     uint32 width, height;
     uint32 frameCount;

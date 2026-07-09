@@ -11,6 +11,11 @@ class VulkanRenderPass;
 class VulkanGraphicsPipeline;
 class VulkanRHI;
 class VulkanTextureBase;
+class VulkanViewport;
+
+vk::PipelineStageFlags ImageLayoutToPipelineStage(ImageLayout layout);
+
+vk::AccessFlags ImageLayoutToAccessMask(ImageLayout layout);
 
 class VulkanCommandContext
 {
@@ -64,18 +69,18 @@ class VulkanGraphicsContext : public RHIGraphicsContext, public VulkanCommandCon
 
     virtual void SetStaticUniformBuffer(const std::string &name, RHIBuffer *uniformBuffer) override;
 
-    virtual void Present() override;
+    virtual void Present(RHIViewport *viewport) override;
 
     virtual void Finalize() override;
     
     virtual void Submit() override;
 
-    virtual void Resize(uint32 width, uint32 height) override;
-
   private:
     void ApplyStaticUniformBuffers(RHIShader *shader);
 
     std::unordered_map<std::string, RHIBuffer *> staticUniformBuffers;
+
+    VulkanViewport *currentViewport;
 
     Scope<RHIRenderPassInfo> currentRenderPassInfo; 
 

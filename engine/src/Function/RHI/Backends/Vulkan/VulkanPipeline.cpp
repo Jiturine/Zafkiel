@@ -164,8 +164,25 @@ VulkanGraphicsPipeline::VulkanGraphicsPipeline(const RHIGraphicsPipelineDesc &de
     std::vector<vk::PipelineColorBlendAttachmentState> attachments(desc.renderTargetDesc.colorAttachmentDescs.size());
     for (size_t i = 0; i < desc.renderTargetDesc.colorAttachmentDescs.size(); i++)
     {
-        attachments[i].setBlendEnable(false)
+        auto &colorAttachmentDesc = desc.renderTargetDesc.colorAttachmentDescs[i];
+        attachments[i].setBlendEnable(colorAttachmentDesc.blendEnable)
                       .setColorWriteMask(vk::ColorComponentFlagBits::eR | vk::ColorComponentFlagBits::eG | vk::ColorComponentFlagBits::eB | vk::ColorComponentFlagBits::eA);
+        if (colorAttachmentDesc.blendEnable)
+        {
+            if (colorAttachmentDesc.blendFunc == BlendFunc::Normal)
+            {
+                attachments[i].setSrcColorBlendFactor(vk::BlendFactor::eSrcAlpha)
+                              .setDstColorBlendFactor(vk::BlendFactor::eOneMinusSrcAlpha)
+                              .setColorBlendOp(vk::BlendOp::eAdd)
+                              .setSrcAlphaBlendFactor(vk::BlendFactor::eOne)
+                              .setDstAlphaBlendFactor(vk::BlendFactor::eZero)
+                              .setAlphaBlendOp(vk::BlendOp::eAdd);
+            }
+            else
+            {
+                Log::Error("Unsupported Blend Func!");
+            }
+        }
     }
     blend.setLogicOpEnable(false)
          .setAttachments(attachments);

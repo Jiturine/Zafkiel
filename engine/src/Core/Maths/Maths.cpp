@@ -22,7 +22,7 @@ mat4 Perspective(float FOV, float aspectRatio, float perspectiveNear, float pers
 mat4 Ortho(float left, float right, float bottom, float top, float near, float far)
 {
     if (graphicsAPI == GraphicsAPI::OpenGL)
-        return glm::ortho(left, right, bottom, top, near, far);
+        return glm::ortho(left, right, top, bottom, near, far);
     else if (graphicsAPI == GraphicsAPI::Vulkan)
         return glm::orthoZO(left, right, bottom, top, near, far);
     return glm::ortho(left, right, bottom, top, near, far);

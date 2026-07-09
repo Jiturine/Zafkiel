@@ -7,7 +7,7 @@
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "Function/RHI/GraphicsAPI.h"
+#include "Core/Base/GraphicsAPI.h"
 
 namespace Zafkiel
 {
@@ -15,6 +15,10 @@ struct [[refl]] vec2 : public glm::vec2
 {
     using glm::vec2::vec2;
     vec2(glm::vec2 raw) : glm::vec2(raw) {}
+    static float cross(vec2 param1, vec2 param2)
+    {
+        return param1.x * param2.y - param1.y * param2.x;
+    }
 };
 
 template <>

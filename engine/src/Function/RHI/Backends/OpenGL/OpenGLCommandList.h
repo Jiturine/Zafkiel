@@ -7,6 +7,7 @@ namespace Zafkiel
 class OpenGLRHI;
 class OpenGLFrameBuffer;
 class OpenGLGraphicsPipeline;
+class OpenGLViewport;
 
 class OpenGLGraphicsContext : public RHIGraphicsContext
 {
@@ -27,18 +28,18 @@ class OpenGLGraphicsContext : public RHIGraphicsContext
   
     virtual void SetStaticUniformBuffer(const std::string &name, RHIBuffer *uniformBuffer) override;
 
-    virtual void Present() override;
+    virtual void Present(RHIViewport *viewport) override;
 
     virtual void Finalize() override {}
 
     virtual void Submit() override {}
-  
-    virtual void Resize(uint32 width, uint32 height) override {}
 
   private:
     void ApplyStaticUniformBuffers(RHIShader *shader);
 
     OpenGLRHI &rhi;
+
+    OpenGLViewport *currentViewport;
 
     OpenGLFrameBuffer *currentFrameBuffer;
 

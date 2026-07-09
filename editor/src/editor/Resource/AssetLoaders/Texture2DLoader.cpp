@@ -8,7 +8,6 @@ namespace Zafkiel
 Ref<Asset> Texture2DLoader::Load(const Ref<EditorAssetMetadata> &textureMetadata)
 {
     int width, height, channels;
-    stbi_set_flip_vertically_on_load(1);
     Path texturePath = EditorAssetManager::Instance().GetAssetDirectory() / textureMetadata->filePath;
 
     auto format = textureMetadata->detail.As<Texture2DMetadata>().format;

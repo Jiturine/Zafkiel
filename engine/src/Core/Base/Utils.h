@@ -49,6 +49,17 @@ constexpr bool EnumHasAnyFlags(Enum Flags, Enum Contains)
 	inline constexpr bool  operator! (Enum  E)             { return !(__underlying_type(Enum))E; } \
 	inline constexpr Enum  operator~ (Enum  E)             { return (Enum)~(__underlying_type(Enum))E; }
 
+// 用于在类内部为私有枚举定义位运算符的宏
+#define ENUM_CLASS_FLAGS_PRIVATE(Enum) \
+	friend inline constexpr Enum& operator|=(Enum& Lhs, Enum Rhs) { return Lhs = (Enum)((__underlying_type(Enum))Lhs | (__underlying_type(Enum))Rhs); } \
+	friend inline constexpr Enum& operator&=(Enum& Lhs, Enum Rhs) { return Lhs = (Enum)((__underlying_type(Enum))Lhs & (__underlying_type(Enum))Rhs); } \
+	friend inline constexpr Enum& operator^=(Enum& Lhs, Enum Rhs) { return Lhs = (Enum)((__underlying_type(Enum))Lhs ^ (__underlying_type(Enum))Rhs); } \
+	friend inline constexpr Enum  operator| (Enum  Lhs, Enum Rhs) { return (Enum)((__underlying_type(Enum))Lhs | (__underlying_type(Enum))Rhs); } \
+	friend inline constexpr Enum  operator& (Enum  Lhs, Enum Rhs) { return (Enum)((__underlying_type(Enum))Lhs & (__underlying_type(Enum))Rhs); } \
+	friend inline constexpr Enum  operator^ (Enum  Lhs, Enum Rhs) { return (Enum)((__underlying_type(Enum))Lhs ^ (__underlying_type(Enum))Rhs); } \
+	friend inline constexpr bool  operator! (Enum  E)             { return !(__underlying_type(Enum))E; } \
+	friend inline constexpr Enum  operator~ (Enum  E)             { return (Enum)~(__underlying_type(Enum))E; }
+
 namespace Zafkiel 
 {
 
@@ -62,13 +73,64 @@ class Signal {
         slots.push_back(MoveTemp(s));
     }
 
-    void Emit(Args&&... args) 
+    template <typename... TArgs>
+    void Emit(TArgs&&... args)
     {
         for (auto& s : slots)
-            s(std::forward<Args>(args)...);
+            s(std::forward<TArgs>(args)...);
     }
 
   private:
     std::vector<Slot> slots;
+};
+
+template <typename T, bool managed>
+class Singleton;
+
+template <typename T>
+class Singleton<T, true>
+{
+  public:
+    template <typename... Args>
+    static void Init(Args&&... args)
+    {
+        instance = new T(std::forward<Args>(args)...);
+    }
+
+    static void Destroy()
+    {
+        delete instance;
+        instance = nullptr;
+    }
+
+    Singleton(T &&) = delete;
+    Singleton(const T &) = delete;
+    void operator=(const T &) = delete;
+
+    static T &Instance() { return *instance; }
+
+  protected:
+    inline static T *instance = nullptr;
+
+    Singleton() = default;
+    virtual ~Singleton() = default;
+};
+
+template <typename T>
+class Singleton<T, false>
+{
+  public:
+    static T &Instance()
+    {
+        static T instance;
+        return instance;
+    }
+    Singleton(T &&) = delete;
+    Singleton(const T &) = delete;
+    void operator=(const T &) = delete;
+
+  protected:
+    Singleton() = default;
+    virtual ~Singleton() = default;
 };
 }

@@ -5,7 +5,7 @@
 #include <backends/imgui_impl_vulkan.h>
 #include <backends/imgui_impl_sdl3.h>
 #include "Function/RHI/Backends/Vulkan/VulkanTexture.h"
-#include "Function/Window/Window.h"
+#include "Platform/PlatformWindow/PlatformWindow.h"
 
 namespace Zafkiel
 {
@@ -125,9 +125,9 @@ class EditorGUI
         }
         return *this;
     }
-    static void BeginFrame();
+    static void BeginFrame() {}
 
-    static void EndFrame();
+    static void EndFrame() {}
 
   private:
     bool sameLine = false;

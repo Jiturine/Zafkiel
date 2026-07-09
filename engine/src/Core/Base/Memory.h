@@ -2,7 +2,7 @@
 
 namespace Zafkiel
 {
-
+// RefCounted 必须是第一基类
 class RefCounted
 {
   public:
@@ -30,7 +30,9 @@ void AddToLiveReferences(void *instance);
 
 void RemoveFromLiveReferences(void *instance);
 
-bool IsLive(void *instance);
+uint32 GetGeneration(void *instance);
+
+bool Check(void *instance, uint32 generation);
 
 }
 
@@ -135,10 +137,9 @@ class Ref
         return *this;
     }
 
-    template <typename T2>
     Ref &operator=(Ref<T> &&other) noexcept
     {
-        if (instance == other.instance) return *this;
+        if (this == &other) return *this;
 
         DecreaseRef();
         instance = other.instance;
@@ -163,21 +164,12 @@ class Ref
         return instance != nullptr;
     }
 
-    T *operator->()
+    T *operator->() const
     {
         return instance;
     }
 
-    const T *operator->() const
-    {
-        return instance;
-    }
-
-    T &operator*()
-    {
-        return *instance;
-    }
-    const T &operator*() const
+    T &operator*() const 
     {
         return *instance;
     }
@@ -187,7 +179,7 @@ class Ref
         return instance;
     }
 
-    const T *get() const
+    T *get() const
     {
         return instance;
     }
@@ -196,6 +188,7 @@ class Ref
     {
         DecreaseRef();
         this->instance = instance;
+        IncreaseRef();
     }
 
     template <typename T2>
@@ -226,10 +219,7 @@ class Ref
     void IncreaseRef() const
     {
         if (instance)
-        {
             instance->IncreaseRefCount();
-            RefUtils::AddToLiveReferences((void *)instance);
-        }
     }
     void DecreaseRef() const
     {
@@ -252,7 +242,9 @@ Ref<T> CreateRef(Args &&...args)
 {
     if constexpr (!std::is_base_of_v<RefCounted, T>)
         Log::Error("Type is not base of Ref!");
-    return Ref<T>(new T(std::forward<Args>(args)...));
+    T *raw = new T(std::forward<Args>(args)...);
+    RefUtils::AddToLiveReferences((void *)raw);
+    return Ref<T>(raw);
 }
 
 template<typename T>
@@ -261,32 +253,84 @@ class WeakRef
 public:
     WeakRef() = default;
 
-    WeakRef(Ref<T> ref)
+    WeakRef(const Ref<T>& ref)
+        : instance(ref.get()), generation(0)
     {
-        m_Instance = ref.Raw();
+        if (instance)
+            generation = RefUtils::GetGeneration(instance);
     }
 
-    WeakRef(T* instance)
+    WeakRef(const WeakRef& other)
+        : instance(other.instance), generation(other.generation)
     {
-        m_Instance = instance;
     }
 
-    T* operator->() { return m_Instance; }
-    const T* operator->() const { return m_Instance; }
+    WeakRef(WeakRef&& other) noexcept
+        : instance(other.instance), generation(other.generation)
+    {
+        other.instance = nullptr;
+        other.generation = 0;
+    }
 
-    T& operator*() { return *m_Instance; }
-    const T& operator*() const { return *m_Instance; }
+    ~WeakRef() = default;
 
-    bool IsValid() const { return m_Instance ? RefUtils::IsLive(m_Instance) : false; }
+    WeakRef& operator=(const WeakRef& other)
+    {
+        if (this == &other) return *this;
+        instance = other.instance;
+        generation = other.generation;
+        return *this;
+    }
+
+    WeakRef& operator=(WeakRef&& other) noexcept
+    {
+        if (this == &other) return *this;
+        instance = other.instance;
+        generation = other.generation;
+        other.instance = nullptr;
+        other.generation = 0;
+        return *this;
+    }
+
+    Ref<T> Lock() const
+    {
+        if (!IsValid())
+            return nullptr;
+        return Ref<T>(instance);
+    }
+
+    bool IsValid() const
+    {
+        return RefUtils::Check(instance, generation);
+    }
+
     operator bool() const { return IsValid(); }
+
+    T *operator->() const
+    {
+        return instance;
+    }
+
+    T &operator*() const 
+    {
+        return *instance;
+    }
 
     template<typename T2>
     WeakRef<T2> As() const
     {
-        return WeakRef<T2>(static_cast<T2*>(m_Instance));
+        WeakRef<T2> result;
+        result.instance = static_cast<T2*>(instance);
+        result.generation = generation;
+        return result;
     }
+
 private:
-    T* m_Instance = nullptr;
+    template<typename U>
+    friend class WeakRef;
+
+    T* instance = nullptr;
+    uint32 generation = 0;
 };
 
 class ScopedBuffer 
@@ -367,7 +411,7 @@ class Buffer
         : data(data), size(size) {}
 
     Buffer(const ScopedBuffer &scopedBuffer)
-        : data(scopedBuffer.Data<uint8>()), size(scopedBuffer.Size<uint8>()) {}
+        : data(scopedBuffer.Data<uint8>()), size(scopedBuffer.Size<uint8>()) {};
 
     template <typename T>
     Buffer(const T &data)

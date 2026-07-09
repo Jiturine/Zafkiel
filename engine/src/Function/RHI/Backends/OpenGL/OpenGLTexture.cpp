@@ -1,4 +1,5 @@
 #include "Function/RHI/Backends/OpenGL/OpenGLTexture.h"
+#include "Function/RHI/Backends/OpenGL/OpenGLRHI.h"
 #include <glad/glad.h>
 
 namespace Zafkiel
@@ -21,6 +22,7 @@ OpenGLImageFormat ImageFormatToOpenGLType(ImageFormat format)
     case BGR8_sRGB: return {GL_SRGB8, GL_BGR, GL_UNSIGNED_BYTE};
     case BGRA8_sRGB: return {GL_SRGB8_ALPHA8, GL_BGRA, GL_UNSIGNED_BYTE};
     case RGB16F: return {GL_RGB16F, GL_RGB, GL_FLOAT};
+    case RGB32F: return {GL_RGB32F, GL_RGB, GL_FLOAT};
     case RGBA16F: return {GL_RGBA16F, GL_RGBA, GL_FLOAT};
     case RGBA32F: return {GL_RGBA32F, GL_RGBA, GL_FLOAT};
     case R32UI: return {GL_R32UI, GL_RED_INTEGER, GL_UNSIGNED_INT};
@@ -58,8 +60,8 @@ GLenum FilterTypeToOpenGLType(TextureFilter filter)
     }
 }
 
-OpenGLTexture::OpenGLTexture(const RHITextureDesc &desc, Buffer data)
-    : RHITexture(desc)
+OpenGLTexture::OpenGLTexture(OpenGLRHI &rhi, const RHITextureDesc &desc, Buffer data)
+    : rhi(rhi), RHITexture(desc)
 {
 	glCreateTextures(GL_TEXTURE_2D, 1, &handle);
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -70,7 +72,6 @@ OpenGLTexture::OpenGLTexture(const RHITextureDesc &desc, Buffer data)
     GLenum wrap = TextureWrapToOpenGLType(desc.wrap);
     GLenum filter = FilterTypeToOpenGLType(desc.filter);
 
-    glBindTexture(GL_TEXTURE_2D, handle);
     glTextureParameteri(handle, GL_TEXTURE_MIN_FILTER, filter);
     glTextureParameteri(handle, GL_TEXTURE_MAG_FILTER, filter);
 
@@ -81,12 +82,13 @@ OpenGLTexture::OpenGLTexture(const RHITextureDesc &desc, Buffer data)
     {
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
         glTextureSubImage2D(handle, 0, 0, 0,
-            desc.width, desc.height, format.dataFormat, format.dataType, data.Data<uint8_t>());
+            desc.width, desc.height, format.dataFormat, format.dataType, data.Data<void>());
     }
 }
 
 OpenGLTexture::~OpenGLTexture()
 {
+    rhi.GetFrameBufferManager().OnDestroyTexture(this);
     glDeleteTextures(1, &handle);
 }
 

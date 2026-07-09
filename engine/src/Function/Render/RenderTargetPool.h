@@ -24,6 +24,8 @@ class RenderTargetPool
     uint32 currentFrame = 0;
 
     std::list<OldTexture> oldTextures;
+
+    std::set<RHITexture *> record;
 };
 
 }

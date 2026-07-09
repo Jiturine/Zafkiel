@@ -2,6 +2,7 @@
 #include "Function/RHI/RHI.h"
 #include "Function/RHI/Backends/OpenGL/OpenGLRHI.h"
 #include "Function/RHI/Backends/Vulkan/VulkanRHI.h"
+#include "Core/Async/TaskGraph.h"
 
 #include <imgui.h>
 #include <backends/imgui_impl_sdl3.h>
@@ -17,51 +18,53 @@
 
 namespace Zafkiel 
 {
-Renderer::Renderer(GraphicsAPI API, Window &window)
+Renderer::Renderer(GraphicsAPI API)
 {
     Maths::SetAPI(API);
-    Application::StartRenderThread([this, API, &window](){
+    TaskGraph::Instance().StartRenderThread();
+
+    Fence initFence;
+    TaskGraph::Instance().EnqueueTask(NamedThreadType::RenderThread, [this, API, &initFence](){
         if (API == GraphicsAPI::OpenGL)
         {
-            GlobalRHI = CreateScope<OpenGLRHI>(window);
+            GlobalRHI = CreateScope<OpenGLRHI>();
         }
         else if (API == GraphicsAPI::Vulkan)
         {
-            GlobalRHI = CreateScope<VulkanRHI>(window);
+            GlobalRHI = CreateScope<VulkanRHI>();
         }
         GlobalRHICmdList = CreateScope<RHICommandListImmediate>(GlobalRHI->GetGraphicsContext(), *GlobalRHI.get());
 
-        InitImGui(window.GetHandle());
+        // InitImGui(window.GetHandle());
 
         renderTargetPool = CreateScope<RenderTargetPool>();
+
+        initFence.Signal();
     });
+
+    initFence.Wait();
 }
 
 Renderer::~Renderer() 
 {
-    
-}
+    Fence destroyFence;
+    TaskGraph::Instance().EnqueueTask(NamedThreadType::RenderThread, [&](){
+        renderTargetPool = nullptr;
+        meshes.clear();
+        materials.clear();
 
-void Renderer::Init(GraphicsAPI API, Window &window)
-{
-    instance = new Renderer(API, window);
-}
-
-void Renderer::Destroy()
-{
-    Submit([](){
-        instance->DestroyImGui();
+        GlobalRHICmdList = nullptr;
+        GlobalRHI = nullptr;
+        
+        destroyFence.Signal();
     });
-    Application::KickRenderThread();
-    Application::WaitRenderThread();
-    Application::StopRenderThread();
-    delete instance;
-    instance = nullptr;
+    destroyFence.Wait();
 
-    GlobalRHICmdList = nullptr;
-    GlobalRHI = nullptr;
+    TaskGraph::Instance().StopRenderThread();
+
 }
 
+#if 0
 void Renderer::InitImGui(SDL_Window* window)
 {
     IMGUI_CHECKVERSION();
@@ -146,7 +149,7 @@ void Renderer::DestroyImGui()
     ImGui::DestroyContext();
 }
 
-
+#endif
 
 Ref<Mesh> Renderer::GetOrCreateMesh(AssetHandle meshAssetHandle)
 {
